@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="python">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_inference.py module &mdash; PREFFECT 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="_utils.py module" href="_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PREFFECT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="_config.html">_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_distributions.html">_distributions.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_logger_config.html">_logger_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_model.html">_model_py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_cli.html">preffect_cli.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_factory.html">preffect_factory.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_preffect.html">_preffect.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_data_loader.html">_data_loader.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">_inference.py module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inference.Inference"><code class="docutils literal notranslate"><span class="pre">Inference</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.calculate_imputation_error"><code class="docutils literal notranslate"><span class="pre">Inference.calculate_imputation_error()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.concatenate_1d_minibatch"><code class="docutils literal notranslate"><span class="pre">Inference.concatenate_1d_minibatch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.concatenate_2d_minibatch"><code class="docutils literal notranslate"><span class="pre">Inference.concatenate_2d_minibatch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.impute_values"><code class="docutils literal notranslate"><span class="pre">Inference.impute_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.reconstruct_from_minibatches"><code class="docutils literal notranslate"><span class="pre">Inference.reconstruct_from_minibatches()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.register_inference_run"><code class="docutils literal notranslate"><span class="pre">Inference.register_inference_run()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.return_counts_as_anndata"><code class="docutils literal notranslate"><span class="pre">Inference.return_counts_as_anndata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.return_latent_space_as_anndata"><code class="docutils literal notranslate"><span class="pre">Inference.return_latent_space_as_anndata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.run_inference"><code class="docutils literal notranslate"><span class="pre">Inference.run_inference()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.save"><code class="docutils literal notranslate"><span class="pre">Inference.save()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.save_visualization"><code class="docutils literal notranslate"><span class="pre">Inference.save_visualization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_batch_adjustment"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_batch_adjustment()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_fraction_pi_per_gene"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_fraction_pi_per_gene()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_gene_scatterplot"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_gene_scatterplot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_latent_recons_umap"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_latent_recons_umap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_lib_size"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_lib_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#inference.Inference.visualize_libsize_and_dispersion"><code class="docutils literal notranslate"><span class="pre">Inference.visualize_libsize_and_dispersion()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="_utils.html">_utils.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_error.html">_error.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cluster.html">_cluster.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_ZINBEstimator.html">_ZINBEstimator.py module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PREFFECT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">_inference.py module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/_inference.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-_inference">
+<span id="inference-py-module"></span><h1>_inference.py module<a class="headerlink" href="#module-_inference" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="inference.Inference">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_inference.</span></span><span class="sig-name descname"><span class="pre">Inference</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preffect_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inference'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.calculate_imputation_error">
+<span class="sig-name descname"><span class="pre">calculate_imputation_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mse'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.calculate_imputation_error" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.concatenate_1d_minibatch">
+<span class="sig-name descname"><span class="pre">concatenate_1d_minibatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.concatenate_1d_minibatch" title="Permalink to this definition"></a></dt>
+<dd><p>Concatenates sublists of 1D tensors or lists from multiple mini-batches into a single list.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>L (list of list of torch.Tensor or list): A nested list where each inner list contains tensors or lists
+from a specific mini-batch. 
+full_idx (list of int): Indices representing the order or selection of elements to retain from the concatenated lists,
+adjusted for any padding that might have been applied during batching.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list of list: A list where each sublist corresponds to a concatenated and trimmed set of data across all mini-batches.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.concatenate_2d_minibatch">
+<span class="sig-name descname"><span class="pre">concatenate_2d_minibatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.concatenate_2d_minibatch" title="Permalink to this definition"></a></dt>
+<dd><p>Concatenates sublists of tensors from multiple mini-batches into a single list of tensors.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>L (list of list of torch.Tensor): A list containing sublists, where each sublist consists of tensors
+from a particular mini-batch. These tensors typically represent some aspect of model outputs such as latent variables.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>list of numpy.ndarray: A list of concatenated arrays. Each array in the list corresponds to a type of data</dt><dd><p>across all mini-batches (e.g., all latent variable tensors concatenated into a single array).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.impute_values">
+<span class="sig-name descname"><span class="pre">impute_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.impute_values" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.reconstruct_from_minibatches">
+<span class="sig-name descname"><span class="pre">reconstruct_from_minibatches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batches</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.reconstruct_from_minibatches" title="Permalink to this definition"></a></dt>
+<dd><p>Reconstructs full dataset arrays from minibatches, combining the various outputs
+from the model's minibatch processing into unified structures.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data (list of dict): List of dictionaries containing outputs from minibatches. Each dictionary</dt><dd><p>should have keys corresponding to different aspects of the model's output, such as
+'latent_variables', 'lib_size_factors', 'X_hat', etc.</p>
+</dd>
+<dt>idx_batches (list of torch.Tensor): List of tensors representing the indices of each minibatch</dt><dd><p>within the overall dataset.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing the reconstructed full dataset. The keys in this dictionary</dt><dd><p>correspond to the unified arrays of outputs such as 'Z_Ls', 'lib_size_factors', 'X_hat_mu',
+'X_hat_theta', 'Z_As', and potentially others depending on the model configuration and type.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.register_inference_run">
+<span class="sig-name descname"><span class="pre">register_inference_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.register_inference_run" title="Permalink to this definition"></a></dt>
+<dd><p>Registers an inference instance within the parent object's inference dictionary. If the specified inference
+instance already exists and overwrite permission is not granted, it raises an error.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>None</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>PreffectError: If an inference object with the same name already exists in the parent's dictionary</dt><dd><p>and overwrite permission is set to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.return_counts_as_anndata">
+<span class="sig-name descname"><span class="pre">return_counts_as_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.return_counts_as_anndata" title="Permalink to this definition"></a></dt>
+<dd><p>Converts the raw and inferred gene expression data into an AnnData format for further analysis.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>list of anndata.AnnData: A list of AnnData objects. Each AnnData object corresponds to a different tissue or condition
+from the dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.return_latent_space_as_anndata">
+<span class="sig-name descname"><span class="pre">return_latent_space_as_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.return_latent_space_as_anndata" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an AnnData object from the latent variables (Z_L, Z_A, Z_Simple) depending on the model type.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>anndata.AnnData: An AnnData object containing the latent representations as the main data matrix 'X'. If the
+model type is 'simple', 'Z_simples' is used. For 'single' or 'full' types, 'Z_As' is used.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PreffectError: If the model type is neither 'simple', 'single', nor 'full', an error is raised indicating
+that the method is not implemented for the given model type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.run_inference">
+<span class="sig-name descname"><span class="pre">run_inference</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.run_inference" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the inference process using the model configured in the parent instance. It handles different types
+of models including 'full', 'single', and 'simple'. It calculates and aggregates results from the model's output
+across all mini-batches.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.save" title="Permalink to this definition"></a></dt>
+<dd><p>Saves the inference results to a file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>results (dict): The dictionary containing the inference results to be saved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.save_visualization">
+<span class="sig-name descname"><span class="pre">save_visualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vlib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.save_visualization" title="Permalink to this definition"></a></dt>
+<dd><p>Saves a matplotlib figure to a specified directory as a PDF file.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>vlib (matplotlib.figure.Figure): The matplotlib figure to be saved.
+configs (dict): Configuration dictionary containing the output path.
+filename (str, optional): The name of the file to save the figure as. Defaults to &quot;needs_a_name.pdf&quot;.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: This function saves the figure to disk and does not return any values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_batch_adjustment">
+<span class="sig-name descname"><span class="pre">visualize_batch_adjustment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_batch_adjustment" title="Permalink to this definition"></a></dt>
+<dd><p>Generates side-by-side scatter plots comparing expected and fitted expression averages (per gene) between sample batches.
+The purpose is to see if batch correction was effective during training. 
+If &gt;2 batches are provided, then all batches are compared to each other (e.g. batches 0+1, 0+2, and 1+2). 
+Since these comparisons will increase quadraticly, we limit comparisons to the first 5 batches.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
+to fetch inferred library sizes.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>matplotlib.pyplot: A matplotlib figure containing scatter plots.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_fraction_pi_per_gene">
+<span class="sig-name descname"><span class="pre">visualize_fraction_pi_per_gene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_fraction_pi_per_gene" title="Permalink to this definition"></a></dt>
+<dd><p>Generates scatter plots comparing expected fraction of zeroes and the mean Pi parameter per gene.
+This is to compare the number of zeroes present before and after going through a ZINB model.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
+to fetch inferred library sizes.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>matplotlib.pyplot: A matplotlib figure containing a scatter plot.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_gene_scatterplot">
+<span class="sig-name descname"><span class="pre">visualize_gene_scatterplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_gene_scatterplot" title="Permalink to this definition"></a></dt>
+<dd><p>Generates scatter plots comparing expected and fitted expression of the first 50 genes of the endogenous set.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
+to fetch inferred library sizes.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>matplotlib.pyplot: A matplotlib figure containing the scatter plots for both the expected and inferred</dt><dd><p>read counts of the first 50 genes in the dataset, which can be used for further processing or display.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_latent_recons_umap">
+<span class="sig-name descname"><span class="pre">visualize_latent_recons_umap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">my_cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_latent_recons_umap" title="Permalink to this definition"></a></dt>
+<dd><p>UMAP of latent space; assumes 'batch' is in obs table of AnnData</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_lib_size">
+<span class="sig-name descname"><span class="pre">visualize_lib_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_lib_size" title="Permalink to this definition"></a></dt>
+<dd><p>Generates histograms comparing expected and inferred library sizes from the given Preffect object.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
+to fetch inferred library sizes.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>matplotlib.pyplot: A matplotlib figure containing the histogram plots for both the expected and inferred</dt><dd><p>library sizes, which can be used for further processing or display.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="inference.Inference.visualize_libsize_and_dispersion">
+<span class="sig-name descname"><span class="pre">visualize_libsize_and_dispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_libsize_and_dispersion" title="Permalink to this definition"></a></dt>
+<dd><p>Generates a series plots to compare gene means, dispersion and library size.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
+to fetch inferred library sizes.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>matplotlib.pyplot: A matplotlib figure containing 4-plot figure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_utils.html" class="btn btn-neutral float-right" title="_utils.py module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Michael T Hallett, Eliseos J Mucaki, Aryamaan Saha, Wenhan Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

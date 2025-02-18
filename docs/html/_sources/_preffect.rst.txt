@@ -1,0 +1,7 @@
+_preffect.py module
+======================
+
+.. automodule:: _preffect
+   :members:
+   :undoc-members:
+   :show-inheritance:

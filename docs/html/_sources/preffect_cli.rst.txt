@@ -1,0 +1,7 @@
+preffect_cli.py module
+======================
+
+.. automodule:: preffect_cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

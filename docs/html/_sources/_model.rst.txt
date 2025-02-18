@@ -1,0 +1,7 @@
+_model_py module
+======================
+
+.. automodule:: _model
+   :members:
+   :undoc-members:
+   :show-inheritance:

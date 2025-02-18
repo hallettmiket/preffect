@@ -1,0 +1,7 @@
+_distributions.py module
+=========================
+
+.. automodule:: _distributions
+   :members:
+   :undoc-members:
+   :show-inheritance:

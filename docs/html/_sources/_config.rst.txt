@@ -1,0 +1,7 @@
+_config.py module
+======================
+
+.. automodule:: _config
+   :members:
+   :undoc-members:
+   :show-inheritance:

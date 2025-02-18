@@ -1,0 +1,8 @@
+__pycache__/
+/docs/source/
+/docs/conf.py
+/docs/*.rst
+/docs/makefile
+/docs/Makefile
+/docs/_build/
+/vignettes/runs/

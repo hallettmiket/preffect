@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="python">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_model_py module &mdash; PREFFECT 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="preffect_cli.py module" href="preffect_cli.html" />
+    <link rel="prev" title="_logger_config.py module" href="_logger_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PREFFECT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="_config.html">_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_distributions.html">_distributions.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_logger_config.html">_logger_config.py module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">_model_py module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model.Decoder"><code class="docutils literal notranslate"><span class="pre">Decoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model.Decoder.decode"><code class="docutils literal notranslate"><span class="pre">Decoder.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Decoder.init_weights"><code class="docutils literal notranslate"><span class="pre">Decoder.init_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Decoder.prepare_latent_space_with_korrection_vars"><code class="docutils literal notranslate"><span class="pre">Decoder.prepare_latent_space_with_korrection_vars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Decoder.training"><code class="docutils literal notranslate"><span class="pre">Decoder.training</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model.Encoder"><code class="docutils literal notranslate"><span class="pre">Encoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model.Encoder.encode"><code class="docutils literal notranslate"><span class="pre">Encoder.encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Encoder.init_weights"><code class="docutils literal notranslate"><span class="pre">Encoder.init_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Encoder.prepare_latent_space_with_korrection_vars"><code class="docutils literal notranslate"><span class="pre">Encoder.prepare_latent_space_with_korrection_vars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.Encoder.training"><code class="docutils literal notranslate"><span class="pre">Encoder.training</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model.LibDecoder"><code class="docutils literal notranslate"><span class="pre">LibDecoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibDecoder.decode"><code class="docutils literal notranslate"><span class="pre">LibDecoder.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibDecoder.init_weights"><code class="docutils literal notranslate"><span class="pre">LibDecoder.init_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibDecoder.prepare_latent_space_with_korrection_vars"><code class="docutils literal notranslate"><span class="pre">LibDecoder.prepare_latent_space_with_korrection_vars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibDecoder.training"><code class="docutils literal notranslate"><span class="pre">LibDecoder.training</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model.LibEncoder"><code class="docutils literal notranslate"><span class="pre">LibEncoder</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibEncoder.encode"><code class="docutils literal notranslate"><span class="pre">LibEncoder.encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibEncoder.init_weights"><code class="docutils literal notranslate"><span class="pre">LibEncoder.init_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibEncoder.prepare_latent_space_with_korrection_vars"><code class="docutils literal notranslate"><span class="pre">LibEncoder.prepare_latent_space_with_korrection_vars()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.LibEncoder.training"><code class="docutils literal notranslate"><span class="pre">LibEncoder.training</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model.VAE"><code class="docutils literal notranslate"><span class="pre">VAE</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.batch_centroid_loss"><code class="docutils literal notranslate"><span class="pre">VAE.batch_centroid_loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.decode"><code class="docutils literal notranslate"><span class="pre">VAE.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.encode_reparameterization"><code class="docutils literal notranslate"><span class="pre">VAE.encode_reparameterization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.forward"><code class="docutils literal notranslate"><span class="pre">VAE.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.init_weights_vae"><code class="docutils literal notranslate"><span class="pre">VAE.init_weights_vae()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.load_pretrained_model"><code class="docutils literal notranslate"><span class="pre">VAE.load_pretrained_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.loss"><code class="docutils literal notranslate"><span class="pre">VAE.loss()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.remove_ghost_samples"><code class="docutils literal notranslate"><span class="pre">VAE.remove_ghost_samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.reparameterize"><code class="docutils literal notranslate"><span class="pre">VAE.reparameterize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.set_parameter_requires_grad"><code class="docutils literal notranslate"><span class="pre">VAE.set_parameter_requires_grad()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model.VAE.training"><code class="docutils literal notranslate"><span class="pre">VAE.training</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_cli.html">preffect_cli.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_factory.html">preffect_factory.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_preffect.html">_preffect.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_data_loader.html">_data_loader.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inference.html">_inference.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_utils.html">_utils.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_error.html">_error.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cluster.html">_cluster.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_ZINBEstimator.html">_ZINBEstimator.py module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PREFFECT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">_model_py module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-_model">
+<span id="model-py-module"></span><h1>_model_py module<a class="headerlink" href="#module-_model" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="model.Decoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">Decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Decoder neural network module for a GAT-based autoencoder</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>layer1 (nn.Linear): First linear transformation layer
+layer2 (nn.Linear): Second linear transformation layer
+layer3 (nn.Linear): Third linear transformation layer
+leaky_relu (nn.LeakyReLU): LeakyReLU activation function</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Decoder.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ejs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.decode" title="Permalink to this definition"></a></dt>
+<dd><p>Decodes using linear transformations and activations</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>Z (Tensor): Encoded feature matrix
+K (Tensor):  korrection variables
+k (list): levels of korrection vars</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tensor: Decoded output matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Decoder.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.init_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize weights of Linear layers using Xavier initialization</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Decoder.prepare_latent_space_with_korrection_vars">
+<span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="model.Decoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#model.Decoder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="model.Encoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">Encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Encoder neural network module using Graph Attention Networks (GATs)</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>layer1 (GATv2Conv): First graph attention layer
+layer2 (GATv2Conv): Second graph attention layer
+mu_layer (nn.Linear): Linear layer to calculate mean of latent space
+logvar_layer (nn.Linear): Linear layer for calculating log variance
+of latent space
+leaky_relu (nn.LeakyReLU): LeakyReLU activation function</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Encoder.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ejs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.encode" title="Permalink to this definition"></a></dt>
+<dd><p>Perform encoding using graph attention layers</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (Tensor): Input feature matrix (zeroed counts)
+ejs (Tensor): Edge indices defining the graph structure
+K (Tensor): Correction variable matrix</p>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[Tensor, Tensor]: Mean and log variance of encoded input</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Encoder.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.init_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize weights of Linear layers</p>
+<p>Args: 
+m (nn.Module): PyTorch module instance</p>
+<p>Returns: None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.Encoder.prepare_latent_space_with_korrection_vars">
+<span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="model.Encoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#model.Encoder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="model.LibDecoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">LibDecoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Library-size decoder module that decodes latent variables back into
+the original space</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>layer_de_lib1 (nn.Linear): Linear layer for decoding latent variables
+layer_de_lib_mu (nn.Linear): Linear layer to decode the mean (mu)
+of the library size
+layer_de_lib_logvar (nn.Linear): Linear layer to decode the log
+variance (logvar) of the library size
+leaky_relu (nn.LeakyReLU): Leaky ReLU activation function</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibDecoder.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z_L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.decode" title="Permalink to this definition"></a></dt>
+<dd><p>Perform the decoding operation for latent variables and correction variables.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>Z_L (torch.Tensor): Latent variables.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Decoded output, processed through a linear layer followed by a LeakyReLU activation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibDecoder.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.init_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize weights of Linear layers using Xavier initialization</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibDecoder.prepare_latent_space_with_korrection_vars">
+<span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="model.LibDecoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#model.LibDecoder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="model.LibEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">LibEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Library-size encoder module using a linear transformation layer followed
+by LeakyReLU activation</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>layer_lib1 (nn.Linear): Linear layer to encode the combined feature of
+log library sizes and variables
+layer_lib_mu (nn.Linear): Linear layer to encode the mean for the
+library size
+layer_lib_logvar (nn.Linear): Linear layer to encode the log variance
+(logvar) for the library size.
+leaky_relu (nn.LeakyReLU): Leaky ReLU activation function.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibEncoder.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_lib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.encode" title="Permalink to this definition"></a></dt>
+<dd><p>Perform the encoding operation for log library sizes and variables</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>log_lib (Tensor): Tensor of log library sizes
+K (Tensor): Tensor of one-hot variables</p>
+</dd>
+</dl>
+<p>Returns: Tensors for the mean (mu) and log variance (logvar)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibEncoder.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.init_weights" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize weights of Linear layers using Xavier initialization</p>
+<dl class="simple">
+<dt>Args: </dt><dd><p>m (nn.Module): PyTorch module instance</p>
+</dd>
+<dt>Returns: </dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.LibEncoder.prepare_latent_space_with_korrection_vars">
+<span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="model.LibEncoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#model.LibEncoder.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="model.VAE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">VAE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Variational Autoencoder (VAE)  to capture the latent structure
+Prepares encoders/decoders/linear layers of the VAE</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.batch_centroid_loss">
+<span class="sig-name descname"><span class="pre">batch_centroid_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.batch_centroid_loss" title="Permalink to this definition"></a></dt>
+<dd><p>Computes a loss based on the Euclidean distance between centroids of each experimental batch in the latent space.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>counts (List[torch.Tensor]): List of tensors containing the latent representations per batch. Each element</dt><dd><p>corresponds to a different tissue or condition and has shape [num_samples, latent_dim].</p>
+</dd>
+<dt>Ks (List[torch.Tensor]): List of tensors where the first column indicates batch membership for each sample in <cite>counts</cite>.</dt><dd><p>Each tensor corresponds to a different tissue or condition and has shape [num_samples, num_batches].</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: A tensor containing the mean of the upper triangular non-zero Euclidean distances between batch</dt><dd><p>centroids for each tissue or condition. Each element in the tensor corresponds to the computed distance for
+one of the tissues or conditions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latent_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.decode" title="Permalink to this definition"></a></dt>
+<dd><p>Decodes the latent variables and combines them with correction variables 
+to calculate ZINB parameters for each type of decoder configuration.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>latent_vars (dict): Dictionary containing reparameterized latent spaces </dt><dd><p>computed by the <cite>encode_reparameterization()</cite> method. It includes keys
+like 'Z_Ls' for library sizes and 'Z_As' for sample-sample interactions.</p>
+</dd>
+<dt>Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to </dt><dd><p>batch or other categorical variables, one for each mini-batch.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing decoded outputs from different decoders and the</dt><dd><p>combined outputs which are used to calculate distributional parameters such
+as pi, omega, and theta.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.encode_reparameterization">
+<span class="sig-name descname"><span class="pre">encode_reparameterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.encode_reparameterization" title="Permalink to this definition"></a></dt>
+<dd><p>Encodes and reparameterizes the input data to produce latent structures 
+for the library size (Z_L) and network structure of sample-sample interactions (Z_A).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>Xs (list of torch.Tensor): List of zeroed Expression Matrices, one for each mini-batch.
+Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to batch or other
+categorical variables, one for each mini-batch.
+edges (list of torch.Tensor): List of adjacency matrices or edge lists representing 
+sample-sample interactions, one for each mini-batch.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing two sub-dictionaries:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>'latent_spaces': Contains mu and logvar for library size, network interactions,</dt><dd><p>and simple models for each mini-batch.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>'latent_variables': Contains reparameterized latent variables Z_L, Z_A, and</dt><dd><p>Z_simple for each mini-batch.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.forward" title="Permalink to this definition"></a></dt>
+<dd><p>Processes a batch of data through the VAE, performing encoding,
+reparameterization, and decoding steps to generate the outputs used for model training or inference.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>batch (dict): A dictionary containing tensors that represent different
+parts of the data batch. Expected keys are:
+'X_batches': Zeroed expression matrices of the minibatch.
+'R_batches': Raw expression matrices of the minibatch.
+'K_batches': korrection variables
+'k_batches' : levels of correction variables
+'idx_batches': Indices of samples in the minibatch.
+'ej_batches': Graph edges in each minibatch (used if model includes graph data).</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>dict: A dictionary containing various outputs from the forward pass of the model,</dt><dd><p>including:
+- 'latent_spaces': The latent spaces derived from the encoder.
+- 'latent_variables': Reparameterized latent variables.
+- 'X_hat': Predicted data samples (e.g., reconstructed expression levels).
+- 'DAs': Decoded activation from the model.
+- 'DLs': Decoded library size factors.
+- 'lib_size_factors': Library size factors computed post decoding.
+- 'px_dispersion': Dispersion parameters of the distribution.
+- 'px_omega': Mu parameters of the distribution.
+- 'distributional_parameters': Parameters such as pi, omega, theta used in the distribution.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.init_weights_vae">
+<span class="sig-name descname"><span class="pre">init_weights_vae</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.init_weights_vae" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize weights of Linear layers using Xavier initialization</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.load_pretrained_model">
+<span class="sig-name descname"><span class="pre">load_pretrained_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.load_pretrained_model" title="Permalink to this definition"></a></dt>
+<dd><p>Loads a pre-trained model state into this model instance. It loads the model's state 
+dictionary, updates the current model instance's parameters, and sets the model to evaluation mode.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>Exception: Error if there are any issues accessing the folder or loading the model file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.loss">
+<span class="sig-name descname"><span class="pre">loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rs_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adj_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generative_outputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.loss" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates and records various losses during training or validation.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>Rs_batch (list of torch.Tensor): Raw expression matrices for the current minibatch, where each tensor</dt><dd><p>corresponds to a batch from a specific condition or tissue.</p>
+</dd>
+</dl>
+<p>idx_batch (list of int): List of indices corresponding to samples in the current minibatch.
+adj_batch (list of torch.Tensor): Adjacency matrices for samples in the minibatch, applicable for models
+considering sample-sample interactions.
+dataset (FFPE_Dataset): Dataset object providing access to dataset properties and helper methods.
+prefix (str): Indicates the phase of the model ('train' or 'val') during which the loss is being computed.
+epoch (int): The current epoch number in the training/validation process.
+generative_outputs (dict): Outputs from the forward pass of the VAE model including latent variables and
+other intermediate data.
+losses (dict): Dictionary to record and update the computed losses over training epochs.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: The average loss computed across different metrics for the current minibatch, which is also</dt><dd><p>logged and stored within the provided 'losses' dictionary.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.remove_ghost_samples">
+<span class="sig-name descname"><span class="pre">remove_ghost_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_Rs_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adjusted_generative_outputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.remove_ghost_samples" title="Permalink to this definition"></a></dt>
+<dd><p>Removes ghost samples from tensors, distributions and lists of 
+vectors and matrices</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>adj_Rs_batch (tensor): Expression of current minibatch of smaples
+idx_batch (list of indices): Indices of samples in the minibatch
+dataset: Dataset created in _data_loader.py
+adjusted_generative_outputs: Output from the VAE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.reparameterize">
+<span class="sig-name descname"><span class="pre">reparameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.reparameterize" title="Permalink to this definition"></a></dt>
+<dd><p>Reparameterization method to sample from a Gaussian distribution</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mu (torch.Tensor): Mean of the Gaussian distribution
+logvar (torch.Tensor): Natural log of the variance of the Gaussian</p>
+</dd>
+<dt>Returns: </dt><dd><p>torch.Tensor: Sampled latent variable, z</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="model.VAE.set_parameter_requires_grad">
+<span class="sig-name descname"><span class="pre">set_parameter_requires_grad</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.set_parameter_requires_grad" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the <cite>requires_grad</cite> to enable/disable the training of specific layers.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>This method is typically called after model initialization or loading a pre-trained model to prepare
+the model for fine-tuning or full training, depending on the experiment's requirements.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="model.VAE.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#model.VAE.training" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_logger_config.html" class="btn btn-neutral float-left" title="_logger_config.py module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="preffect_cli.html" class="btn btn-neutral float-right" title="preffect_cli.py module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Michael T Hallett, Eliseos J Mucaki, Aryamaan Saha, Wenhan Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

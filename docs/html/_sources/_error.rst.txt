@@ -1,0 +1,7 @@
+_error.py module
+======================
+
+.. automodule:: _error
+   :members:
+   :undoc-members:
+   :show-inheritance:

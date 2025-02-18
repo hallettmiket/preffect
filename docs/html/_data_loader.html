@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="python">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_data_loader.py module &mdash; PREFFECT 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="_preffect.py module" href="_preffect.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PREFFECT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="_config.html">_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_distributions.html">_distributions.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_logger_config.html">_logger_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_model.html">_model_py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_cli.html">preffect_cli.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_factory.html">preffect_factory.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_preffect.html">_preffect.py module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">_data_loader.py module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data_loader.FFPE_dataset"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.MCAR"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.MCAR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.check_fidelity_of_anndata"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.check_fidelity_of_anndata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.clamp_tensor_values"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.clamp_tensor_values()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.filter_NaNs_from_COO"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.filter_NaNs_from_COO()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.from_anndata_2_numpy"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.from_anndata_2_numpy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.from_numpy_2_tensors"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.from_numpy_2_tensors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.get_ghost_indices"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.get_ghost_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.harmonize_samples"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.harmonize_samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.load_anndata"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.load_anndata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.pad_adjacency_matrices"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.pad_adjacency_matrices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.prep_batch_iterator"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.prep_batch_iterator()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.select_genes"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.select_genes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.select_samples"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.select_samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data_loader.FFPE_dataset.setup_categorical_variables"><code class="docutils literal notranslate"><span class="pre">FFPE_dataset.setup_categorical_variables()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inference.html">_inference.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_utils.html">_utils.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_error.html">_error.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cluster.html">_cluster.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_ZINBEstimator.html">_ZINBEstimator.py module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PREFFECT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">_data_loader.py module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/_data_loader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-_data_loader">
+<span id="data-loader-py-module"></span><h1>_data_loader.py module<a class="headerlink" href="#module-_data_loader" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_data_loader.</span></span><span class="sig-name descname"><span class="pre">FFPE_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learning_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
+<p>FFPE_dataset: start of data loader</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.MCAR">
+<span class="sig-name descname"><span class="pre">MCAR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arguments</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.MCAR" title="Permalink to this definition"></a></dt>
+<dd><p>Simulates Missing Completely At Random (MCAR) by zeroing a fraction of elements
+in each tensor of the lists <cite>self.Xs</cite> and <cite>self.As_orig</cite>. The fraction of dropout 
+assigned to each gene is a random variable between 0 and the given lambda value.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="simple">
+<dt>arguments (dict): A dictionary containing the following keys:</dt><dd><ul class="simple">
+<li><p><strong>'lambda_counts':</strong> The maximum dropout rate for any gene in the expression matrix.</p></li>
+<li><p><strong>'lambda_edges':</strong> The maximum dropout rate for the adjacency matrix.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>tuple: A tuple containing the following elements:</dt><dd><ul class="simple">
+<li><p><strong>List[torch.Tensor]:</strong> A list of new tensors with zeroed elements in the expression matrix.</p></li>
+<li><p><strong>List[torch.Tensor]:</strong> A list of tensors indicating the indices of zeroed locations within the count tensor.</p></li>
+<li><p><strong>List[torch.Tensor]:</strong> A list of new tensors with zeroed elements in the edge matrix.</p></li>
+<li><p><strong>List[torch.Tensor]:</strong> A list of tensors indicating the indices of zeroed locations within the edge tensor.</p></li>
+<li><p><strong>List[torch.Tensor]:</strong> A list of tensors indicating the indices of non-zeros in masked, padded adjacencies.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.check_fidelity_of_anndata">
+<span class="sig-name descname"><span class="pre">check_fidelity_of_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.check_fidelity_of_anndata" title="Permalink to this definition"></a></dt>
+<dd><p>This function checks each input AnnData object for the following:</p>
+<ol class="arabic simple">
+<li><p>A valid expression matrix (AnnData 'X' matrix).</p></li>
+<li><p>Gene IDs (AnnData 'var' must exist with column 'gene').</p></li>
+<li><p>Sample IDs (AnnData 'obs' table must exist; expects 'obs_names' to be sample IDs).</p></li>
+<li><p>Presence of an Aj correlation matrix. If not found, the <cite>configs</cite> is modified so that adjacency information is not considered in downstream computations.</p></li>
+<li><p>A &quot;sample_association&quot; must exist in the <cite>obsm</cite> of each AnnData, indicating which samples are associated with each other (tau_1, tau_2, etc.). Consequently, the sample names between the AnnData tables (N=calT) are expected to be unique. If a sample is not associated with a certain tissue, the cell for that unassociated tissue should read NA or NaN.</p></li>
+</ol>
+<dl class="simple">
+<dt>Args:</dt><dd><p><strong>adatas (List[AnnData]):</strong> A list of original AnnData objects loaded from files.</p>
+</dd>
+<dt>Returns:</dt><dd><p><strong>bool:</strong> True if all checks pass.</p>
+</dd>
+<dt>Raises:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.clamp_tensor_values">
+<span class="sig-name descname"><span class="pre">clamp_tensor_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tensor_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.clamp_tensor_values" title="Permalink to this definition"></a></dt>
+<dd><p>Clamps values of tensors in a list based on pre-defined thresholds:</p>
+<ul class="simple">
+<li><p>Expression is clamped at &gt;10^6.</p></li>
+<li><p>Any given value less than 10^(-10) is zeroed.</p></li>
+<li><p>Tensors are also converted to float.</p></li>
+</ul>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p><strong>tensor_list (List[torch.Tensor]):</strong> PyTorch tensors to be clamped.</p>
+</dd>
+<dt>Returns:</dt><dd><p><strong>torch.Tensor:</strong> A new tensor obtained by stacking the clamped tensors along a new dimension (<cite>dim=0</cite>).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.filter_NaNs_from_COO">
+<span class="sig-name descname"><span class="pre">filter_NaNs_from_COO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.filter_NaNs_from_COO" title="Permalink to this definition"></a></dt>
+<dd><p>Filters NaN from data arrays of COO (Coordinate) sparse matrices</p>
+<p>This function takes lists of COO matrices (Ms), filters out the
+NaN values from their data arrays, and returns new lists of filtered
+COO matrices.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p><strong>Ms (list):</strong> List of COO matrices that need to be filtered</p>
+</dd>
+<dt>Returns:</dt><dd><p><strong>filtered_Ms (list):</strong> List of filtered COO matrices</p>
+</dd>
+<dt>Notes:</dt><dd><p>This function assumes that the input matrices are in COO format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.from_anndata_2_numpy">
+<span class="sig-name descname"><span class="pre">from_anndata_2_numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.from_anndata_2_numpy" title="Permalink to this definition"></a></dt>
+<dd><p>Extracts info from anndata, creates several self vars for this dataset</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p><strong>anndata_orig:</strong> raw anndata structures read in from file. They have
+been checked for their fidelity (no information is missing)</p>
+</dd>
+<dt>Returns:</dt><dd><p>A series of self variables are created in the dataset object</p>
+</dd>
+<dt>Raises:</dt><dd><p>Not sure yet if there is anything to raise here.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.from_numpy_2_tensors">
+<span class="sig-name descname"><span class="pre">from_numpy_2_tensors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.from_numpy_2_tensors" title="Permalink to this definition"></a></dt>
+<dd><p>Converts multiple attributes from NumPy arrays to PyTorch tensors. It also clamps raw Rs, filters NaNs from As and Ss, and pads the adjacency matrices As and Ss.</p>
+<p>Attributes Transformed:</p>
+<ul class="simple">
+<li><p><strong>Rs</strong>: Expression matrices are clamped (max 100000) and converted.</p></li>
+<li><p><strong>Xs</strong>: Same as Rs for zeroed expression matrices.</p></li>
+<li><p><strong>As</strong>: Nans in Adjacency matrices are filtered.</p></li>
+<li><p><strong>Ks</strong>: Converted to tensor after concatenating dataframes.</p></li>
+<li><p><strong>ks</strong>: Converted to tensor.</p></li>
+<li><p><strong>As_ej_index</strong>: Indices of non-zeros in padded adjacencies.</p></li>
+</ul>
+<p>Note:</p>
+<ul class="simple">
+<li><p>Assumes that self.Rs, As, and Ss are NumPy arrays or similar.</p></li>
+<li><p>Assumes that self.Ks contains Pandas DataFrames.</p></li>
+<li><p>Rs and Xs are logged.</p></li>
+</ul>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>None. This function modifies the attributes in place.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.get_ghost_indices">
+<span class="sig-name descname"><span class="pre">get_ghost_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tissue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.get_ghost_indices" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves indices of &quot;ghost&quot; samples in a particular tissue sample set.</p>
+<p><strong>Parameters</strong>:</p>
+<blockquote>
+<div><p><strong>tissue</strong> (int): An integer representing the index of the tissue in the <cite>self.calT</cite> range.</p>
+</div></blockquote>
+<p><strong>Returns</strong>:</p>
+<blockquote>
+<div><p><strong>indices</strong> (list[int]): List of indices in self.anndatas[tissue].obs.index.value that correspond to the ghost samples in <cite>self.sample_tissue_map</cite>.</p>
+</div></blockquote>
+<p><strong>Raises</strong>:</p>
+<blockquote>
+<div><p><strong>AssertionError</strong>: If the input <cite>tissue</cite> is not within the range defined by <cite>self.calT</cite>.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.harmonize_samples">
+<span class="sig-name descname"><span class="pre">harmonize_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anndata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.harmonize_samples" title="Permalink to this definition"></a></dt>
+<dd><p>This function reads &quot;sample_association&quot; in the obsm, and uses it to order associated samples to the same rows in X.</p>
+<ul class="simple">
+<li><p>&quot;sample_association&quot; is a table of calT cols (&quot;tau_1&quot;, etc) and indicates which tissues are related.</p></li>
+<li><p>&quot;sample_association&quot; combined and used to order the table X, obs, and obsm table &quot;sample_sample_adj&quot; (var/varm unaffected).</p></li>
+<li><p>If a sample doesn't have an associated sample in one or more tissues, the other cols for those tissues in this table should be 'NaN'.</p></li>
+<li><p>We expect AnnData 'obs_names' should be unique across all AnnData tables provided.</p></li>
+</ul>
+<dl>
+<dt>Returns:</dt><dd><p>List of Anndata of length calT; restructured to order rows the same across associated samples; if no association, a &quot;ghost&quot; entry is added:</p>
+<ul class="simple">
+<li><p>NA/NaN are converted to a unique name.</p></li>
+<li><p>A new row with this name is added to 'obs'; 'NaN' added to each entry (for easy identification of ghost samples).</p></li>
+<li><p>A new row with this name is added to 'X', where expression of each gene is zero.</p></li>
+</ul>
+<p>The AnnData tables X, obs, and the required obsm sparse matrix &quot;sample_sample_adj&quot; are then re-arranged to align associated samples to the same row. It is expected that each sample has a maximum of one associated sample per calT (e.g. a sample can only have one association to a sample in a different tissue).</p>
+</dd>
+<dt>Raises:</dt><dd><p>None due to filtering step in 'check_fidelity_of_anndata'.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.load_anndata">
+<span class="sig-name descname"><span class="pre">load_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.load_anndata" title="Permalink to this definition"></a></dt>
+<dd><p>This loads anndata files (h5ad) from a given directory (specified in
+configs). All files that have the name structure
+<a href="#id1"><span class="problematic" id="id2">*</span></a>tau_x.h5ad where x is an integer are loaded x determines
+the order of tissues.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p><strong>anndata_dir:</strong> location of all anndata files.
+anntarget_dataset: specifies a specific dataset within anndata_dir
+learning_type: species whether it is 'train', 'validation' or 'test'</p>
+</dd>
+<dt>Returns:</dt><dd><p>One anndata datastructure for each valid file identified
+sorted by tau.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.pad_adjacency_matrices">
+<span class="sig-name descname"><span class="pre">pad_adjacency_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">adj_mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_shape</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.pad_adjacency_matrices" title="Permalink to this definition"></a></dt>
+<dd><p>Pads input adjacency matrix with 0s to achieve specified shape.</p>
+<p><strong>Parameters</strong>:</p>
+<ul class="simple">
+<li><p><strong>adj_mat (torch.Tensor):</strong> 2D tensor adjacency matrix to be padded.</p></li>
+<li><p><strong>final_shape (int):</strong> The final shape that the adjacency matrix should have after padding.</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul class="simple">
+<li><p><strong>adj_mat_new (torch.Tensor):</strong> The padded adjacency matrix with shape as specified by <cite>final_shape</cite>.</p></li>
+</ul>
+<p><strong>Notes</strong>:</p>
+<ul class="simple">
+<li><p>Padding is added to the right and bottom of the matrix.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.prep_batch_iterator">
+<span class="sig-name descname"><span class="pre">prep_batch_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trivial_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.prep_batch_iterator" title="Permalink to this definition"></a></dt>
+<dd><p>Splits data into multiple batches of data tensors for model training (divided by sample).</p>
+<p><strong>Parameters</strong>:</p>
+<ul class="simple">
+<li><p><strong>configs (dict):</strong> A dictionary with the key 'mini_batch_size', specifying the number of samples/elements in each sample mini-batch.</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul class="simple">
+<li><p><strong>final_X_batches, final_R_batches, final_K_batches</strong>: List of original expression, zeroed expression, sample information (from Obs) randomly separated into multiple &quot;mini-batches&quot; by sample.</p></li>
+<li><p><strong>final_idx_batches</strong>: Indices of which samples are in which minibatch.</p></li>
+</ul>
+<p><strong>Notes</strong>:</p>
+<ul class="simple">
+<li><p>The original tensors in <cite>self.Xs</cite>, <cite>self.Rs</cite>, and <cite>self.Ks</cite> are not modified.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.select_genes">
+<span class="sig-name descname"><span class="pre">select_genes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anndatas</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.select_genes" title="Permalink to this definition"></a></dt>
+<dd><p>Perform gene filtering steps, if desired.</p>
+<ul class="simple">
+<li><p>Limit to highest variable genes based on 'select_genes' parameter.</p></li>
+<li><p>Remove highest expressed genes using trimming, if 'trim_high_expressed_genes' is true.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.select_samples">
+<span class="sig-name descname"><span class="pre">select_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anndata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.select_samples" title="Permalink to this definition"></a></dt>
+<dd><p>Randomly selects samples from AnnDatas table based on the value set by configs['select_samples'].
+If configs['select_samples'] = float('inf') or &lt;=0, all samples will be chosen normally.</p>
+<p><strong>Args</strong>:</p>
+<ul class="simple">
+<li><p><strong>anndata (list):</strong> A list of anndata files (X sorted to match each other after harmonize_samples().</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul class="simple">
+<li><p><strong>anndatas (list):</strong> Updated list of anndata files.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_loader.FFPE_dataset.setup_categorical_variables">
+<span class="sig-name descname"><span class="pre">setup_categorical_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.setup_categorical_variables" title="Permalink to this definition"></a></dt>
+<dd><p>Configures the categorical variables for each tissue and sample in the dataset.</p>
+<p><strong>Uses</strong>:</p>
+<ul class="simple">
+<li><p><strong>self.configs['vars_to_correct']</strong> (list[str]): List of column names in sample_metadata DataFrames that need to be one-hot encoded.</p></li>
+<li><p><strong>self.configs['adjust_target_batch']</strong> (list of tuples): List of tuples where the first element is the column name to adjust for and the second element is a target value for the adjustment. This is used during inference (only) to adjust the expression levels to a specific target batch.</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<ul class="simple">
+<li><p><strong>None</strong>: This function modifies the instance variables in place.</p></li>
+</ul>
+<p><strong>Attributes Modified</strong>:</p>
+<ul class="simple">
+<li><p><strong>self.Ks</strong>: List of one-hot encoded DataFrames for each sample's correction variables.</p></li>
+<li><p><strong>self.ks</strong>: List of integers representing the number of one-hot encoded columns for each sample's correction variables.</p></li>
+</ul>
+<p><strong>Raises</strong>:</p>
+<ul class="simple">
+<li><p><strong>AssertionError</strong>: The input column names in 'correction_vars' should match with the column names in 'self.sample_metadata'.</p></li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_preffect.html" class="btn btn-neutral float-left" title="_preffect.py module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Michael T Hallett, Eliseos J Mucaki, Aryamaan Saha, Wenhan Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

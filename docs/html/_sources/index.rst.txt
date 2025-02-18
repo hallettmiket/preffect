@@ -1,0 +1,33 @@
+.. PREFFECT documentation master file, created by
+   sphinx-quickstart on Tue Jan 21 11:14:51 2025.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to PREFFECT's documentation!
+====================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   _config
+   _distributions
+   _logger_config
+   _model
+   preffect_cli
+   preffect_factory
+   _preffect
+   _data_loader
+   genindex
+   _inference
+   _utils
+   _error
+   _cluster
+   _ZINBEstimator
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

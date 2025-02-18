@@ -1,0 +1,7 @@
+_inference.py module
+======================
+
+.. automodule:: _inference
+   :members:
+   :undoc-members:
+   :show-inheritance:

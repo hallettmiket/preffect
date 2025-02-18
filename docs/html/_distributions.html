@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="python">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_distributions.py module &mdash; PREFFECT 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="_logger_config.py module" href="_logger_config.html" />
+    <link rel="prev" title="_config.py module" href="_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PREFFECT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="_config.html">_config.py module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">_distributions.py module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#distributions.NegativeBinomial"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.arg_constraints"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.arg_constraints</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.log_prob"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.log_prob()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.mean"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.mean()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.sample"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.sample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.support"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.support</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.NegativeBinomial.variance"><code class="docutils literal notranslate"><span class="pre">NegativeBinomial.variance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#distributions.Poisson"><code class="docutils literal notranslate"><span class="pre">Poisson</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.arg_constraints"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.arg_constraints</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.log_prob"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.log_prob()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.mean"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.mean()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.sample"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.sample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.support"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.support</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.variance"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.variance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.zi_logits"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.zi_logits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distributions.ZeroInflatedNegativeBinomial.zi_probs"><code class="docutils literal notranslate"><span class="pre">ZeroInflatedNegativeBinomial.zi_probs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#distributions.log_nb_positive"><code class="docutils literal notranslate"><span class="pre">log_nb_positive()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#distributions.log_zinb_positive"><code class="docutils literal notranslate"><span class="pre">log_zinb_positive()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="_logger_config.html">_logger_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_model.html">_model_py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_cli.html">preffect_cli.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_factory.html">preffect_factory.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_preffect.html">_preffect.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_data_loader.html">_data_loader.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inference.html">_inference.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_utils.html">_utils.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_error.html">_error.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cluster.html">_cluster.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_ZINBEstimator.html">_ZINBEstimator.py module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PREFFECT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">_distributions.py module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/_distributions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-_distributions">
+<span id="distributions-py-module"></span><h1>_distributions.py module<a class="headerlink" href="#module-_distributions" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_distributions.</span></span><span class="sig-name descname"><span class="pre">NegativeBinomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#distributions.NegativeBinomial" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Distribution</span></code></p>
+<p>Negative binomial distribution.</p>
+<p>One of the following parameterizations must be provided:</p>
+<p>(1), (<cite>total_count</cite>, <cite>probs</cite>) where <cite>total_count</cite> is the number of
+failures until the experiment is stopped and <cite>probs</cite> the success
+probability. (2), (<cite>mu</cite>, <cite>theta</cite>) parameterization, which is the one
+used by scvi-tools. These parameters respectively
+control the mean and inverse dispersion of the distribution.</p>
+<p>In the (<cite>mu</cite>, <cite>theta</cite>) parameterization, samples from the negative
+binomial are generated as follows:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>:math:<a href="#id1"><span class="problematic" id="id2">`</span></a>w sim textrm{Gamma}(underbrace{theta}_{text{shape}},</dt><dd><p>underbrace{theta/mu}_{text{rate}})`</p>
+</dd>
+</dl>
+</li>
+<li><p><span class="math notranslate nohighlight">\(x \sim \textrm{Poisson}(w)\)</span></p></li>
+</ol>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>total_count</dt><dd><p>Number of failures until the experiment is stopped.</p>
+</dd>
+<dt>probs</dt><dd><p>The success probability.</p>
+</dd>
+<dt>mu</dt><dd><p>Mean of the distribution.</p>
+</dd>
+<dt>theta</dt><dd><p>Inverse dispersion.</p>
+</dd>
+<dt>scale</dt><dd><p>Normalized mean expression of the distribution.</p>
+</dd>
+<dt>validate_args</dt><dd><p>Raise ValueError if arguments do not match constraints</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.arg_constraints">
+<span class="sig-name descname"><span class="pre">arg_constraints</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'mu':</span> <span class="pre">GreaterThanEq(lower_bound=0),</span> <span class="pre">'scale':</span> <span class="pre">GreaterThanEq(lower_bound=0),</span> <span class="pre">'theta':</span> <span class="pre">GreaterThanEq(lower_bound=0)}</span></em><a class="headerlink" href="#distributions.NegativeBinomial.arg_constraints" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.log_prob">
+<span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.NegativeBinomial.log_prob" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log probability of a given value under the Negative Binomial distribution.</p>
+<p>This method computes the log likelihood of observing a given count value under the
+specified Negative Binomial distribution parameters.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value (torch.Tensor): The observed count values for which the log probability is calculated.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: The log probability of the observed counts.</p>
+</dd>
+<dt>Raises:</dt><dd><p>UserWarning: If the provided values are outside the support of the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#distributions.NegativeBinomial.mean" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the mean of the Negative Binomial distribution.</p>
+<p>This method computes the expected value (mean) of the distribution,
+which is defined as <cite>mu</cite> for the Negative Binomial distribution.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The mean of the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Size</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.NegativeBinomial.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Generate samples from the Negative Binomial distribution.</p>
+<p>This method samples from the distribution using the gamma-Poisson mixture:
+a gamma distribution to generate rate parameters, and a Poisson distribution
+to generate the final count data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>sample_shape (Union[torch.Size, Tuple], optional): The shape of the tensor to generate.</dt><dd><p>Defaults to torch.Size(), which generates a single sample.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Samples from the Negative Binomial distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.support">
+<span class="sig-name descname"><span class="pre">support</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">IntegerGreaterThan(lower_bound=0)</span></em><a class="headerlink" href="#distributions.NegativeBinomial.support" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.NegativeBinomial.variance">
+<span class="sig-name descname"><span class="pre">variance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#distributions.NegativeBinomial.variance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the variance of the Negative Binomial distribution.</p>
+<p>This method computes the variance of the distribution, which is derived from
+the formula: <cite>mean + (mean^2) / theta</cite>.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The variance of the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="distributions.Poisson">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_distributions.</span></span><span class="sig-name descname"><span class="pre">Poisson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#distributions.Poisson" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Poisson</span></code></p>
+<p>Poisson distribution.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>rate</dt><dd><p>rate of the Poisson distribution.</p>
+</dd>
+<dt>validate_args</dt><dd><p>whether to validate input.</p>
+</dd>
+<dt>scale</dt><dd><p>Normalized mean expression of the distribution.
+This optional parameter is not used in any computations,
+but allows to store normalization expression levels.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_distributions.</span></span><span class="sig-name descname"><span class="pre">ZeroInflatedNegativeBinomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">total_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zi_logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#distributions.NegativeBinomial" title="_distributions.NegativeBinomial"><code class="xref py py-class docutils literal notranslate"><span class="pre">NegativeBinomial</span></code></a></p>
+<p>Zero-inflated negative binomial distribution.</p>
+<p>One of the following parameterizations must be provided:</p>
+<p>(1), (<cite>total_count</cite>, <cite>probs</cite>) where <cite>total_count</cite> is the number of
+failures until the experiment is stopped and <cite>probs</cite> the success
+probability. (2), (<cite>mu</cite>, <cite>theta</cite>) parameterization, which is the one
+used by scvi-tools. These parameters respectively
+control the mean and inverse dispersion of the distribution.</p>
+<p>In the (<cite>mu</cite>, <cite>theta</cite>) parameterization, samples from the negative
+binomial are generated as follows:</p>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>:math:<a href="#id4"><span class="problematic" id="id5">`</span></a>w sim textrm{Gamma}(underbrace{theta}_{text{shape}},</dt><dd><p>underbrace{theta/mu}_{text{rate}})`</p>
+</dd>
+</dl>
+</li>
+<li><p><span class="math notranslate nohighlight">\(x \sim \textrm{Poisson}(w)\)</span></p></li>
+</ol>
+<section id="id6">
+<h2>Parameters<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>total_count</dt><dd><p>Number of failures until the experiment is stopped.</p>
+</dd>
+<dt>probs</dt><dd><p>The success probability.</p>
+</dd>
+<dt>mu</dt><dd><p>Mean of the distribution.</p>
+</dd>
+<dt>theta</dt><dd><p>Inverse dispersion.</p>
+</dd>
+<dt>zi_logits</dt><dd><p>Logits scale of zero inflation probability.</p>
+</dd>
+<dt>scale</dt><dd><p>Normalized mean expression of the distribution.</p>
+</dd>
+<dt>validate_args</dt><dd><p>Raise ValueError if arguments do not match constraints</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.arg_constraints">
+<span class="sig-name descname"><span class="pre">arg_constraints</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'mu':</span> <span class="pre">GreaterThanEq(lower_bound=0),</span> <span class="pre">'scale':</span> <span class="pre">GreaterThanEq(lower_bound=0),</span> <span class="pre">'theta':</span> <span class="pre">GreaterThanEq(lower_bound=0),</span> <span class="pre">'zi_logits':</span> <span class="pre">Real()}</span></em><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.arg_constraints" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.log_prob">
+<span class="sig-name descname"><span class="pre">log_prob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.log_prob" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log probability of a given value under the Zero-Inflated Negative Binomial distribution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>value (torch.Tensor): The observed count values for which the log probability is calculated.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: The log probability of the observed counts.</p>
+</dd>
+<dt>Raises:</dt><dd><p>UserWarning: If the provided values are outside the support of the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.mean" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the mean of the Zero-Inflated Negative Binomial distribution.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>torch.Tensor: The expected mean of the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Size</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Generate samples from the Zero-Inflated Negative Binomial distribution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>sample_shape (Union[torch.Size, Tuple], optional): The shape of the tensor to generate.</dt><dd><p>Defaults to an empty tuple, which generates a single sample.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Samples from the Zero-Inflated Negative Binomial distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.support">
+<span class="sig-name descname"><span class="pre">support</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">IntegerGreaterThan(lower_bound=0)</span></em><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.support" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.variance">
+<span class="sig-name descname"><span class="pre">variance</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.variance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the variance of the Zero-Inflated Negative Binomial distribution.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>NotImplementedError: Indicates that the method is not implemented.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.zi_logits">
+<span class="sig-name descname"><span class="pre">zi_logits</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.zi_logits" title="Permalink to this definition"></a></dt>
+<dd><p>ZI logits.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="distributions.ZeroInflatedNegativeBinomial.zi_probs">
+<span class="sig-name descname"><span class="pre">zi_probs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#distributions.ZeroInflatedNegativeBinomial.zi_probs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="distributions.log_nb_positive">
+<span class="sig-prename descclassname"><span class="pre">_distributions.</span></span><span class="sig-name descname"><span class="pre">log_nb_positive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta:</span> <span class="pre">~torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_fn:</span> <span class="pre">callable</span> <span class="pre">=</span> <span class="pre">&lt;built-in</span> <span class="pre">method</span> <span class="pre">log</span> <span class="pre">of</span> <span class="pre">type</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lgamma_fn:</span> <span class="pre">callable</span> <span class="pre">=</span> <span class="pre">&lt;built-in</span> <span class="pre">method</span> <span class="pre">lgamma</span> <span class="pre">of</span> <span class="pre">type</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#distributions.log_nb_positive" title="Permalink to this definition"></a></dt>
+<dd><p>Log likelihood (scalar) of a minibatch according to a nb model.</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>x</dt><dd><p>data</p>
+</dd>
+<dt>mu</dt><dd><dl class="simple">
+<dt>mean of the negative binomial (has to be positive support)</dt><dd><p>(shape: minibatch x vars)</p>
+</dd>
+</dl>
+</dd>
+<dt>theta</dt><dd><dl class="simple">
+<dt>inverse dispersion parameter (has to be positive support)</dt><dd><p>(shape: minibatch x vars)</p>
+</dd>
+</dl>
+</dd>
+<dt>eps</dt><dd><p>numerical stability constant</p>
+</dd>
+<dt>log_fn</dt><dd><p>log function</p>
+</dd>
+<dt>lgamma_fn</dt><dd><p>log gamma function</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="distributions.log_zinb_positive">
+<span class="sig-prename descclassname"><span class="pre">_distributions.</span></span><span class="sig-name descname"><span class="pre">log_zinb_positive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#distributions.log_zinb_positive" title="Permalink to this definition"></a></dt>
+<dd><p>Log likelihood (scalar) of a minibatch according to a zinb model.</p>
+<section id="id8">
+<h2>Parameters<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>x</dt><dd><p>Data</p>
+</dd>
+<dt>mu</dt><dd><dl class="simple">
+<dt>mean of the negative binomial (has to be positive support)</dt><dd><p>(shape: minibatch x vars)</p>
+</dd>
+</dl>
+</dd>
+<dt>theta</dt><dd><dl class="simple">
+<dt>inverse dispersion parameter (has to be positive support)</dt><dd><p>(shape: minibatch x vars)</p>
+</dd>
+</dl>
+</dd>
+<dt>pi</dt><dd><p>logit of the dropout parameter (real support) (shape: minibatch x vars)</p>
+</dd>
+<dt>eps</dt><dd><p>numerical stability constant</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>We parametrize the bernoulli using the logits,</dt><dd><p>hence the softplus functions appearing.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_config.html" class="btn btn-neutral float-left" title="_config.py module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_logger_config.html" class="btn btn-neutral float-right" title="_logger_config.py module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Michael T Hallett, Eliseos J Mucaki, Aryamaan Saha, Wenhan Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

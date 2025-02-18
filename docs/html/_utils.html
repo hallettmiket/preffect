@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="python">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>_utils.py module &mdash; PREFFECT 0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="_error.py module" href="_error.html" />
+    <link rel="prev" title="_inference.py module" href="_inference.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PREFFECT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="_config.html">_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_distributions.html">_distributions.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_logger_config.html">_logger_config.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_model.html">_model_py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_cli.html">preffect_cli.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preffect_factory.html">preffect_factory.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_preffect.html">_preffect.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_data_loader.html">_data_loader.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_inference.html">_inference.py module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">_utils.py module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#utils.To"><code class="docutils literal notranslate"><span class="pre">To()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.ZINB_expected_value"><code class="docutils literal notranslate"><span class="pre">ZINB_expected_value()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.adjusted_categorical_correction_variable"><code class="docutils literal notranslate"><span class="pre">adjusted_categorical_correction_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.calculate_and_sort_by_iqr"><code class="docutils literal notranslate"><span class="pre">calculate_and_sort_by_iqr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.categorical_correction_variable"><code class="docutils literal notranslate"><span class="pre">categorical_correction_variable()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.check_folder_access"><code class="docutils literal notranslate"><span class="pre">check_folder_access()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.check_for_nans"><code class="docutils literal notranslate"><span class="pre">check_for_nans()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.check_int_and_uniq"><code class="docutils literal notranslate"><span class="pre">check_int_and_uniq()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.copy_file"><code class="docutils literal notranslate"><span class="pre">copy_file()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.ensure_directory"><code class="docutils literal notranslate"><span class="pre">ensure_directory()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.logging_helper"><code class="docutils literal notranslate"><span class="pre">logging_helper()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.logging_tensor"><code class="docutils literal notranslate"><span class="pre">logging_tensor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.multi_logging_tensor"><code class="docutils literal notranslate"><span class="pre">multi_logging_tensor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.one_hot_encode"><code class="docutils literal notranslate"><span class="pre">one_hot_encode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.plot_progression"><code class="docutils literal notranslate"><span class="pre">plot_progression()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.plot_progression_all"><code class="docutils literal notranslate"><span class="pre">plot_progression_all()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.print_loss_table"><code class="docutils literal notranslate"><span class="pre">print_loss_table()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.reparameterize_gaussian"><code class="docutils literal notranslate"><span class="pre">reparameterize_gaussian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.sanity_check_on_configs"><code class="docutils literal notranslate"><span class="pre">sanity_check_on_configs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.selective_one_hot"><code class="docutils literal notranslate"><span class="pre">selective_one_hot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.set_seeds"><code class="docutils literal notranslate"><span class="pre">set_seeds()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.target_specific_one_hot"><code class="docutils literal notranslate"><span class="pre">target_specific_one_hot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.torch_mtx_unbatching"><code class="docutils literal notranslate"><span class="pre">torch_mtx_unbatching()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.umap_draw_latent"><code class="docutils literal notranslate"><span class="pre">umap_draw_latent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utils.update_composite_configs"><code class="docutils literal notranslate"><span class="pre">update_composite_configs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="_error.html">_error.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_cluster.html">_cluster.py module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_ZINBEstimator.html">_ZINBEstimator.py module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PREFFECT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">_utils.py module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-_utils">
+<span id="utils-py-module"></span><h1>_utils.py module<a class="headerlink" href="#module-_utils" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.To">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">To</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.To" title="Permalink to this definition"></a></dt>
+<dd><p>Transfers each object in the provided dictionary to the specified device using PyTorch's <cite>.to()</cite> method.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dev (torch.device or str): The target device to which the tensors or models should be moved.
+objects (dict): A dictionary where each key-value pair consists of a name (key) and a PyTorch tensor or model
+(value). The value can either be a single tensor/model or a list of tensors/models.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A dictionary with the same keys as the input but with each tensor or model moved to the specified device.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.ZINB_expected_value">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">ZINB_expected_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.ZINB_expected_value" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the expected value from a Zero-Inflated Negative Binomial (ZINB) or Negative Binomial (NB) distribution.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mu (torch.Tensor): The mean of the negative binomial distribution.
+logits (torch.Tensor): The logits for the zero-inflation component.</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: The expected values computed from the NB/ZINB distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.adjusted_categorical_correction_variable">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">adjusted_categorical_correction_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.adjusted_categorical_correction_variable" title="Permalink to this definition"></a></dt>
+<dd><p>One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
+where only the target value is active.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df (DataFrame): The input DataFrame containing the categorical variable.
+cat_var (str): The column name to be one-hot encoded.
+target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.</p>
+</dd>
+<dt>Returns:</dt><dd><p>DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
+and all other category values are 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.calculate_and_sort_by_iqr">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_and_sort_by_iqr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_pam50</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_bc_genes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.calculate_and_sort_by_iqr" title="Permalink to this definition"></a></dt>
+<dd><p>Function to calculate IQR in a table by column, then sort the table</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>expr (table): A table of expression data where columns represent a gene and rows are samples
+gene_names: Name of genes (only needed if force_pam50 is True)</p>
+</dd>
+<dt>Returns:</dt><dd><p>torch.Tensor: Sorted index for the data frame based on IQR</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.categorical_correction_variable">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">categorical_correction_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.categorical_correction_variable" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.check_folder_access">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_folder_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_folder_access" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the specified folder path exists, is accessible, and adheres to the required format.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>path (str): The filesystem path of the directory to check. This path should be absolute or relative to the current working directory.</p>
+</dd>
+<dt>Raises:</dt><dd><p>FileNotFoundError: If the directory does not exist at the specified path.
+PermissionError: If the directory exists but does not have read permissions enabled.
+ValueError: If the directory path does not end with a '/'.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None, raises error on failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.check_for_nans">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_for_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_for_nans" title="Permalink to this definition"></a></dt>
+<dd><p>Checks for NaN values in a PyTorch tensor and raises an error if found.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>obj (torch.Tensor): The tensor to check for NaN values.
+msg (str): The error message to display if NaN values are found.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If NaN values are found in the <cite>obj</cite> tensor.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.check_int_and_uniq">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_int_and_uniq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_int_and_uniq" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if list contains unique integers.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>file_nums (list): A list of values from filenames after the phrase &quot;tau&quot;.</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If any element in the list is not an integer or if integers are not unique.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: Raises ValueError on failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.copy_file">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">copy_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.copy_file" title="Permalink to this definition"></a></dt>
+<dd><p>Copies a file from the source path to the destination path.</p>
+<dl>
+<dt>Args:</dt><dd><p>source_path (str): The path to the source file that needs to be copied. 
+destination_path (str): The path to the destination where the file should be copied.</p>
+</dd>
+<dt>Raises:</dt><dd><dl class="simple">
+<dt>IOError: An error occurred during the file copying process, such as the source file not existing,</dt><dd><p>no permission to read the file, or issues with the destination path.</p>
+</dd>
+</dl>
+<p>Exception: Catches any other unforeseen exceptions that could occur during the copying process.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.ensure_directory">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">ensure_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.ensure_directory" title="Permalink to this definition"></a></dt>
+<dd><p>Ensures that a directory exists at the specified path. If the directory does not exist, it is created with specific
+permissions. If it already exists, the function does nothing.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>directory_path (str): The filesystem path where the directory should exist.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.logging_helper">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">logging_helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.logging_helper" title="Permalink to this definition"></a></dt>
+<dd><p>Logs tensor values along with their corresponding keys from a dictionary.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dic (dict): The dictionary containing keys and tensor values to be logged.
+log (logging.Logger): Logger used for outputting tensor information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.logging_tensor">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">logging_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.logging_tensor" title="Permalink to this definition"></a></dt>
+<dd><p>Logs the details of a tensor or a list of tensors, including its size,
+dtype, minimum, maximum values, and checks for NaNs or infinities.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>log (logging.Logger): The logging object used for logging the details.
+tensor (torch.Tensor or list[torch.Tensor]): The tensor or list of tensors to be logged.
+msg (str): The message to be printed before logging the tensor details.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.multi_logging_tensor">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">multi_logging_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">things</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.multi_logging_tensor" title="Permalink to this definition"></a></dt>
+<dd><p>Logs details of multiple tensors from a list of lists, where each sublist contains parameters 
+intended for the <cite>logging_tensor</cite> function. This allows for batch logging of tensor details for efficient monitoring 
+of tensor states across different stages or components of a model.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>things (list of list): Each inner list should contain three elements corresponding to the </dt><dd><p>parameters expected by the <cite>logging_tensor</cite> function:
+1. log (logging.Logger): The logger object used for logging.
+2. tensor (torch.Tensor or list[torch.Tensor]): The tensor(s) to be logged.
+3. msg (str): A descriptive message that precedes the tensor details in the log.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.one_hot_encode">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">one_hot_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.one_hot_encode" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.plot_progression">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">plot_progression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.plot_progression" title="Permalink to this definition"></a></dt>
+<dd><p>Plots the progression of average loss across mini-batches and epochs.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>target (list or ndarray): A list or NumPy array containing average loss values</dt><dd><p>at each mini-batch or epoch.</p>
+</dd>
+</dl>
+<p>title (str): The title to display on the plot.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: This function plots the graph but does not return any value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.plot_progression_all">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">plot_progression_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.plot_progression_all" title="Permalink to this definition"></a></dt>
+<dd><p>Plots the progression of multiple types of loss metrics during training and validation across epochs.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>losses (dict): A dictionary containing loss values for various metrics, </dt><dd><p>like 'average_loss', 'kl_gene', etc., categorized into 'train' and 'val'.</p>
+</dd>
+</dl>
+<p>epoch (int): The current epoch number for which the losses are being plotted.
+x_dim (int): The number of rows in the subplot grid.
+y_dim (int): The number of columns in the subplot grid.
+file_path (str, optional): The file path where the plot should be saved. If not specified,
+the plot is not saved to a file.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: This function plots the graphs but does not return any value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.print_loss_table">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">print_loss_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.print_loss_table" title="Permalink to this definition"></a></dt>
+<dd><p>Prints a well-formatted table for loss metrics or other numerical data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data (list of lists): The data to be printed. Each sublist is considered a row in the table.</dt><dd><p>The first row is assumed to be the header. Cells can contain numerical values (int, float),
+NumPy arrays, or strings.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None: Prints the table to the standard output but does not return any value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.reparameterize_gaussian">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">reparameterize_gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.reparameterize_gaussian" title="Permalink to this definition"></a></dt>
+<dd><p>Reparameterizes a Gaussian distribution and samples from it.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>mu (torch.Tensor): The mean of the Gaussian distribution.
+var (torch.Tensor): The variance of the Gaussian distribution.</p>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>torch.Tensor: A sample from the Gaussian distribution parameterized</dt><dd><p>by <cite>mu</cite> and <cite>var</cite>, with the same shape as <cite>mu</cite> and <cite>var</cite>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sanity_check_on_configs">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">sanity_check_on_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preffect_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_ds_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.sanity_check_on_configs" title="Permalink to this definition"></a></dt>
+<dd><p>Performs a series of assertions on configuration variables to ensure they meet
+predefined criteria necessary for PREFFECT to function.</p>
+<dl class="simple">
+<dt>Raises:</dt><dd><p>PreffectE: If any of the configuration variables do not pass their respective checks.
+This indicates a critical mismatch in the expected environment setup.</p>
+</dd>
+</dl>
+<p>No parameters are read and no values are returned.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.selective_one_hot">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">selective_one_hot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.selective_one_hot" title="Permalink to this definition"></a></dt>
+<dd><p>One-hot encodes a specific column in a DataFrame and removes all other columns.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df (DataFrame): The input DataFrame.
+cat_var (str): The column name to be one-hot encoded.</p>
+</dd>
+<dt>Returns:</dt><dd><p>DataFrame: A DataFrame containing only the one-hot encoded column of cat_var.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.set_seeds">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">set_seeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.set_seeds" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the seed for generating random numbers to ensure reproducibility across various random number generators.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>config_seed (int): The seed value to use for all random number generators.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.target_specific_one_hot">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">target_specific_one_hot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.target_specific_one_hot" title="Permalink to this definition"></a></dt>
+<dd><p>One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
+where only the target value is active.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>df (DataFrame): The input DataFrame containing the categorical variable.
+cat_var (str): The column name to be one-hot encoded.
+target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.</p>
+</dd>
+<dt>Returns:</dt><dd><p>DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
+and all other category values are 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.torch_mtx_unbatching">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">torch_mtx_unbatching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mtx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.torch_mtx_unbatching" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if list contains unique integers</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>file_nums (list): A list of values from filenames after the phrase &quot;tau&quot;</p>
+</dd>
+<dt>Raises:</dt><dd><p>ValueError: If any element in the list is not an integer or if integers are not unique.</p>
+</dd>
+<dt>Returns:</dt><dd><p>None: Raises ValueError on failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.umap_draw_latent">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">umap_draw_latent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_from_forward</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.umap_draw_latent" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.update_composite_configs">
+<span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">update_composite_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.update_composite_configs" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_inference.html" class="btn btn-neutral float-left" title="_inference.py module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_error.html" class="btn btn-neutral float-right" title="_error.py module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Michael T Hallett, Eliseos J Mucaki, Aryamaan Saha, Wenhan Zhang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
