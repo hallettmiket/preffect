@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#import-and-structure-of-data-for-preffect)
+[← Back to Main](../readme/readme.md#import-and-structure-of-data-for-preffect)
 # Import and Structure of Data for PREFFECT
 
 ## Set Input Path in __config.py_
@@ -21,7 +21,7 @@ To set the 'simple' example data set as PREFFECT input, modify the `INPUT_ANNDAT
 configs = {
   # Global Parameters
   ...  
-  'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/exp/preffect/vignettes/simple/'
+  'INPUT_ANNDATA_PATH' : './preffect/vignettes/simple/'
 ```
 where '_PREFFECT_PATH_' is the location to your installation of PREFFECT. Setting up `_config.py` for training will be explained in more detail in [Training a PREFFECT model](training.md).
 
@@ -81,7 +81,7 @@ Then we load the sample data (in Python):
 import anndata as ad
 
 # Load an AnnData file (we will use the 'single' example dataset provided)
-single_data_file = '/PREFFECT_PATH/exp/preffect/vignettes/single/train/sim_single.train.tau_1.h5ad'
+single_data_file = './preffect/vignettes/single/train/sim_single.train.tau_1.h5ad'
 
 adata_single = ad.read_h5ad(single_data_file)
 ```
@@ -159,7 +159,7 @@ Only the 'full' sample data will have the 'sample_associations' file.
 import anndata as ad
 
 # Load an AnnData file (we will use the 'single' example dataset provided)
-full_data_file = '/PREFFECT_PATH/exp/preffect/vignettes/full/train/sim_full.train.tau_1.h5ad'
+full_data_file = './preffect/vignettes/full/train/sim_full.train.tau_1.h5ad'
 
 adata_full = ad.read_h5ad(full_data_file)
 ```
@@ -196,4 +196,4 @@ A placeholder entry (which we colloquially call a "ghost" sample) is added to th
 
 
 ##
-[← Back to Main](readme.md#import-and-structure-of-data-for-preffect)
+[← Back to Main](../readme/readme.md#import-and-structure-of-data-for-preffect)

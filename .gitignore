@@ -5,5 +5,7 @@ __pycache__/
 /docs/makefile
 /docs/Makefile
 /docs/_build/
+/docs/readme.txt
+/docs/make.bat
 /vignettes/runs/
 

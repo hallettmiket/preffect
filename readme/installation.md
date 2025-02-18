@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#installation)
+[← Back to Main](../readme/readme.md#installation)
 
 # Basic Installation
 
@@ -38,4 +38,4 @@ python -m ipykernel install --user --name=preffect_{cpu,gpu}_env
 ```
 
 ##
-[← Back to Main](readme.md#installation)
+[← Back to Main](../readme/readme.md#installation)

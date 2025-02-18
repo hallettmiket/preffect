@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#setting_parameters)
+[← Back to Main](../readme/readme.md#setting_parameters)
 
 # Setting PREFFECT Parameters
 The parameters of PREFFECT are edited from within a configuration file (_~/exp/preffect/\_config.py_) which consist of the parameters that control paths, set training/inference parameters, adjust learning parameters, and apply correction variables, in addition to other modifiers for fine-tuning.
@@ -23,7 +23,7 @@ Example setup of these parameters:
 configs = {
     # Path parameters
     'CODE_DIRECTORY' : '/PREFFECT_PATH/', # change to your installation path
-    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/exp/preffect/vignettes/simple/',
+    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/vignettes/simple/',
     # set to your desired output location
     'OUTPUT_PATH' : '/PATH_TO_OUTPUT/example_simple_dataset/', 
 ```
@@ -258,4 +258,4 @@ Note: PREFFECT will end with an assertion if all parameters are > 1, as no losse
 <br>
 
 ##
-[← Back to Main](readme.md#setting_parameters)
+[← Back to Main](../readme/readme.md#setting_parameters)

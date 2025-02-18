@@ -1,4 +1,4 @@
-# PREFFECT - PaRaffin Embedded Formaldehye FixEd Cleaning Tool
+# PREFFECT - PaRaffin Embedded Formalin-FixEd FixEd Cleaning Tool
 Release Version 0.1
 
 ## Description
@@ -39,30 +39,30 @@ Contact: [Mike Hallett](mailto:michael.hallett@uwo.ca)
 
 <p align="center">
   <span style="background-color: white; display: inline-block; padding: 10px;">
-  <img src="./assets/logos/western_logo.png" alt="Western_Small" width="80" style="vertical-align: middle; margin-right: 20px;"/>
-  <img src="./assets/logos/sunnybrook_logo_2024.png" alt="SunnyBrook" width="280" style="vertical-align: middle; margin-right: 20px;"/>
-  <img src="./assets/logos/nserc_2024.png" alt="NSERC" width="130" style="vertical-align: middle;"/>
-  <img src="./assets/logos/cihr_color_logo_2024.png" alt="NSERC" width="150" style="vertical-align: middle;"/>
+  <img src="./readme/assets/logos/western_logo.png" alt="Western_Small" width="80" style="vertical-align: middle; margin-right: 20px;"/>
+  <img src="./readme/assets/logos/sunnybrook_logo_2024.png" alt="SunnyBrook" width="280" style="vertical-align: middle; margin-right: 20px;"/>
+  <img src="./readme/assets/logos/nserc_2024.png" alt="NSERC" width="130" style="vertical-align: middle;"/>
+  <img src="./readme/assets/logos/cihr_color_logo_2024.png" alt="NSERC" width="150" style="vertical-align: middle;"/>
 </span>
 </p>
 
 # <u>User Guide</u>
 PREFFECT allows the user to perform a series of tasks to clean, impute and evaluate RNA sequencing from FFPE materials. Below, we will describe how to set up your input, setup and optimize runs through the __config.py_ file, derive new models (training), retrain previously derived models (pre-train), as well as performing inference and other analyses.
 
-## [Installation](installation.md)
+## [Installation](./readme/installation.md)
 
-## [Import and Structure of Data for PREFFECT](importing.md)
+## [Import and Structure of Data for PREFFECT](./readme/importing.md)
 
-## [Setting PREFFECT configurations](setting_parameters.md)
+## [Setting PREFFECT configurations](./readme/setting_parameters.md)
 
-## [Training a PREFFECT model](training.md)
+## [Training a PREFFECT model](./readme/training.md)
 
-## [Inference with PREFFECT](inference.md)
+## [Inference with PREFFECT](./readme/inference.md)
 
-## [Imputation](imputation.md)
+## [Imputation](./readme/imputation.md)
 
-## [Clustering](clustering.md)
+## [Clustering](./readme/clustering.md)
 
-## [Transfer Learning](transfer_learning.md)
+## [Transfer Learning](./readme/transfer_learning.md)
 
 ## Differential Expression (Not Yet Implemented)

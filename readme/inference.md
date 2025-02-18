@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#inference-with-preffect)
+[← Back to Main](../readme/readme.md#inference-with-preffect)
 
 # Performing Inference 
 Using a trained model to make predictions or decisions based on unseen test data.
@@ -11,7 +11,7 @@ Once a PREFFECT model has been generated, we can use it to perform inference on 
 configs = {
     # Path parameters
     'CODE_DIRECTORY' : '/PREFFECT_PATH/', # change to your installation path
-    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/exp/preffect/vignettes/simple/', # test data
+    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/vignettes/simple/', # test data
     'OUTPUT_PATH' : '/PATH_TO_OUTPUT/example_simple_dataset/', # set to your desired output location
    
     # training parameters      
@@ -88,7 +88,7 @@ This command will create the `inference_object`, as well as create a series of f
 
 When the `task` parameter in `_config.py` has been set to 'inference', we can run `preffect_cli.py` directly on the command line.
 ```bash
-    $ python ./exp/4_preffect/preffect_cli.py
+    $ python ./preffect/preffect_cli.py
 ```
 
 The PREFFECT model will be updated with the results of this task (within `inference_dict`). 
@@ -156,4 +156,4 @@ When a run is complete, you will find new/modified files in your `OUTPUT_PATH`:
 ```
 
 ##
-[← Back to Main](readme.md#inference-with-preffect)
+[← Back to Main](../readme/readme.md#inference-with-preffect)

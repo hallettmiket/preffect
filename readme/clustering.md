@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#clustering)
+[← Back to Main](../readme/readme.md#clustering)
 
 # Clustering
 PREFFECT provides clustering functions to evaluate UMAP clustering of the latent space or the estimated counts of a PREFFECT model
@@ -57,4 +57,4 @@ cl.cluster_counts(color_by = "leiden", umap_nneighbors=10, cluster_aim=5, cluste
 ```
 
 ##
-[← Back to Main](readme.md#clustering)
+[← Back to Main](../readme.md#clustering)

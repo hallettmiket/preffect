@@ -1,4 +1,4 @@
-# PREFFECT - PaRaffin Embedded Formaldehye FixEd Cleaning Tool
+[← Back to Main](../readme/readme.md#imputation)
 
 ## Imputation
 Imputated count values from a PREFFECT model can be extracted in Python.
@@ -48,4 +48,4 @@ inference_object, error_masked, error_unmasked  = factory(
 )
 ```
 
-[← Back to Main](readme.md#imputation)
+[← Back to Main](../readme/readme.md#imputation)

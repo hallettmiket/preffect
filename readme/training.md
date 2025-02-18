@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#training-a-preffect-model)
+[← Back to Main](../readme/readme.md#training-a-preffect-model)
 
 # Training a PREFFECT Model
 
@@ -10,7 +10,7 @@ We begin by setting the parameters in `_config.py` for training. PREFFECT provid
 configs = {
     # Path parameters
     'CODE_DIRECTORY' : '/PREFFECT_PATH/', # change to your installation path
-    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/exp/preffect/vignettes/simple/', # expects subdirectories train and validation
+    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/vignettes/simple/', # expects subdirectories train and validation
     'OUTPUT_PATH' : '/PATH_TO_OUTPUT/example_simple_dataset/', # set to your desired output location
    
     # training parameters      
@@ -27,7 +27,7 @@ Creating a multi-tissue _full_ model is similar, however you must also alter the
 configs = {
     # Path parameters
     'CODE_DIRECTORY' : '/PREFFECT_PATH/', # change to your installation path
-    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/exp/preffect/vignettes/full/', # expects subdirectories train and validation
+    'INPUT_ANNDATA_PATH' : '/PREFFECT_PATH/vignettes/full/', # expects subdirectories train and validation
     'OUTPUT_PATH' : '/PATH_TO_OUTPUT/example_full_dataset/', # set to your desired output location
    
     # training parameters      
@@ -96,12 +96,12 @@ The "always_save" parameter is set to True by default. If this is turned off, th
 
 We can training a PREFFECT model from the command line. The following command will develop a single PREFFECT model using the parameters listed in `_config.py:`
 ```bash
-$ python ./exp/preffect/preffect_cli.py
+$ python ./preffect/preffect_cli.py
 ```
 
 You can also run PREFFECT with parameters set entirely on the command line:
 ```bash
-python ./exp/preffect/preffect_cli.py --NICK_NAME test_1 --INPUT_ANNDATA_PATH /PREFFECT_PATH/exp/preffect/vignettes/simple/ --epochs 200 --mini_batch_size 400 --lr 0.001 --infer_lib_size True --model_likelihood NB  --batch_centroid_loss False --select_samples 100 --select_sample_replacement True --task inference --adjust_vars False --OUTPUT_PATH /PATH_TO_OUTPUT/example_simple_dataset/ --save_model True
+python ./preffect/preffect_cli.py --NICK_NAME test_1 --INPUT_ANNDATA_PATH /PREFFECT_PATH/exp/preffect/vignettes/simple/ --epochs 200 --mini_batch_size 400 --lr 0.001 --infer_lib_size True --model_likelihood NB  --batch_centroid_loss False --select_samples 100 --select_sample_replacement True --task inference --adjust_vars False --OUTPUT_PATH /PATH_TO_OUTPUT/example_simple_dataset/ --save_model True
 ```
 
 You can import the generated PREFFECT model to a Python script using PREFFECT Factory's 'reinstate' task: 
@@ -138,4 +138,4 @@ When a run is complete, you will find the results in your `OUTPUT_PATH`. It will
 
 
 ##
-[← Back to Main](readme.md#training-a-preffect-model)
+[← Back to Main](../readme/readme.md#training-a-preffect-model)

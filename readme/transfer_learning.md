@@ -1,4 +1,4 @@
-[← Back to Main](readme.md#transfer-learning)
+[← Back to Main](../readme/readme.md#transfer-learning)
 
 # Transfer Learning
 Utilizing the learned features of a previously trained PREFFECT model to derive a new model.
@@ -33,10 +33,10 @@ Similarly, many training parameters must be unchanged to maintain the general st
 
 Now that `_config.py` has been set up, we can begin continue training a model using `preffect_cli.
 ```bash
-$ python ./exp/4_preffect/preffect_cli.py
+$ python ./preffect/preffect_cli.py
 ```
 
 Training at this point will continue as normal.
 
 ##
-[← Back to Main](readme.md#transfer-learning)
+[← Back to Main](../readme/readme.md#transfer-learning)
