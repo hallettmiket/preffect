@@ -65,4 +65,4 @@ PREFFECT allows the user to perform a series of tasks to clean, impute and evalu
 
 ## [Transfer Learning](./readme/transfer_learning.md)
 
-## Differential Expression (Not Yet Implemented)
+## Differential Expression (In Development)

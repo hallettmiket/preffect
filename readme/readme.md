@@ -39,10 +39,10 @@ Contact: [Mike Hallett](mailto:michael.hallett@uwo.ca)
 
 <p align="center">
   <span style="background-color: white; display: inline-block; padding: 10px;">
-  <img src="./readme/assets/logos/western_logo.png" alt="Western_Small" width="80" style="vertical-align: middle; margin-right: 20px;"/>
-  <img src="./readme/assets/logos/sunnybrook_logo_2024.png" alt="SunnyBrook" width="280" style="vertical-align: middle; margin-right: 20px;"/>
-  <img src="./readme/assets/logos/nserc_2024.png" alt="NSERC" width="130" style="vertical-align: middle;"/>
-  <img src="./readme/assets/logos/cihr_color_logo_2024.png" alt="NSERC" width="150" style="vertical-align: middle;"/>
+  <img src="./assets/logos/western_logo.png" alt="Western_Small" width="80" style="vertical-align: middle; margin-right: 20px;"/>
+  <img src="./assets/logos/sunnybrook_logo_2024.png" alt="SunnyBrook" width="280" style="vertical-align: middle; margin-right: 20px;"/>
+  <img src="./assets/logos/nserc_2024.png" alt="NSERC" width="130" style="vertical-align: middle;"/>
+  <img src="./assets/logos/cihr_color_logo_2024.png" alt="NSERC" width="150" style="vertical-align: middle;"/>
 </span>
 </p>
 
@@ -65,4 +65,4 @@ PREFFECT allows the user to perform a series of tasks to clean, impute and evalu
 
 ## [Transfer Learning](./readme/transfer_learning.md)
 
-## Differential Expression (Not Yet Implemented)
+## Differential Expression (In Development)
