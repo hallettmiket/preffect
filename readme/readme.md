@@ -49,20 +49,20 @@ Contact: [Mike Hallett](mailto:michael.hallett@uwo.ca)
 # <u>User Guide</u>
 PREFFECT allows the user to perform a series of tasks to clean, impute and evaluate RNA sequencing from FFPE materials. Below, we will describe how to set up your input, setup and optimize runs through the __config.py_ file, derive new models (training), retrain previously derived models (pre-train), as well as performing inference and other analyses.
 
-## [Installation](./readme/installation.md)
+## [Installation](./installation.md)
 
-## [Import and Structure of Data for PREFFECT](./readme/importing.md)
+## [Import and Structure of Data for PREFFECT](./importing.md)
 
-## [Setting PREFFECT configurations](./readme/setting_parameters.md)
+## [Setting PREFFECT configurations](./setting_parameters.md)
 
-## [Training a PREFFECT model](./readme/training.md)
+## [Training a PREFFECT model](./training.md)
 
-## [Inference with PREFFECT](./readme/inference.md)
+## [Inference with PREFFECT](./inference.md)
 
-## [Imputation](./readme/imputation.md)
+## [Imputation](./imputation.md)
 
-## [Clustering](./readme/clustering.md)
+## [Clustering](./clustering.md)
 
-## [Transfer Learning](./readme/transfer_learning.md)
+## [Transfer Learning](./transfer_learning.md)
 
 ## Differential Expression (In Development)
