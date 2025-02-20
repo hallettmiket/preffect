@@ -14,11 +14,15 @@ PREFFECT is designed to accomplish the following tasks:
 **Eliseos John Mucaki -**
 *Department of Biochemistry, Western University, London, Canada*
 
+**Wenhan Zhang -**
+*Department of Biochemistry, Western University, London, Canada*
+
 **Aryamaan Saha -**
 *Department of Biological Engineering and Data Science, Indian Institute of Technology, Madras, India*
 
-**Wenhan Zhang -**
-*Department of Biochemistry, Western University, London, Canada*
+**S Trabinjac -**
+*Department of Radiation Oncology, Sunnybrook Health Sciences Centre
+Department of Laboratory Medicine and Pathobiology, University of Toronto Toronto, Canada*
 
 **Sharon Nofech-Moses -**
 *Department of Anatomic Pathology, Sunnybrook Health Sciences Centre*
