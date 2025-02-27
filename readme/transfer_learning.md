@@ -31,7 +31,7 @@ Similarly, many training parameters must be unchanged to maintain the general st
 
 ### Running PREFFECT for Interence
 
-Now that `_config.py` has been set up, we can begin continue training a model using `preffect_cli.
+Now that `_config.py` has been set up, we can begin continue training a model using `preffect_cli`.
 ```bash
 $ python ./preffect/preffect_cli.py
 ```

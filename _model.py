@@ -27,28 +27,43 @@ class Encoder(nn.Module):
     """
     Encoder neural network module using Graph Attention Networks (GATs)
 
-    Attributes:
-        layer1 (GATv2Conv): First graph attention layer
-        layer2 (nn.Linear): Second graph attention layer
-        layer3 (nn.Linear): Second graph attention layer
-        mu_layer (nn.Linear): Linear layer to calculate mean of latent space
-        logvar_layer (nn.Linear): Linear layer for calculating log variance
-        of latent space
-        leaky_relu (nn.LeakyReLU): LeakyReLU activation function
+    :ivar layer1: First graph attention layer.
+    :vartype layer1: GATv2Conv
+    :ivar layer2: Second linear transformation layer.
+    :vartype layer2: nn.Linear
+    :ivar layer3: Third linear transformation layer.
+    :vartype layer3: nn.Linear
+    :ivar mu_layer: Linear layer to compute the mean of the latent space representation.
+    :vartype mu_layer: nn.Linear
+    :ivar logvar_layer: Linear layer to compute the log variance of the latent space representation.
+    :vartype logvar_layer: nn.Linear
+    :ivar leaky_relu: LeakyReLU activation function.
+    :vartype leaky_relu: nn.LeakyReLU
     """
 
     def __init__(self, in_channels, k, r_prime, r, h, alpha, dropout, model_type, correction):
         """
         Initialize the Encoder instance
 
-        Args:
-            in_channels (int): Number of input features.
-            k (int): Number of clinical/technical variables
-            r, r_prime (int): Dimensionality of the output space of the
-            first and second GAT layer
-            h (int): Number of heads for multi-head attention
-            alpha (float): Negative slope for LeakyReLU
-            correction (boolean): Activate embedding step to adjust for correction variables
+        :param in_channels: Number of input features.
+        :type in_channels: int
+        :param k: List of integers representing the number of categories for each correction variable.
+                  None values indicate continuous variables.
+        :type k: List[int]
+        :param r_prime: Dimensionality of the intermediate space.
+        :type r_prime: int
+        :param r: Dimensionality of the output space (latent space).
+        :type r: int
+        :param h: Number of attention heads for multi-head attention.
+        :type h: int
+        :param alpha: Negative slope for the LeakyReLU activation function.
+        :type alpha: float
+        :param dropout: Dropout probability for regularization.
+        :type dropout: float
+        :param model_type: Type of the model ('single', 'full', or 'simple').
+        :type model_type: str
+        :param correction: Flag indicating whether to apply correction using categorical variables.
+        :type correction: bool
         """
         super(Encoder, self).__init__()
 
@@ -91,6 +106,20 @@ class Encoder(nn.Module):
         self.apply(self.init_weights)
 
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
+        r"""
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param lat_space: Latent space representation tensor.
+        :type lat_space: torch.Tensor
+
+        :return: A tuple containing:
+                - `h`: The modified latent space tensor with correction variables incorporated.
+                - `total_cat`: The sum of the embedded categorical variables, or None if no categorical variables are present.
+        :rtype: Tuple[torch.Tensor, Optional[torch.Tensor]]
+        """
 
         continuous_indices = [i for i, x in enumerate(k) if x is None]
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
@@ -119,13 +148,22 @@ class Encoder(nn.Module):
         """
         Perform encoding using graph attention layers
 
-        Args:
-            X (Tensor): Input feature matrix (zeroed counts)
-            ejs (Tensor): Edge indices defining the graph structure
-            K (Tensor): Correction variable matrix
+        :param X: Input feature matrix (zeroed counts).
+        :type X: torch.Tensor
+        :param ejs: Edge indices defining the graph structure.
+        :type ejs: torch.Tensor
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param correction: Flag indicating whether to apply correction using the correction variables.
+        :type correction: bool
 
-        Returns:
-            Tuple[Tensor, Tensor]: Mean and log variance of encoded input
+        :return: A tuple containing:
+                - `mu`: Mean of the encoded input.
+                - `logvar`: Log variance of the encoded input.
+        :rtype: Tuple[torch.Tensor, torch.Tensor]
         """
 
         if correction is True:
@@ -180,10 +218,10 @@ class Encoder(nn.Module):
         """
         Initialize weights of Linear layers 
         
-        Args: 
-        m (nn.Module): PyTorch module instance
+        :param m: A PyTorch module instance.
+        :type m: nn.Module
 
-        Returns: None
+        :return: None
         """
 
         if isinstance(m, nn.Linear):
@@ -201,11 +239,37 @@ class Decoder(nn.Module):
     """
     Decoder neural network module for a GAT-based autoencoder
 
-    Attributes:
-        layer1 (nn.Linear): First linear transformation layer
-        layer2 (nn.Linear): Second linear transformation layer
-        layer3 (nn.Linear): Third linear transformation layer
-        leaky_relu (nn.LeakyReLU): LeakyReLU activation function
+    :param r: Dimensionality of the input latent space.
+    :type r: int
+    :param r_prime: Dimensionality of the intermediate space.
+    :type r_prime: int
+    :param k: List of the number of categories for each categorical variable. None values are ignored.
+    :type k: List[int]
+    :param final: Number of output features.
+    :type final: int
+    :param alpha: Negative slope for the LeakyReLU activation function.
+    :type alpha: float
+    :param dropout: Dropout probability for regularization.
+    :type dropout: float
+    :param model_type: Type of the model ('single', 'full', or 'simple').
+    :type model_type: str
+    :param correction: Flag indicating whether to apply correction using categorical variables.
+    :type correction: bool
+
+    :ivar layer1: First linear transformation layer.
+    :vartype layer1: nn.Linear
+    :ivar layer2: Second linear transformation layer.
+    :vartype layer2: nn.Linear
+    :ivar layer3: Third linear transformation layer.
+    :vartype simple_layer: nn.Linear
+    :ivar leaky_relu: LeakyReLU activation function.
+    :vartype leaky_relu: nn.LeakyReLU
+    :ivar dropout1: Dropout layer after the first linear transformation.
+    :vartype dropout1: nn.Dropout
+    :ivar dropout2: Dropout layer after the second linear transformation.
+    :vartype dropout2: nn.Dropout
+    :ivar dropout: Dropout layer for the 'simple' model type.
+    :vartype dropout: nn.Dropout
     """
 
     def __init__(self, r, r_prime, k, final, alpha, dropout, model_type, correction):
@@ -250,6 +314,20 @@ class Decoder(nn.Module):
         self.apply(self.init_weights)
 
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
+        r"""
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param lat_space: Latent space representation tensor.
+        :type lat_space: torch.Tensor
+
+        :return: A tuple containing:
+                - `h`: The modified latent space tensor with correction variables incorporated.
+                - `total_cat`: The sum of the embedded categorical variables, or None if no categorical variables are present.
+        :rtype: Tuple[torch.Tensor, Optional[torch.Tensor]]
+        """
 
         continuous_indices = [i for i, x in enumerate(k) if x is None]
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
@@ -275,13 +353,20 @@ class Decoder(nn.Module):
         """
         Decodes using linear transformations and activations
 
-        Args:
-            Z (Tensor): Encoded feature matrix
-            K (Tensor):  korrection variables
-            k (list): levels of korrection vars
+        :param Z: Encoded latent space representation tensor.
+        :type Z: torch.Tensor
+        :param ejs: Placeholder parameter (not used in the method).
+        :type ejs: Any
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param correction: Flag indicating whether to apply correction using the correction variables.
+        :type correction: bool
 
-        Returns:
-            Tensor: Decoded output matrix
+        :return: Decoded output tensor in the original feature space.
+        :rtype: torch.Tensor
         """
 
         if correction is True:
@@ -303,11 +388,10 @@ class Decoder(nn.Module):
         """
         Initialize weights of Linear layers using Xavier initialization
 
-        Args:
-            m (nn.Module): PyTorch module instance
+        :param m: A PyTorch module instance.
+        :type m: nn.Module
 
-        Returns:
-            None
+        :return: None
         """
         if isinstance(m, nn.Linear):
             torch.nn.init.orthogonal_(m.weight)
@@ -322,25 +406,36 @@ class LibEncoder(nn.Module):
     Library-size encoder module using a linear transformation layer followed
     by LeakyReLU activation
 
-    Attributes:
-        layer_lib1 (nn.Linear): Linear layer to encode the combined feature of
-        log library sizes and variables
-        layer_lib_mu (nn.Linear): Linear layer to encode the mean for the
-        library size
-        layer_lib_logvar (nn.Linear): Linear layer to encode the log variance
-        (logvar) for the library size.
-        leaky_relu (nn.LeakyReLU): Leaky ReLU activation function.
+    :ivar layer_lib1: Linear layer to encode the combined feature of log library sizes and variables.
+    :vartype layer_lib1: nn.Linear
+    :ivar layer_lib_mu: Linear layer to encode the mean for the library size.
+    :vartype layer_lib_mu: nn.Linear
+    :ivar layer_lib_logvar: Linear layer to encode the log variance (logvar) for the library size.
+    :vartype layer_lib_logvar: nn.Linear
+    :ivar leaky_relu: Leaky ReLU activation function.
+    :vartype leaky_relu: nn.LeakyReLU
+    :ivar dropout1: Dropout layer to prevent overfitting.
+    :vartype dropout1: nn.Dropout
+    :ivar embeddings: Module list of embedding layers for categorical correction variables.
+    :vartype embeddings: nn.ModuleList
     """
     def __init__(self, k, r_prime, r, alpha, dropout, correction):
         """
         Initialize LibEncoder instance
 
-        Args:
-            k (int): Number of clinical/technical variables
-            r_prime (int): Dimensionality of intermediate feature space
-            r (int): Dimensionality of the output feature space
-            alpha (float): Negative slope for LeakyReLU activation
-            dropout (float): Dropout rate used in the dropout layer to prevent overfitting.
+        :param k: List of integers representing the number of categories for each correction variable.
+                  None values indicate continuous variables.
+        :type k: List[int]
+        :param r_prime: Dimensionality of the intermediate feature space.
+        :type r_prime: int
+        :param r: Dimensionality of the output feature space (latent space).
+        :type r: int
+        :param alpha: Negative slope for the LeakyReLU activation function.
+        :type alpha: float
+        :param dropout: Dropout rate used in the dropout layer to prevent overfitting.
+        :type dropout: float
+        :param correction: Flag indicating whether to apply correction using categorical variables.
+        :type correction: bool
         """
         super(LibEncoder, self).__init__()
 
@@ -365,35 +460,58 @@ class LibEncoder(nn.Module):
         self.apply(self.init_weights)
         
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
+        r"""
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param lat_space: Latent space representation tensor.
+        :type lat_space: torch.Tensor
 
-            continuous_indices = [i for i, x in enumerate(k) if x is None]
-            categorical_indices = [i for i, x in enumerate(k) if x is not None]
+        :return: A tuple containing:
+                - `h`: The modified latent space tensor with correction variables incorporated.
+                - `total_cat`: The sum of the embedded categorical variables, or None if no categorical variables are present.
+        :rtype: Tuple[torch.Tensor, Optional[torch.Tensor]]
+        """
 
-            h = lat_space
-            if len(continuous_indices)>0:
-                #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
-                h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
+        continuous_indices = [i for i, x in enumerate(k) if x is None]
+        categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
-            if len(categorical_indices)> 0:
-                total_cat = None
-                for idx in categorical_indices:
-                    holder = self.embeddings[idx](K[idx])
-                    if total_cat is None:
-                        total_cat = holder
-                    else:
-                        total_cat += holder
-                    h = torch.cat((h, holder), dim = 1)
-            return h, total_cat
+        h = lat_space
+        if len(continuous_indices)>0:
+            #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
+            h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
+
+        if len(categorical_indices)> 0:
+            total_cat = None
+            for idx in categorical_indices:
+                holder = self.embeddings[idx](K[idx])
+                if total_cat is None:
+                    total_cat = holder
+                else:
+                    total_cat += holder
+                h = torch.cat((h, holder), dim = 1)
+        return h, total_cat
 
     def encode(self, log_lib, K, k, correction):
         """
         Perform the encoding operation for log library sizes and variables
 
-        Args:
-            log_lib (Tensor): Tensor of log library sizes
-            K (Tensor): Tensor of one-hot variables
-        
-        Returns: Tensors for the mean (mu) and log variance (logvar)
+        :param log_lib: Tensor of log library sizes.
+        :type log_lib: torch.Tensor
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param correction: Flag indicating whether to apply correction using the correction variables.
+        :type correction: bool
+
+        :return: A tuple containing:
+                - `mu`: Tensor representing the mean of the latent space representation.
+                - `logvar`: Tensor representing the log variance of the latent space representation.
+        :rtype: Tuple[torch.Tensor, torch.Tensor]
         """
 
         if correction is True:
@@ -416,11 +534,10 @@ class LibEncoder(nn.Module):
         """
         Initialize weights of Linear layers using Xavier initialization
 
-        Args: 
-            m (nn.Module): PyTorch module instance
-        
-        Returns: 
-            None
+        :param m: A PyTorch module instance.
+        :type m: nn.Module
+
+        :return: None
         """
         if isinstance(m, nn.Linear):
             torch.nn.init.orthogonal_(m.weight)
@@ -433,24 +550,33 @@ class LibDecoder(nn.Module):
     Library-size decoder module that decodes latent variables back into
     the original space
 
-    Attributes:
-        layer_de_lib1 (nn.Linear): Linear layer for decoding latent variables
-        layer_de_lib_mu (nn.Linear): Linear layer to decode the mean (mu)
-        of the library size
-        layer_de_lib_logvar (nn.Linear): Linear layer to decode the log
-        variance (logvar) of the library size
-        leaky_relu (nn.LeakyReLU): Leaky ReLU activation function
+    :ivar lib_decode_size_factor: Linear layer for decoding the latent variables.
+    :vartype lib_decode_size_factor: nn.Linear
+    :ivar lib_decode_size_factor_2: Linear layer for further decoding the library size.
+    :vartype lib_decode_size_factor_2: nn.Linear
+    :ivar leaky_relu: Leaky ReLU activation function.
+    :vartype leaky_relu: nn.LeakyReLU
+    :ivar embeddings: Module list of embedding layers for categorical correction variables.
+    :vartype embeddings: nn.ModuleList
+
     """
     def __init__(self, r, r_prime, k, final, alpha, correction):
         """
         Initialize LibDecoder instance.
 
-        Args:
-            r (int): Dimensionality of the output feature space
-            r_prime (int): Dimensionality of intermediate feature space
-            k (int): Number of correction variables (clinical/technical) vars
-            final (int): Number of final output features
-            alpha (float): Negative slope for LeakyReLU activation
+        :param r: Dimensionality of the output feature space (latent space).
+        :type r: int
+        :param r_prime: Dimensionality of the intermediate feature space.
+        :type r_prime: int
+        :param k: List of integers representing the number of categories for each correction variable.
+                  None values indicate continuous variables.
+        :type k: List[int]
+        :param final: Number of final output features (library size).
+        :type final: int
+        :param alpha: Negative slope for the LeakyReLU activation function.
+        :type alpha: float
+        :param correction: Flag indicating whether to apply correction using categorical variables.
+        :type correction: bool
         """
         super(LibDecoder, self).__init__()
 
@@ -472,35 +598,56 @@ class LibDecoder(nn.Module):
         self.apply(self.init_weights)
 
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
+        r"""
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param lat_space: Latent space representation tensor.
+        :type lat_space: torch.Tensor
 
-            continuous_indices = [i for i, x in enumerate(k) if x is None]
-            categorical_indices = [i for i, x in enumerate(k) if x is not None]
+        :return: A tuple containing:
+                - `h`: The modified latent space tensor with correction variables incorporated.
+                - `total_cat`: The sum of the embedded categorical variables, or None if no categorical variables are present.
+        :rtype: Tuple[torch.Tensor, Optional[torch.Tensor]]
+        """
 
-            h = lat_space
-            if len(continuous_indices)>0:
-                #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
-                h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
+        continuous_indices = [i for i, x in enumerate(k) if x is None]
+        categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
-            if len(categorical_indices)> 0:
-                total_cat = None
-                for idx in categorical_indices:
-                    holder = self.embeddings[idx](K[idx])
-                    if total_cat is None:
-                        total_cat = holder
-                    else:
-                        total_cat += holder
-                    h = torch.cat((h, holder), dim = 1)
-            return h, total_cat
+        h = lat_space
+        if len(continuous_indices)>0:
+            #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
+            h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
+
+        if len(categorical_indices)> 0:
+            total_cat = None
+            for idx in categorical_indices:
+                holder = self.embeddings[idx](K[idx])
+                if total_cat is None:
+                    total_cat = holder
+                else:
+                    total_cat += holder
+                h = torch.cat((h, holder), dim = 1)
+        return h, total_cat
 
     def decode(self, Z_L, K, k, correction):
         """
         Perform the decoding operation for latent variables and correction variables.
 
-        Args:
-            Z_L (torch.Tensor): Latent variables.
+        :param Z_L: Latent variables tensor.
+        :type Z_L: torch.Tensor
+        :param K: List of correction variable tensors.
+        :type K: List[torch.Tensor]
+        :param k: List of integers representing the number of categories for each correction variable.
+                None values indicate continuous variables.
+        :type k: List[int]
+        :param correction: Flag indicating whether to apply correction using the correction variables.
+        :type correction: bool
 
-        Returns:
-            torch.Tensor: Decoded output, processed through a linear layer followed by a LeakyReLU activation.
+        :return: Decoded output tensor representing the reconstructed library size.
+        :rtype: torch.Tensor
         """
 
         if correction is True:
@@ -516,11 +663,10 @@ class LibDecoder(nn.Module):
         """
         Initialize weights of Linear layers using Xavier initialization
 
-        Args:
-            m (nn.Module): PyTorch module instance
+        :param m: A PyTorch module instance.
+        :type m: nn.Module
 
-        Returns:
-            None
+        :return: None
         """
         if isinstance(m, nn.Linear):
             torch.nn.init.orthogonal_(m.weight)
@@ -529,13 +675,25 @@ class LibDecoder(nn.Module):
 
 
 class VAE(nn.Module):
-    """
+    r"""
     Variational Autoencoder (VAE)  to capture the latent structure
     Prepares encoders/decoders/linear layers of the VAE
+
+    :param N: Number of genes.
+    :type N: int
+    :param M: Number of samples.
+    :type M: int
+    :param ks: List of integers representing the number of categories for each correction variable.
+    :type ks: List[int]
+    :param log: Logger for outputting information during model operations.
+    :type log: logging.Logger
+    :param configs: Configuration dictionary containing parameters for the VAE.
+    :type configs: dict
+
     """
 
     def __init__(self, N, M, ks, log, configs):
-        """
+        r"""
         Initializing VAE instance
 
         Args:
@@ -627,14 +785,13 @@ class VAE(nn.Module):
             self.load_pretrained_model()
 
     def init_weights_vae(self, m):
-        """
+        r"""
         Initialize weights of Linear layers using Xavier initialization
 
-        Args:
-            m (nn.Module): PyTorch module instance
+        :param m: A PyTorch module instance.
+        :type m: nn.Module
 
-        Returns:
-            None
+        :return: None
         """
         if isinstance(m, nn.Linear):
             torch.nn.init.orthogonal_(m.weight)
@@ -642,15 +799,16 @@ class VAE(nn.Module):
                 m.bias.data.fill_(0.01)
 
     def reparameterize(self, mu, logvar):
-        """
+        r"""
         Reparameterization method to sample from a Gaussian distribution
 
-        Args:
-            mu (torch.Tensor): Mean of the Gaussian distribution
-            logvar (torch.Tensor): Natural log of the variance of the Gaussian
+        :param mu: Mean of the Gaussian distribution.
+        :type mu: torch.Tensor
+        :param logvar: Natural log of the variance of the Gaussian distribution.
+        :type logvar: torch.Tensor
 
-        Returns: 
-            torch.Tensor: Sampled latent variable, z
+        :return: Sampled latent variable `z`.
+        :rtype: torch.Tensor
         """
         std = torch.exp(0.5 * logvar)
         eps1 = torch.randn_like(std)
@@ -658,23 +816,23 @@ class VAE(nn.Module):
         return z
 
     def encode_reparameterization(self, Xs, Ks, ks, edges):
-        """
+        r"""
         Encodes and reparameterizes the input data to produce latent structures 
         for the library size (Z_L) and network structure of sample-sample interactions (Z_A).
 
-        Args:
-            Xs (list of torch.Tensor): List of zeroed Expression Matrices, one for each mini-batch.
-            Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to batch or other
-            categorical variables, one for each mini-batch.
-            edges (list of torch.Tensor): List of adjacency matrices or edge lists representing 
-            sample-sample interactions, one for each mini-batch.
+        :param Xs: List of zeroed expression matrices, one for each mini-batch.
+        :type Xs: List[torch.Tensor]
+        :param Ks: List of one-hot encoded matrices corresponding to batch or other categorical variables, one for each mini-batch.
+        :type Ks: List[torch.Tensor]
+        :param ks: List of integers representing the number of categories for each correction variable.
+        :type ks: List[int]
+        :param edges: List of adjacency matrices or edge lists representing sample-sample interactions, one for each mini-batch.
+        :type edges: List[torch.Tensor]
 
-        Returns:
-            dict: A dictionary containing two sub-dictionaries:
-                - 'latent_spaces': Contains mu and logvar for library size, network interactions,
-                    and simple models for each mini-batch.
-                - 'latent_variables': Contains reparameterized latent variables Z_L, Z_A, and
-                    Z_simple for each mini-batch.
+        :return: A dictionary containing two sub-dictionaries:
+                - `latent_spaces`: Contains the mean (`mu`) and log variance (`logvar`) for the library size, network interactions, expression matrix, and simple models for each mini-batch.
+                - `latent_variables`: Contains the reparameterized latent variables `Z_L`, `Z_A`, `Z_X`, and `Z_simple` for each mini-batch.
+        :rtype: Dict[str, Dict[str, List[torch.Tensor]]]
         """
 
         latent_variables = {'Z_Ls': [], 'Z_As': [],  'Z_Xs': [], 'Z_simples': []}
@@ -753,21 +911,25 @@ class VAE(nn.Module):
         }
 
     def decode(self, latent_vars, Ks, ks, edges):
-        """
+        r"""
         Decodes the latent variables and combines them with correction variables 
         to calculate ZINB parameters for each type of decoder configuration.
 
-        Args:
-            latent_vars (dict): Dictionary containing reparameterized latent spaces 
-                computed by the `encode_reparameterization()` method. It includes keys
-                like 'Z_Ls' for library sizes and 'Z_As' for sample-sample interactions.
-            Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to 
-                batch or other categorical variables, one for each mini-batch.
+        :param latent_vars: Dictionary containing reparameterized latent spaces computed by the `encode_reparameterization()` method.
+                        It includes keys like 'Z_Ls' for library sizes and 'Z_As' for sample-sample interactions.
+        :type latent_vars: Dict[str, List[torch.Tensor]]
+        :param Ks: List of one-hot encoded matrices corresponding to batch or other categorical variables, one for each mini-batch.
+        :type Ks: List[torch.Tensor]
+        :param ks: List of integers representing the number of categories for each correction variable.
+        :type ks: List[int]
+        :param edges: List of adjacency matrices or edge lists representing sample-sample interactions, one for each mini-batch.
+        :type edges: List[torch.Tensor]
 
-        Returns:
-            dict: A dictionary containing decoded outputs from different decoders and the
-                combined outputs which are used to calculate distributional parameters such
-                as pi, omega, and theta.
+        :return: A dictionary containing:
+                - `DLs`: List of decoded library sizes.
+                - `DAs`: List of decoded sample-sample interactions.
+                - `distributional_parameters`: Dictionary containing the ZINB distributional parameters (`pi`, `omega`, and `theta`).
+        :rtype: Dict[str, Union[List[torch.Tensor], Dict[str, torch.Tensor]]]
         """
         cuda_device_num = self.configs['cuda_device_num']
         device = torch.device(f'cuda:{cuda_device_num}' if torch.cuda.is_available() else 'cpu')
@@ -827,32 +989,47 @@ class VAE(nn.Module):
 
     # FORWARD FUNCTION
     def forward(self, batch): 
-        """
+        r"""
         Processes a batch of data through the VAE, performing encoding,
         reparameterization, and decoding steps to generate the outputs used for model training or inference.
 
-        Args:
-            batch (dict): A dictionary containing tensors that represent different
-            parts of the data batch. Expected keys are:
-            'X_batches': Zeroed expression matrices of the minibatch.
-            'R_batches': Raw expression matrices of the minibatch.
-            'K_batches': korrection variables
-            'k_batches' : levels of correction variables
-            'idx_batches': Indices of samples in the minibatch.
-            'ej_batches': Graph edges in each minibatch (used if model includes graph data).
+        :param batch: A dictionary containing tensors that represent different parts of the data batch. Expected keys are:
+        
+            - 'X_batches': Zeroed expression matrices of the minibatch.
+            
+            - 'R_batches': Raw expression matrices of the minibatch.
+            
+            - 'K_batches': Correction variables.
+            
+            - 'k_batches': Levels of correction variables.
+            
+            - 'idx_batches': Indices of samples in the minibatch.
+            
+            - 'ej_batches': Graph edges in each minibatch (used if the model includes graph data).
+            
+        :type batch: Dict[str, List[torch.Tensor]]
 
-        Returns:
-            dict: A dictionary containing various outputs from the forward pass of the model,
-                including:
-                - 'latent_spaces': The latent spaces derived from the encoder.
-                - 'latent_variables': Reparameterized latent variables.
-                - 'X_hat': Predicted data samples (e.g., reconstructed expression levels).
-                - 'DAs': Decoded activation from the model.
-                - 'DLs': Decoded library size factors.
-                - 'lib_size_factors': Library size factors computed post decoding.
-                - 'px_dispersion': Dispersion parameters of the distribution.
-                - 'px_omega': Mu parameters of the distribution.
-                - 'distributional_parameters': Parameters such as pi, omega, theta used in the distribution.
+        :return: A dictionary containing various outputs from the forward pass of the model, including:
+            
+            - 'latent_spaces': The latent spaces derived from the encoder.
+            
+            - 'latent_variables': Reparameterized latent variables.
+            
+            - 'X_hat': Predicted data samples (e.g., reconstructed expression levels).
+            
+            - 'DAs': Decoded activations from the model.
+            
+            - 'DLs': Decoded library size factors.
+            
+            - 'lib_size_factors': Library size factors computed post-decoding.
+            
+            - 'px_dispersion': Dispersion parameters of the distribution.
+            
+            - 'px_omega': Mu parameters of the distribution.
+            
+            - 'distributional_parameters': Parameters such as pi, omega, theta used in the distribution.
+            
+        :rtype: Dict[str, Union[torch.distributions.Distribution, List[torch.Tensor], Dict[str, torch.Tensor]]]
         """
 
         Xs_batch = batch['X_batches']
@@ -938,8 +1115,7 @@ class VAE(nn.Module):
         Loads a pre-trained model state into this model instance. It loads the model's state 
         dictionary, updates the current model instance's parameters, and sets the model to evaluation mode. 
 
-        Raises:
-            Exception: Error if there are any issues accessing the folder or loading the model file.
+        :raises Exception: If there are any issues accessing the folder or loading the model file.
         """
         
         cuda_device_num = self.configs['cuda_device_num']

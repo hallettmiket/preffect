@@ -281,19 +281,27 @@ been checked for their fidelity (no information is missing)</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="data_loader.FFPE_dataset.load_anndata">
 <span class="sig-name descname"><span class="pre">load_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data_loader.FFPE_dataset.load_anndata" title="Permalink to this definition"></a></dt>
-<dd><p>This loads anndata files (h5ad) from a given directory (specified in
-configs). All files that have the name structure
-<a href="#id1"><span class="problematic" id="id2">*</span></a>tau_x.h5ad where x is an integer are loaded x determines
-the order of tissues.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p><strong>anndata_dir:</strong> location of all anndata files.
-anntarget_dataset: specifies a specific dataset within anndata_dir
-learning_type: species whether it is 'train', 'validation' or 'test'</p>
+<dd><p>Load AnnData files (h5ad) from a specified directory.</p>
+<p>This method loads AnnData files from a directory specified in the <cite>configs</cite> dictionary. The expected file naming 
+structure is <cite>*tau_x.h5ad</cite>, where <cite>x</cite> is an integer determining the order of tissues [[1]]. The loaded AnnData objects
+are sorted based on the <cite>tau</cite> value [[2]].</p>
+<p>The method handles different learning types (<cite>'train'</cite>, <cite>'validation'</cite>, <cite>'test'</cite>, <cite>'inference'</cite>, <cite>'impute_experiment'</cite>)
+and adjusts the file loading path accordingly. It also checks for the presence of adjacency matrices in the AnnData 
+objects and defaults to a simple model if they are missing [[8]].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of AnnData objects, sorted by the <cite>tau</cite> value.</p>
 </dd>
-<dt>Returns:</dt><dd><p>One anndata datastructure for each valid file identified
-sorted by tau.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of anndata.AnnData</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The method expects the AnnData files to follow the <cite>*tau_x.h5ad</cite> naming convention.</p></li>
+</ul>
+</div>
 </dd></dl>
 
 <dl class="py method">

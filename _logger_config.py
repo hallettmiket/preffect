@@ -9,11 +9,11 @@ def setup_loggers(configs):
     """
     Sets up the loggers for the application using the provided configuration.
 
-    Args:
-        configs (dict): Configuration dictionary that includes settings such as the log directory path.
+    :param configs: Configuration dictionary containing settings such as the log directory path.
+    :type configs: dict
 
-    Returns:
-        tuple: A tuple containing references to the input, forward, and inference loggers.
+    :return: A tuple containing references to the 'input', 'forward', and 'inference' loggers.
+    :rtype: tuple(logging.Logger, logging.Logger, logging.Logger)
     """
     log_directory = configs['log_path']
     # Ensure the log directory exists

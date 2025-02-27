@@ -138,23 +138,51 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">Decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>Decoder neural network module for a GAT-based autoencoder</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>layer1 (nn.Linear): First linear transformation layer
-layer2 (nn.Linear): Second linear transformation layer
-layer3 (nn.Linear): Third linear transformation layer
-leaky_relu (nn.LeakyReLU): LeakyReLU activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>int</em>) -- Dimensionality of the input latent space.</p></li>
+<li><p><strong>r_prime</strong> (<em>int</em>) -- Dimensionality of the intermediate space.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of the number of categories for each categorical variable. None values are ignored.</p></li>
+<li><p><strong>final</strong> (<em>int</em>) -- Number of output features.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) -- Negative slope for the LeakyReLU activation function.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em>) -- Dropout probability for regularization.</p></li>
+<li><p><strong>model_type</strong> (<em>str</em>) -- Type of the model ('single', 'full', or 'simple').</p></li>
+<li><p><strong>correction</strong> (<em>bool</em>) -- Flag indicating whether to apply correction using categorical variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>layer1</strong> (<em>nn.Linear</em>) -- First linear transformation layer.</p></li>
+<li><p><strong>layer2</strong> (<em>nn.Linear</em>) -- Second linear transformation layer.</p></li>
+<li><p><strong>layer3</strong> -- Third linear transformation layer.</p></li>
+<li><p><strong>leaky_relu</strong> (<em>nn.LeakyReLU</em>) -- LeakyReLU activation function.</p></li>
+<li><p><strong>dropout1</strong> (<em>nn.Dropout</em>) -- Dropout layer after the first linear transformation.</p></li>
+<li><p><strong>dropout2</strong> (<em>nn.Dropout</em>) -- Dropout layer after the second linear transformation.</p></li>
+<li><p><strong>dropout</strong> (<em>nn.Dropout</em>) -- Dropout layer for the 'simple' model type.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.Decoder.decode">
 <span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ejs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.decode" title="Permalink to this definition"></a></dt>
 <dd><p>Decodes using linear transformations and activations</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>Z (Tensor): Encoded feature matrix
-K (Tensor):  korrection variables
-k (list): levels of korrection vars</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z</strong> (<em>torch.Tensor</em>) -- Encoded latent space representation tensor.</p></li>
+<li><p><strong>ejs</strong> (<em>Any</em>) -- Placeholder parameter (not used in the method).</p></li>
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>correction</strong> (<em>bool</em>) -- Flag indicating whether to apply correction using the correction variables.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>Tensor: Decoded output matrix</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded output tensor in the original feature space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -163,10 +191,12 @@ k (list): levels of korrection vars</p>
 <dt class="sig sig-object py" id="model.Decoder.init_weights">
 <span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.init_weights" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize weights of Linear layers using Xavier initialization</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>nn.Module</em>) -- A PyTorch module instance.</p>
 </dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -174,7 +204,25 @@ k (list): levels of korrection vars</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.Decoder.prepare_latent_space_with_korrection_vars">
 <span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Decoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>lat_space</strong> (<em>torch.Tensor</em>) -- Latent space representation tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>h</cite>: The modified latent space tensor with correction variables incorporated.
+- <cite>total_cat</cite>: The sum of the embedded categorical variables, or None if no categorical variables are present.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, Optional[torch.Tensor]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model.Decoder.training">
@@ -188,25 +236,40 @@ k (list): levels of korrection vars</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">_model.</span></span><span class="sig-name descname"><span class="pre">Encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>Encoder neural network module using Graph Attention Networks (GATs)</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>layer1 (GATv2Conv): First graph attention layer
-layer2 (GATv2Conv): Second graph attention layer
-mu_layer (nn.Linear): Linear layer to calculate mean of latent space
-logvar_layer (nn.Linear): Linear layer for calculating log variance
-of latent space
-leaky_relu (nn.LeakyReLU): LeakyReLU activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer1</strong> (<em>GATv2Conv</em>) -- First graph attention layer.</p></li>
+<li><p><strong>layer2</strong> (<em>nn.Linear</em>) -- Second linear transformation layer.</p></li>
+<li><p><strong>layer3</strong> (<em>nn.Linear</em>) -- Third linear transformation layer.</p></li>
+<li><p><strong>mu_layer</strong> (<em>nn.Linear</em>) -- Linear layer to compute the mean of the latent space representation.</p></li>
+<li><p><strong>logvar_layer</strong> (<em>nn.Linear</em>) -- Linear layer to compute the log variance of the latent space representation.</p></li>
+<li><p><strong>leaky_relu</strong> (<em>nn.LeakyReLU</em>) -- LeakyReLU activation function.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.Encoder.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ejs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.encode" title="Permalink to this definition"></a></dt>
 <dd><p>Perform encoding using graph attention layers</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>X (Tensor): Input feature matrix (zeroed counts)
-ejs (Tensor): Edge indices defining the graph structure
-K (Tensor): Correction variable matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>torch.Tensor</em>) -- Input feature matrix (zeroed counts).</p></li>
+<li><p><strong>ejs</strong> (<em>torch.Tensor</em>) -- Edge indices defining the graph structure.</p></li>
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>correction</strong> (<em>bool</em>) -- Flag indicating whether to apply correction using the correction variables.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>Tuple[Tensor, Tensor]: Mean and log variance of encoded input</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>mu</cite>: Mean of the encoded input.
+- <cite>logvar</cite>: Log variance of the encoded input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, torch.Tensor]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -215,15 +278,38 @@ K (Tensor): Correction variable matrix</p>
 <dt class="sig sig-object py" id="model.Encoder.init_weights">
 <span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.init_weights" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize weights of Linear layers</p>
-<p>Args: 
-m (nn.Module): PyTorch module instance</p>
-<p>Returns: None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>nn.Module</em>) -- A PyTorch module instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model.Encoder.prepare_latent_space_with_korrection_vars">
 <span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.Encoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>lat_space</strong> (<em>torch.Tensor</em>) -- Latent space representation tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>h</cite>: The modified latent space tensor with correction variables incorporated.
+- <cite>total_cat</cite>: The sum of the embedded categorical variables, or None if no categorical variables are present.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, Optional[torch.Tensor]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model.Encoder.training">
@@ -238,23 +324,35 @@ m (nn.Module): PyTorch module instance</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>Library-size decoder module that decodes latent variables back into
 the original space</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>layer_de_lib1 (nn.Linear): Linear layer for decoding latent variables
-layer_de_lib_mu (nn.Linear): Linear layer to decode the mean (mu)
-of the library size
-layer_de_lib_logvar (nn.Linear): Linear layer to decode the log
-variance (logvar) of the library size
-leaky_relu (nn.LeakyReLU): Leaky ReLU activation function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lib_decode_size_factor</strong> (<em>nn.Linear</em>) -- Linear layer for decoding the latent variables.</p></li>
+<li><p><strong>lib_decode_size_factor_2</strong> (<em>nn.Linear</em>) -- Linear layer for further decoding the library size.</p></li>
+<li><p><strong>leaky_relu</strong> (<em>nn.LeakyReLU</em>) -- Leaky ReLU activation function.</p></li>
+<li><p><strong>embeddings</strong> (<em>nn.ModuleList</em>) -- Module list of embedding layers for categorical correction variables.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.LibDecoder.decode">
 <span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Z_L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.decode" title="Permalink to this definition"></a></dt>
 <dd><p>Perform the decoding operation for latent variables and correction variables.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>Z_L (torch.Tensor): Latent variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Z_L</strong> (<em>torch.Tensor</em>) -- Latent variables tensor.</p></li>
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>correction</strong> (<em>bool</em>) -- Flag indicating whether to apply correction using the correction variables.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>torch.Tensor: Decoded output, processed through a linear layer followed by a LeakyReLU activation.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded output tensor representing the reconstructed library size.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -263,10 +361,12 @@ leaky_relu (nn.LeakyReLU): Leaky ReLU activation function</p>
 <dt class="sig sig-object py" id="model.LibDecoder.init_weights">
 <span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.init_weights" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize weights of Linear layers using Xavier initialization</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>nn.Module</em>) -- A PyTorch module instance.</p>
 </dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -274,7 +374,25 @@ leaky_relu (nn.LeakyReLU): Leaky ReLU activation function</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.LibDecoder.prepare_latent_space_with_korrection_vars">
 <span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibDecoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>lat_space</strong> (<em>torch.Tensor</em>) -- Latent space representation tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>h</cite>: The modified latent space tensor with correction variables incorporated.
+- <cite>total_cat</cite>: The sum of the embedded categorical variables, or None if no categorical variables are present.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, Optional[torch.Tensor]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model.LibDecoder.training">
@@ -289,36 +407,53 @@ leaky_relu (nn.LeakyReLU): Leaky ReLU activation function</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>Library-size encoder module using a linear transformation layer followed
 by LeakyReLU activation</p>
-<dl class="simple">
-<dt>Attributes:</dt><dd><p>layer_lib1 (nn.Linear): Linear layer to encode the combined feature of
-log library sizes and variables
-layer_lib_mu (nn.Linear): Linear layer to encode the mean for the
-library size
-layer_lib_logvar (nn.Linear): Linear layer to encode the log variance
-(logvar) for the library size.
-leaky_relu (nn.LeakyReLU): Leaky ReLU activation function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer_lib1</strong> (<em>nn.Linear</em>) -- Linear layer to encode the combined feature of log library sizes and variables.</p></li>
+<li><p><strong>layer_lib_mu</strong> (<em>nn.Linear</em>) -- Linear layer to encode the mean for the library size.</p></li>
+<li><p><strong>layer_lib_logvar</strong> (<em>nn.Linear</em>) -- Linear layer to encode the log variance (logvar) for the library size.</p></li>
+<li><p><strong>leaky_relu</strong> (<em>nn.LeakyReLU</em>) -- Leaky ReLU activation function.</p></li>
+<li><p><strong>dropout1</strong> (<em>nn.Dropout</em>) -- Dropout layer to prevent overfitting.</p></li>
+<li><p><strong>embeddings</strong> (<em>nn.ModuleList</em>) -- Module list of embedding layers for categorical correction variables.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.LibEncoder.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_lib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.encode" title="Permalink to this definition"></a></dt>
 <dd><p>Perform the encoding operation for log library sizes and variables</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>log_lib (Tensor): Tensor of log library sizes
-K (Tensor): Tensor of one-hot variables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_lib</strong> (<em>torch.Tensor</em>) -- Tensor of log library sizes.</p></li>
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>correction</strong> (<em>bool</em>) -- Flag indicating whether to apply correction using the correction variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>mu</cite>: Tensor representing the mean of the latent space representation.
+- <cite>logvar</cite>: Tensor representing the log variance of the latent space representation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, torch.Tensor]</p>
 </dd>
 </dl>
-<p>Returns: Tensors for the mean (mu) and log variance (logvar)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="model.LibEncoder.init_weights">
 <span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.init_weights" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize weights of Linear layers using Xavier initialization</p>
-<dl class="simple">
-<dt>Args: </dt><dd><p>m (nn.Module): PyTorch module instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>nn.Module</em>) -- A PyTorch module instance.</p>
 </dd>
-<dt>Returns: </dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,7 +461,25 @@ K (Tensor): Tensor of one-hot variables</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.LibEncoder.prepare_latent_space_with_korrection_vars">
 <span class="sig-name descname"><span class="pre">prepare_latent_space_with_korrection_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_space</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.LibEncoder.prepare_latent_space_with_korrection_vars" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>K</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of correction variable tensors.</p></li>
+<li><p><strong>k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.
+None values indicate continuous variables.</p></li>
+<li><p><strong>lat_space</strong> (<em>torch.Tensor</em>) -- Latent space representation tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing:
+- <cite>h</cite>: The modified latent space tensor with correction variables incorporated.
+- <cite>total_cat</cite>: The sum of the embedded categorical variables, or None if no categorical variables are present.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple[torch.Tensor, Optional[torch.Tensor]]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="model.LibEncoder.training">
@@ -341,6 +494,17 @@ K (Tensor): Tensor of one-hot variables</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>Variational Autoencoder (VAE)  to capture the latent structure
 Prepares encoders/decoders/linear layers of the VAE</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>N</strong> (<em>int</em>) -- Number of genes.</p></li>
+<li><p><strong>M</strong> (<em>int</em>) -- Number of samples.</p></li>
+<li><p><strong>ks</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.</p></li>
+<li><p><strong>log</strong> (<em>logging.Logger</em>) -- Logger for outputting information during model operations.</p></li>
+<li><p><strong>configs</strong> (<em>dict</em>) -- Configuration dictionary containing parameters for the VAE.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="model.VAE.batch_centroid_loss">
 <span class="sig-name descname"><span class="pre">batch_centroid_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.batch_centroid_loss" title="Permalink to this definition"></a></dt>
@@ -367,20 +531,24 @@ one of the tissues or conditions.</p>
 <span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latent_vars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.decode" title="Permalink to this definition"></a></dt>
 <dd><p>Decodes the latent variables and combines them with correction variables 
 to calculate ZINB parameters for each type of decoder configuration.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>latent_vars (dict): Dictionary containing reparameterized latent spaces </dt><dd><p>computed by the <cite>encode_reparameterization()</cite> method. It includes keys
-like 'Z_Ls' for library sizes and 'Z_As' for sample-sample interactions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latent_vars</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>torch.Tensor</em><em>]</em><em>]</em>) -- Dictionary containing reparameterized latent spaces computed by the <cite>encode_reparameterization()</cite> method.
+It includes keys like 'Z_Ls' for library sizes and 'Z_As' for sample-sample interactions.</p></li>
+<li><p><strong>Ks</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of one-hot encoded matrices corresponding to batch or other categorical variables, one for each mini-batch.</p></li>
+<li><p><strong>ks</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.</p></li>
+<li><p><strong>edges</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of adjacency matrices or edge lists representing sample-sample interactions, one for each mini-batch.</p></li>
+</ul>
 </dd>
-<dt>Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to </dt><dd><p>batch or other categorical variables, one for each mini-batch.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing:
+- <cite>DLs</cite>: List of decoded library sizes.
+- <cite>DAs</cite>: List of decoded sample-sample interactions.
+- <cite>distributional_parameters</cite>: Dictionary containing the ZINB distributional parameters (<cite>pi</cite>, <cite>omega</cite>, and <cite>theta</cite>).</p>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: A dictionary containing decoded outputs from different decoders and the</dt><dd><p>combined outputs which are used to calculate distributional parameters such
-as pi, omega, and theta.</p>
-</dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Union[List[torch.Tensor], Dict[str, torch.Tensor]]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -390,28 +558,22 @@ as pi, omega, and theta.</p>
 <span class="sig-name descname"><span class="pre">encode_reparameterization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.encode_reparameterization" title="Permalink to this definition"></a></dt>
 <dd><p>Encodes and reparameterizes the input data to produce latent structures 
 for the library size (Z_L) and network structure of sample-sample interactions (Z_A).</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>Xs (list of torch.Tensor): List of zeroed Expression Matrices, one for each mini-batch.
-Ks (list of torch.Tensor): List of one-hot encoded matrices corresponding to batch or other
-categorical variables, one for each mini-batch.
-edges (list of torch.Tensor): List of adjacency matrices or edge lists representing 
-sample-sample interactions, one for each mini-batch.</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: A dictionary containing two sub-dictionaries:</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>'latent_spaces': Contains mu and logvar for library size, network interactions,</dt><dd><p>and simple models for each mini-batch.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>'latent_variables': Contains reparameterized latent variables Z_L, Z_A, and</dt><dd><p>Z_simple for each mini-batch.</p>
-</dd>
-</dl>
-</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xs</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of zeroed expression matrices, one for each mini-batch.</p></li>
+<li><p><strong>Ks</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of one-hot encoded matrices corresponding to batch or other categorical variables, one for each mini-batch.</p></li>
+<li><p><strong>ks</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- List of integers representing the number of categories for each correction variable.</p></li>
+<li><p><strong>edges</strong> (<em>List</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- List of adjacency matrices or edge lists representing sample-sample interactions, one for each mini-batch.</p></li>
 </ul>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing two sub-dictionaries:
+- <cite>latent_spaces</cite>: Contains the mean (<cite>mu</cite>) and log variance (<cite>logvar</cite>) for the library size, network interactions, expression matrix, and simple models for each mini-batch.
+- <cite>latent_variables</cite>: Contains the reparameterized latent variables <cite>Z_L</cite>, <cite>Z_A</cite>, <cite>Z_X</cite>, and <cite>Z_simple</cite> for each mini-batch.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Dict[str, List[torch.Tensor]]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -421,29 +583,36 @@ sample-sample interactions, one for each mini-batch.</p>
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Processes a batch of data through the VAE, performing encoding,
 reparameterization, and decoding steps to generate the outputs used for model training or inference.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>batch (dict): A dictionary containing tensors that represent different
-parts of the data batch. Expected keys are:
-'X_batches': Zeroed expression matrices of the minibatch.
-'R_batches': Raw expression matrices of the minibatch.
-'K_batches': korrection variables
-'k_batches' : levels of correction variables
-'idx_batches': Indices of samples in the minibatch.
-'ej_batches': Graph edges in each minibatch (used if model includes graph data).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>torch.Tensor</em><em>]</em><em>]</em>) -- <p>A dictionary containing tensors that represent different parts of the data batch. Expected keys are:</p>
+<ul class="simple">
+<li><p>'X_batches': Zeroed expression matrices of the minibatch.</p></li>
+<li><p>'R_batches': Raw expression matrices of the minibatch.</p></li>
+<li><p>'K_batches': Correction variables.</p></li>
+<li><p>'k_batches': Levels of correction variables.</p></li>
+<li><p>'idx_batches': Indices of samples in the minibatch.</p></li>
+<li><p>'ej_batches': Graph edges in each minibatch (used if the model includes graph data).</p></li>
+</ul>
+</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: A dictionary containing various outputs from the forward pass of the model,</dt><dd><p>including:
-- 'latent_spaces': The latent spaces derived from the encoder.
-- 'latent_variables': Reparameterized latent variables.
-- 'X_hat': Predicted data samples (e.g., reconstructed expression levels).
-- 'DAs': Decoded activation from the model.
-- 'DLs': Decoded library size factors.
-- 'lib_size_factors': Library size factors computed post decoding.
-- 'px_dispersion': Dispersion parameters of the distribution.
-- 'px_omega': Mu parameters of the distribution.
-- 'distributional_parameters': Parameters such as pi, omega, theta used in the distribution.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A dictionary containing various outputs from the forward pass of the model, including:</p>
+<ul class="simple">
+<li><p>'latent_spaces': The latent spaces derived from the encoder.</p></li>
+<li><p>'latent_variables': Reparameterized latent variables.</p></li>
+<li><p>'X_hat': Predicted data samples (e.g., reconstructed expression levels).</p></li>
+<li><p>'DAs': Decoded activations from the model.</p></li>
+<li><p>'DLs': Decoded library size factors.</p></li>
+<li><p>'lib_size_factors': Library size factors computed post-decoding.</p></li>
+<li><p>'px_dispersion': Dispersion parameters of the distribution.</p></li>
+<li><p>'px_omega': Mu parameters of the distribution.</p></li>
+<li><p>'distributional_parameters': Parameters such as pi, omega, theta used in the distribution.</p></li>
+</ul>
+</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Union[torch.distributions.Distribution, List[torch.Tensor], Dict[str, torch.Tensor]]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -452,10 +621,12 @@ parts of the data batch. Expected keys are:
 <dt class="sig sig-object py" id="model.VAE.init_weights_vae">
 <span class="sig-name descname"><span class="pre">init_weights_vae</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.init_weights_vae" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize weights of Linear layers using Xavier initialization</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>m (nn.Module): PyTorch module instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>m</strong> (<em>nn.Module</em>) -- A PyTorch module instance.</p>
 </dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -465,8 +636,9 @@ parts of the data batch. Expected keys are:
 <span class="sig-name descname"><span class="pre">load_pretrained_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.load_pretrained_model" title="Permalink to this definition"></a></dt>
 <dd><p>Loads a pre-trained model state into this model instance. It loads the model's state 
 dictionary, updates the current model instance's parameters, and sets the model to evaluation mode.</p>
-<dl class="simple">
-<dt>Raises:</dt><dd><p>Exception: Error if there are any issues accessing the folder or loading the model file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> -- If there are any issues accessing the folder or loading the model file.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -516,11 +688,18 @@ adjusted_generative_outputs: Output from the VAE</p>
 <dt class="sig sig-object py" id="model.VAE.reparameterize">
 <span class="sig-name descname"><span class="pre">reparameterize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#model.VAE.reparameterize" title="Permalink to this definition"></a></dt>
 <dd><p>Reparameterization method to sample from a Gaussian distribution</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>mu (torch.Tensor): Mean of the Gaussian distribution
-logvar (torch.Tensor): Natural log of the variance of the Gaussian</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>torch.Tensor</em>) -- Mean of the Gaussian distribution.</p></li>
+<li><p><strong>logvar</strong> (<em>torch.Tensor</em>) -- Natural log of the variance of the Gaussian distribution.</p></li>
+</ul>
 </dd>
-<dt>Returns: </dt><dd><p>torch.Tensor: Sampled latent variable, z</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sampled latent variable <cite>z</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>

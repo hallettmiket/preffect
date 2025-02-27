@@ -96,10 +96,15 @@
 <dt class="sig sig-object py" id="logger_config.setup_loggers">
 <span class="sig-prename descclassname"><span class="pre">_logger_config.</span></span><span class="sig-name descname"><span class="pre">setup_loggers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#logger_config.setup_loggers" title="Permalink to this definition"></a></dt>
 <dd><p>Sets up the loggers for the application using the provided configuration.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>configs (dict): Configuration dictionary that includes settings such as the log directory path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em>) -- Configuration dictionary containing settings such as the log directory path.</p>
 </dd>
-<dt>Returns:</dt><dd><p>tuple: A tuple containing references to the input, forward, and inference loggers.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple containing references to the 'input', 'forward', and 'inference' loggers.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple(logging.Logger, logging.Logger, logging.Logger)</p>
 </dd>
 </dl>
 </dd></dl>

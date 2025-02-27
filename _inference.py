@@ -64,15 +64,23 @@ class Inference:
 
     def register_inference_run(self):
         """
-        Registers an inference instance within the parent object's inference dictionary. If the specified inference
-        instance already exists and overwrite permission is not granted, it raises an error.
+        Register the current inference instance within the parent object's inference dictionary.
 
-        Args:
-            None
+        This method checks if an inference instance with the same name already exists in the parent's
+        inference dictionary. If it does not exist or if the overwrite permission is granted, the
+        current inference instance is added to the dictionary using the specified inference key.
+        If an instance with the same name already exists and overwrite permission is not granted,
+        a `PreffectError` is raised.
 
-        Raises:
-            PreffectError: If an inference object with the same name already exists in the parent's dictionary
-                        and overwrite permission is set to False.
+        :raises PreffectError: If an inference object with the same name already exists in the parent's
+                            dictionary and overwrite permission is set to False.
+
+        .. note::
+            - The parent object is assumed to be a Preffect object that has an `inference_dict` attribute.
+            - The `configs_inf` attribute of the current instance is used to determine the inference key
+            and overwrite permission.
+            - The current inference instance is copied using `copy.copy()` before being added to the
+            parent's dictionary to avoid unintended modifications.
         """
         # This will register the inference instance in the parent which is a Preffect object
         if self.configs_inf['inference_key'] not in self.parent.inference_dict.keys() or self.configs_inf['inference_overwrite']:
@@ -115,6 +123,18 @@ class Inference:
  
 
     def impute_values(self):
+        """
+        Impute missing values in the input data using the trained model.
+
+        This method uses the simplest form of imputation by returning the reconstructed counts
+        as an AnnData object. The imputed values are obtained from the model's output after
+        running inference on the input data.
+
+        :return: An AnnData object containing the imputed counts.
+        :rtype: AnnData
+
+        :raises PreffectError: If the inference has not been computed before calling this method.
+        """
         if self.output is None:
             raise PreffectError(f"Inference object has not been computed.")
         # this is the simplest form of imputation. more to come.
@@ -300,9 +320,8 @@ class Inference:
         """
         Converts the raw and inferred gene expression data into an AnnData format for further analysis.
 
-        Returns:
-            list of anndata.AnnData: A list of AnnData objects. Each AnnData object corresponds to a different tissue or condition
-            from the dataset. 
+        :return: A list of AnnData objects, where each object represents a tissue or condition from the dataset.
+        :rtype: List[anndata.AnnData]
         """
         adata = [self.ds.anndatas[i].copy() for i in range(self.ds.calT)]
         for i in range(len(adata)):
@@ -328,13 +347,10 @@ class Inference:
         """
         Creates an AnnData object from the latent variables (Z_L, Z_A, Z_Simple) depending on the model type.
 
-        Returns:
-            anndata.AnnData: An AnnData object containing the latent representations as the main data matrix 'X'. If the
-            model type is 'simple', 'Z_simples' is used. For 'single' or 'full' types, 'Z_As' is used.
+        :return: A list of AnnData objects, where each object represents the latent space for a specific tissue or condition.
+        :rtype: List[anndata.AnnData]
 
-        Raises:
-            PreffectError: If the model type is neither 'simple', 'single', nor 'full', an error is raised indicating
-            that the method is not implemented for the given model type.
+        :raises PreffectError: If the model type is neither 'simple', 'single', nor 'full', an error is raised indicating that the method is not implemented for the given model type.
         """
 
         anndata_list = []
@@ -367,8 +383,9 @@ class Inference:
         """
         Saves the inference results to a file.
 
-        Args:
-            results (dict): The dictionary containing the inference results to be saved.
+        :param results: The dictionary containing the inference results to be saved.
+        :type results: Dict
+
         """
         fname = os.path.join(self.configs_inf['inference_path'], self.configs_inf['inference_key'])
         if self.configs_inf['adjust_vars']:
@@ -384,13 +401,12 @@ class Inference:
         """
         Concatenates sublists of tensors from multiple mini-batches into a single list of tensors.
 
-        Args:
-            L (list of list of torch.Tensor): A list containing sublists, where each sublist consists of tensors
-            from a particular mini-batch. These tensors typically represent some aspect of model outputs such as latent variables.
+        :param L: A list containing sublists, where each sublist consists of tensors from a particular mini-batch.
+        :type L: List[List[torch.Tensor]]
 
-        Returns:
-            list of numpy.ndarray: A list of concatenated arrays. Each array in the list corresponds to a type of data
-                across all mini-batches (e.g., all latent variable tensors concatenated into a single array).
+        :return: A list of concatenated arrays. Each array in the list corresponds to a type of data across all
+                mini-batches (e.g., all latent variable tensors concatenated into a single array).
+        :rtype: List[numpy.ndarray]
         """
         tensor_arrays = [[tensor.cpu().numpy() for tensor in sublist] for sublist in L]
         transformed = [[tensor_arrays[j][i] for j in range(len(tensor_arrays))] for i in range(len(tensor_arrays[0]))]
@@ -403,14 +419,14 @@ class Inference:
         """
         Concatenates sublists of 1D tensors or lists from multiple mini-batches into a single list.
 
-        Args:
-            L (list of list of torch.Tensor or list): A nested list where each inner list contains tensors or lists
-            from a specific mini-batch. 
-            full_idx (list of int): Indices representing the order or selection of elements to retain from the concatenated lists,
-            adjusted for any padding that might have been applied during batching.
+        :param L: A nested list where each inner list contains tensors or lists from a specific mini-batch.
+        :type L: List[List[Union[torch.Tensor, List]]]
+        :param full_idx: Indices representing the order or selection of elements to retain from the concatenated lists,
+                        adjusted for any padding that might have been applied during batching.
+        :type full_idx: List[int]
 
-        Returns:
-            list of list: A list where each sublist corresponds to a concatenated and trimmed set of data across all mini-batches.
+        :return: A list where each sublist corresponds to a concatenated and trimmed set of data across all mini-batches.
+        :rtype: List[List]
         """
         minibatches = [ [tissue.cpu().squeeze().tolist() for tissue in minibatch]  for minibatch in L ]
         lib_size_factors = [[minibatches[j][i] for j in range(len(minibatches))] for i in range(len(minibatches[0]))]
@@ -429,17 +445,17 @@ class Inference:
         Reconstructs full dataset arrays from minibatches, combining the various outputs
         from the model's minibatch processing into unified structures.
 
-        Args:
-            data (list of dict): List of dictionaries containing outputs from minibatches. Each dictionary
-                should have keys corresponding to different aspects of the model's output, such as
-                'latent_variables', 'lib_size_factors', 'X_hat', etc.
-            idx_batches (list of torch.Tensor): List of tensors representing the indices of each minibatch
-                within the overall dataset.
+        :param data: List of dictionaries containing outputs from minibatches. Each dictionary should have keys
+                 corresponding to different aspects of the model's output, such as 'latent_variables',
+                 'lib_size_factors', 'X_hat', etc.
+        :type data: List[Dict]
+        :param idx_batches: List of tensors representing the indices of each minibatch within the overall dataset.
+        :type idx_batches: List[List[torch.Tensor]]
 
-        Returns:
-            dict: A dictionary containing the reconstructed full dataset. The keys in this dictionary
-                correspond to the unified arrays of outputs such as 'Z_Ls', 'lib_size_factors', 'X_hat_mu',
-                'X_hat_theta', 'Z_As', and potentially others depending on the model configuration and type.
+        :return: A dictionary containing the reconstructed full dataset. The keys in this dictionary correspond to
+                the unified arrays of outputs such as 'Z_Ls', 'lib_size_factors', 'X_hat_mu', 'X_hat_theta', 'Z_As',
+                and potentially others depending on the model configuration and type.
+        :rtype: Dict
         """
         full_data = {'Z_Ls' : None, 'lib_size_factors' : None, 'X_hat_mu' : None, 'X_hat_theta': None,
                      'X_hat_pi' : None, 'Z_simples': None, 'Z_As' : None, 'Z_Xs' : None, 'px_dispersion' : None}
@@ -493,14 +509,14 @@ class Inference:
         """
         Generates histograms comparing expected and inferred library sizes from the given Preffect object.
 
-        Args:
-            pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.
-                This object should have access to training datasets for original expressions and inference results
-                to fetch inferred library sizes.
+        :param infer_obj: An instance of the Inference class containing necessary data and configurations.
+                      This object should have access to training datasets for original expressions and
+                      inference results to fetch inferred library sizes.
+        :type infer_obj: Inference
 
-        Returns:
-            matplotlib.pyplot: A matplotlib figure containing the histogram plots for both the expected and inferred
-                library sizes, which can be used for further processing or display.
+        :return: A matplotlib figure containing the histogram plots for both the observed and inferred
+                library sizes, and optionally a scatter plot comparing them.
+        :rtype: matplotlib.figure.Figure
         """
         pref_obj = infer_obj.parent
 
@@ -561,14 +577,14 @@ class Inference:
         """
         Generates scatter plots comparing expected and fitted expression of the first 50 genes of the endogenous set.
 
-        Args:
-            pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.
-                This object should have access to training datasets for original expressions and inference results
-                to fetch inferred library sizes.
+        :param infer_obj: An instance of the Inference class containing necessary data and configurations.
+                      This object should have access to training datasets for original expressions and
+                      inference results to fetch inferred library sizes.
+        :type infer_obj: Inference
 
-        Returns:
-            matplotlib.pyplot: A matplotlib figure containing the scatter plots for both the expected and inferred
-                read counts of the first 50 genes in the dataset, which can be used for further processing or display.
+        :return: A matplotlib figure containing the scatter plots for both the expected and inferred
+                read counts of the first 50 genes in the dataset.
+        :rtype: matplotlib.figure.Figure
         """
         pref_obj = infer_obj.parent
         #observed_counts = pref_obj.train_dataset.Rs[0]
@@ -625,13 +641,14 @@ class Inference:
         If >2 batches are provided, then all batches are compared to each other (e.g. batches 0+1, 0+2, and 1+2). 
         Since these comparisons will increase quadraticly, we limit comparisons to the first 5 batches.
 
-        Args:
-            pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.
-                This object should have access to training datasets for original expressions and inference results
-                to fetch inferred library sizes.
+        :param infer_obj: An instance of the Inference class containing necessary data and configurations.
+                      This object should have access to training datasets for original expressions and
+                      inference results to fetch inferred library sizes.
+        :type infer_obj: Inference
 
-        Returns:
-            matplotlib.pyplot: A matplotlib figure containing scatter plots.
+        :return: A matplotlib figure containing the scatter plots, or None if there is only one batch or if
+                batch correction is not being performed.
+        :rtype: Optional[matplotlib.figure.Figure]
         """
         
         pref_obj = infer_obj.parent
@@ -800,13 +817,13 @@ class Inference:
         """
         Generates a series plots to compare gene means, dispersion and library size.
 
-        Args:
-            pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.
-                This object should have access to training datasets for original expressions and inference results
-                to fetch inferred library sizes.
+        :param infer_obj: An instance of the Inference class containing necessary data and configurations.
+                      This object should have access to training datasets for original expressions and
+                      inference results to fetch inferred library sizes [[3]][[6]][[8]].
+        :type infer_obj: Inference
 
-        Returns:
-            matplotlib.pyplot: A matplotlib figure containing 4-plot figure.
+        :return: A matplotlib figure containing the 4-plot visualization.
+        :rtype: matplotlib.figure.Figure
         """
         pref_obj = infer_obj.parent
 
@@ -1012,13 +1029,12 @@ class Inference:
         """
         Saves a matplotlib figure to a specified directory as a PDF file.
 
-        Args:
-            vlib (matplotlib.figure.Figure): The matplotlib figure to be saved.
-            configs (dict): Configuration dictionary containing the output path.
-            filename (str, optional): The name of the file to save the figure as. Defaults to "needs_a_name.pdf".
+        :param vlib: The matplotlib figure to be saved.
+        :type vlib: matplotlib.figure.Figure
+        :param filename: The name of the file to save the figure as, including the file extension.
+        :type filename: str
 
-        Returns:
-            None: This function saves the figure to disk and does not return any values.
+        :raises PreffectError: If `filename` is not provided.
         """
         if filename is None:
             raise PreffectError('Must specify a filename to store a visualization.')

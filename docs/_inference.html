@@ -123,13 +123,19 @@
 <dt class="sig sig-object py" id="inference.Inference.concatenate_1d_minibatch">
 <span class="sig-name descname"><span class="pre">concatenate_1d_minibatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.concatenate_1d_minibatch" title="Permalink to this definition"></a></dt>
 <dd><p>Concatenates sublists of 1D tensors or lists from multiple mini-batches into a single list.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>L (list of list of torch.Tensor or list): A nested list where each inner list contains tensors or lists
-from a specific mini-batch. 
-full_idx (list of int): Indices representing the order or selection of elements to retain from the concatenated lists,
-adjusted for any padding that might have been applied during batching.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>L</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>Union</em><em>[</em><em>torch.Tensor</em><em>, </em><em>List</em><em>]</em><em>]</em><em>]</em>) -- A nested list where each inner list contains tensors or lists from a specific mini-batch.</p></li>
+<li><p><strong>full_idx</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) -- Indices representing the order or selection of elements to retain from the concatenated lists,
+adjusted for any padding that might have been applied during batching.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>list of list: A list where each sublist corresponds to a concatenated and trimmed set of data across all mini-batches.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list where each sublist corresponds to a concatenated and trimmed set of data across all mini-batches.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[List]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -138,14 +144,16 @@ adjusted for any padding that might have been applied during batching.</p>
 <dt class="sig sig-object py" id="inference.Inference.concatenate_2d_minibatch">
 <span class="sig-name descname"><span class="pre">concatenate_2d_minibatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">L</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.concatenate_2d_minibatch" title="Permalink to this definition"></a></dt>
 <dd><p>Concatenates sublists of tensors from multiple mini-batches into a single list of tensors.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>L (list of list of torch.Tensor): A list containing sublists, where each sublist consists of tensors
-from a particular mini-batch. These tensors typically represent some aspect of model outputs such as latent variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>L</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>torch.Tensor</em><em>]</em><em>]</em>) -- A list containing sublists, where each sublist consists of tensors from a particular mini-batch.</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>list of numpy.ndarray: A list of concatenated arrays. Each array in the list corresponds to a type of data</dt><dd><p>across all mini-batches (e.g., all latent variable tensors concatenated into a single array).</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of concatenated arrays. Each array in the list corresponds to a type of data across all
+mini-batches (e.g., all latent variable tensors concatenated into a single array).</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[numpy.ndarray]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -153,27 +161,44 @@ from a particular mini-batch. These tensors typically represent some aspect of m
 <dl class="py method">
 <dt class="sig sig-object py" id="inference.Inference.impute_values">
 <span class="sig-name descname"><span class="pre">impute_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.impute_values" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Impute missing values in the input data using the trained model.</p>
+<p>This method uses the simplest form of imputation by returning the reconstructed counts
+as an AnnData object. The imputed values are obtained from the model's output after
+running inference on the input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An AnnData object containing the imputed counts.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>AnnData</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If the inference has not been computed before calling this method.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="inference.Inference.reconstruct_from_minibatches">
 <span class="sig-name descname"><span class="pre">reconstruct_from_minibatches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batches</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.reconstruct_from_minibatches" title="Permalink to this definition"></a></dt>
 <dd><p>Reconstructs full dataset arrays from minibatches, combining the various outputs
 from the model's minibatch processing into unified structures.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>data (list of dict): List of dictionaries containing outputs from minibatches. Each dictionary</dt><dd><p>should have keys corresponding to different aspects of the model's output, such as
-'latent_variables', 'lib_size_factors', 'X_hat', etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>List</em><em>[</em><em>Dict</em><em>]</em>) -- List of dictionaries containing outputs from minibatches. Each dictionary should have keys
+corresponding to different aspects of the model's output, such as 'latent_variables',
+'lib_size_factors', 'X_hat', etc.</p></li>
+<li><p><strong>idx_batches</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>torch.Tensor</em><em>]</em><em>]</em>) -- List of tensors representing the indices of each minibatch within the overall dataset.</p></li>
+</ul>
 </dd>
-<dt>idx_batches (list of torch.Tensor): List of tensors representing the indices of each minibatch</dt><dd><p>within the overall dataset.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the reconstructed full dataset. The keys in this dictionary correspond to
+the unified arrays of outputs such as 'Z_Ls', 'lib_size_factors', 'X_hat_mu', 'X_hat_theta', 'Z_As',
+and potentially others depending on the model configuration and type.</p>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: A dictionary containing the reconstructed full dataset. The keys in this dictionary</dt><dd><p>correspond to the unified arrays of outputs such as 'Z_Ls', 'lib_size_factors', 'X_hat_mu',
-'X_hat_theta', 'Z_As', and potentially others depending on the model configuration and type.</p>
-</dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -181,26 +206,40 @@ from the model's minibatch processing into unified structures.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="inference.Inference.register_inference_run">
 <span class="sig-name descname"><span class="pre">register_inference_run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.register_inference_run" title="Permalink to this definition"></a></dt>
-<dd><p>Registers an inference instance within the parent object's inference dictionary. If the specified inference
-instance already exists and overwrite permission is not granted, it raises an error.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>None</p>
-</dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>PreffectError: If an inference object with the same name already exists in the parent's dictionary</dt><dd><p>and overwrite permission is set to False.</p>
+<dd><p>Register the current inference instance within the parent object's inference dictionary.</p>
+<p>This method checks if an inference instance with the same name already exists in the parent's
+inference dictionary. If it does not exist or if the overwrite permission is granted, the
+current inference instance is added to the dictionary using the specified inference key.
+If an instance with the same name already exists and overwrite permission is not granted,
+a <cite>PreffectError</cite> is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If an inference object with the same name already exists in the parent's
+dictionary and overwrite permission is set to False.</p>
 </dd>
 </dl>
-</dd>
-</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The parent object is assumed to be a Preffect object that has an <cite>inference_dict</cite> attribute.</p></li>
+<li><p>The <cite>configs_inf</cite> attribute of the current instance is used to determine the inference key</p></li>
+</ul>
+<p>and overwrite permission.
+- The current inference instance is copied using <cite>copy.copy()</cite> before being added to the
+parent's dictionary to avoid unintended modifications.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="inference.Inference.return_counts_as_anndata">
 <span class="sig-name descname"><span class="pre">return_counts_as_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.return_counts_as_anndata" title="Permalink to this definition"></a></dt>
 <dd><p>Converts the raw and inferred gene expression data into an AnnData format for further analysis.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>list of anndata.AnnData: A list of AnnData objects. Each AnnData object corresponds to a different tissue or condition
-from the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of AnnData objects, where each object represents a tissue or condition from the dataset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[anndata.AnnData]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -209,12 +248,15 @@ from the dataset.</p>
 <dt class="sig sig-object py" id="inference.Inference.return_latent_space_as_anndata">
 <span class="sig-name descname"><span class="pre">return_latent_space_as_anndata</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.return_latent_space_as_anndata" title="Permalink to this definition"></a></dt>
 <dd><p>Creates an AnnData object from the latent variables (Z_L, Z_A, Z_Simple) depending on the model type.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>anndata.AnnData: An AnnData object containing the latent representations as the main data matrix 'X'. If the
-model type is 'simple', 'Z_simples' is used. For 'single' or 'full' types, 'Z_As' is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of AnnData objects, where each object represents the latent space for a specific tissue or condition.</p>
 </dd>
-<dt>Raises:</dt><dd><p>PreffectError: If the model type is neither 'simple', 'single', nor 'full', an error is raised indicating
-that the method is not implemented for the given model type.</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[anndata.AnnData]</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If the model type is neither 'simple', 'single', nor 'full', an error is raised indicating that the method is not implemented for the given model type.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -235,8 +277,9 @@ across all mini-batches.</p>
 <dt class="sig sig-object py" id="inference.Inference.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.save" title="Permalink to this definition"></a></dt>
 <dd><p>Saves the inference results to a file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>results (dict): The dictionary containing the inference results to be saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> (<em>Dict</em>) -- The dictionary containing the inference results to be saved.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -245,12 +288,15 @@ across all mini-batches.</p>
 <dt class="sig sig-object py" id="inference.Inference.save_visualization">
 <span class="sig-name descname"><span class="pre">save_visualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vlib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.save_visualization" title="Permalink to this definition"></a></dt>
 <dd><p>Saves a matplotlib figure to a specified directory as a PDF file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>vlib (matplotlib.figure.Figure): The matplotlib figure to be saved.
-configs (dict): Configuration dictionary containing the output path.
-filename (str, optional): The name of the file to save the figure as. Defaults to &quot;needs_a_name.pdf&quot;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>vlib</strong> (<em>matplotlib.figure.Figure</em>) -- The matplotlib figure to be saved.</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- The name of the file to save the figure as, including the file extension.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>None: This function saves the figure to disk and does not return any values.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If <cite>filename</cite> is not provided.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -262,14 +308,18 @@ filename (str, optional): The name of the file to save the figure as. Defaults t
 The purpose is to see if batch correction was effective during training. 
 If &gt;2 batches are provided, then all batches are compared to each other (e.g. batches 0+1, 0+2, and 1+2). 
 Since these comparisons will increase quadraticly, we limit comparisons to the first 5 batches.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
-to fetch inferred library sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_obj</strong> (<a class="reference internal" href="#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- An instance of the Inference class containing necessary data and configurations.
+This object should have access to training datasets for original expressions and
+inference results to fetch inferred library sizes.</p>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A matplotlib figure containing the scatter plots, or None if there is only one batch or if
+batch correction is not being performed.</p>
 </dd>
-<dt>Returns:</dt><dd><p>matplotlib.pyplot: A matplotlib figure containing scatter plots.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[matplotlib.figure.Figure]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -295,17 +345,18 @@ to fetch inferred library sizes.</p>
 <dt class="sig sig-object py" id="inference.Inference.visualize_gene_scatterplot">
 <span class="sig-name descname"><span class="pre">visualize_gene_scatterplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_gene_scatterplot" title="Permalink to this definition"></a></dt>
 <dd><p>Generates scatter plots comparing expected and fitted expression of the first 50 genes of the endogenous set.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
-to fetch inferred library sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_obj</strong> (<a class="reference internal" href="#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- An instance of the Inference class containing necessary data and configurations.
+This object should have access to training datasets for original expressions and
+inference results to fetch inferred library sizes.</p>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A matplotlib figure containing the scatter plots for both the expected and inferred
+read counts of the first 50 genes in the dataset.</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>matplotlib.pyplot: A matplotlib figure containing the scatter plots for both the expected and inferred</dt><dd><p>read counts of the first 50 genes in the dataset, which can be used for further processing or display.</p>
-</dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -320,17 +371,18 @@ to fetch inferred library sizes.</p>
 <dt class="sig sig-object py" id="inference.Inference.visualize_lib_size">
 <span class="sig-name descname"><span class="pre">visualize_lib_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_lib_size" title="Permalink to this definition"></a></dt>
 <dd><p>Generates histograms comparing expected and inferred library sizes from the given Preffect object.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
-to fetch inferred library sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_obj</strong> (<a class="reference internal" href="#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- An instance of the Inference class containing necessary data and configurations.
+This object should have access to training datasets for original expressions and
+inference results to fetch inferred library sizes.</p>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A matplotlib figure containing the histogram plots for both the observed and inferred
+library sizes, and optionally a scatter plot comparing them.</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>matplotlib.pyplot: A matplotlib figure containing the histogram plots for both the expected and inferred</dt><dd><p>library sizes, which can be used for further processing or display.</p>
-</dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>
@@ -339,14 +391,17 @@ to fetch inferred library sizes.</p>
 <dt class="sig sig-object py" id="inference.Inference.visualize_libsize_and_dispersion">
 <span class="sig-name descname"><span class="pre">visualize_libsize_and_dispersion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#inference.Inference.visualize_libsize_and_dispersion" title="Permalink to this definition"></a></dt>
 <dd><p>Generates a series plots to compare gene means, dispersion and library size.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>pref_obj (Preffect): An instance of the Preffect class containing necessary data and configurations.</dt><dd><p>This object should have access to training datasets for original expressions and inference results
-to fetch inferred library sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>infer_obj</strong> (<a class="reference internal" href="#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- An instance of the Inference class containing necessary data and configurations.
+This object should have access to training datasets for original expressions and
+inference results to fetch inferred library sizes [[3]][[6]][[8]].</p>
 </dd>
-</dl>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A matplotlib figure containing the 4-plot visualization.</p>
 </dd>
-<dt>Returns:</dt><dd><p>matplotlib.pyplot: A matplotlib figure containing 4-plot figure.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>matplotlib.figure.Figure</p>
 </dd>
 </dl>
 </dd></dl>

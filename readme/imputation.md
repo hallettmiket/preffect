@@ -21,10 +21,15 @@ adata_imputed = inference_object.impute_values()
 ```
 
 This AnnData structure will consist of:
+
 `adata_imputed.X` - The estimated count values for all genes and samples (the mean of the estimated NB/ZINB for each gene-sample pair)
+
 `adata_imputed.layers["original_counts"]` - Count data used for training
+
 `adata_imputed.layers["X_hat_theta"]` - The estimated dispersion of the estimated NB/ZINB for each gene-sample pair
+
 `adata_imputed.layers["X_hat_pi"]` - The estimated dropout of the estimated ZINB for each gene-sample pair (will not exist if `model_likelihood` = "NB")
+
 `adata_imputed.obs` - Batch and/or Subtype information, if provided.
 
 ## Evaluating Imputation of Artificially Zeroed Counts

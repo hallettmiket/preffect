@@ -116,19 +116,21 @@ class FFPE_dataset(Dataset):
 
     def load_anndata(self):
         """
-        This loads anndata files (h5ad) from a given directory (specified in
-        configs). All files that have the name structure
-        *tau_x.h5ad where x is an integer are loaded x determines
-        the order of tissues.
+        Load AnnData files (h5ad) from a specified directory.
 
-        Args:
-            **anndata_dir:** location of all anndata files.
-            anntarget_dataset: specifies a specific dataset within anndata_dir
-            learning_type: species whether it is 'train', 'validation' or 'test'            
+        This method loads AnnData files from a directory specified in the `configs` dictionary. The expected file naming 
+        structure is `*tau_x.h5ad`, where `x` is an integer determining the order of tissues [[1]]. The loaded AnnData objects
+        are sorted based on the `tau` value [[2]].
 
-        Returns:
-            One anndata datastructure for each valid file identified
-            sorted by tau.
+        The method handles different learning types (`'train'`, `'validation'`, `'test'`, `'inference'`, `'impute_experiment'`)
+        and adjusts the file loading path accordingly. It also checks for the presence of adjacency matrices in the AnnData 
+        objects and defaults to a simple model if they are missing [[8]].
+
+        :return: A list of AnnData objects, sorted by the `tau` value.
+        :rtype: list of anndata.AnnData
+
+        .. note::
+            - The method expects the AnnData files to follow the `*tau_x.h5ad` naming convention.
         """
 
         learning_path = self.learning_type + "/"

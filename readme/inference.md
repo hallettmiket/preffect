@@ -35,7 +35,7 @@ configs = {
     ...
 }
 ```
-It is a requirement that 'batch' is included as a correction variable (through the `correct_vars` and 'vars_to_correct' parameters) during PREFFECT model training for this option to function properly.
+It is a requirement that 'batch' is included as a correction variable (through the `correct_vars` and `vars_to_correct` parameters) during PREFFECT model training for this option to function properly.
 
 ## Endogenous Inference is Performed Immediately After Training
 
@@ -129,9 +129,13 @@ Within `inference_object`, there are a series of useful functions. Here, we impo
 The Inference object include functions that generate summary plots of the results. However, these are automatically generated when the inference task is completed (see Inference Output for its location).
 
 visualize_lib_size.pdf - Draws histograms for the observed library size per sample, and the library size estimated by the model (the latter only appears if `infer_lib_size` is True).
+
 visualize_libsize_and_dispersion.pdf - Plots illustrating the estimated NB mean and dispersion across all genes.
+
 visualize_batch_adjustment.pdf - Scatterplots comparing the overall average of gene counts between batches (the file will not be generated if batch information is not provided).
+
 visualize_gene_scatterplot.pdf - 50 scatterplots displaying the observed and estimated counts of each sample on an individual gene basis (only the first 50 genes are displayed).
+
 visualize_latent_recons_umap.pdf - Two UMAPs which cluster the latent space and the reconstruction error after Inference. Clusters are coloured according to batch (if provided).
 
 

@@ -70,18 +70,23 @@ def _convert_counts_logits_to_mean_disp(total_count, logits):
 
 
 class Poisson(PoissonTorch):
-    """Poisson distribution.
+    r"""
+    Poisson distribution.
 
-    Parameters
-    ----------
-    rate
-        rate of the Poisson distribution.
-    validate_args
-        whether to validate input.
-    scale
-        Normalized mean expression of the distribution.
-        This optional parameter is not used in any computations,
-        but allows to store normalization expression levels.
+    The Poisson distribution is a discrete probability distribution that expresses the probability 
+    of a given number of events occurring in a fixed interval of time or space, if these events 
+    occur with a known constant mean rate and independently of the time since the last event.
+
+    The Poisson distribution is characterized by a single parameter :math:`\lambda` that represents
+    the average rate of occurrence. It is commonly used to model the number of times a random 
+    event occurs in a given amount of time, distance, area, etc.
+
+    :param rate: Rate parameter :math:`\lambda` of the Poisson distribution.
+    :type rate: torch.Tensor
+    :param validate_args: Whether to validate input arguments.
+    :type validate_args: bool, optional
+    :param scale: Normalized mean expression of the distribution.
+    :type scale: torch.Tensor, optional
     """
 
     def __init__(
@@ -95,37 +100,51 @@ class Poisson(PoissonTorch):
 
 
 class NegativeBinomial(Distribution):
-    r"""Negative binomial distribution.
+    r"""
+    Negative binomial distribution.
 
     One of the following parameterizations must be provided:
 
-    (1), (`total_count`, `probs`) where `total_count` is the number of
-    failures until the experiment is stopped and `probs` the success
-    probability. (2), (`mu`, `theta`) parameterization, which is the one
-    used by scvi-tools. These parameters respectively
-    control the mean and inverse dispersion of the distribution.
+    1. (`total_count`, `probs`) where:
+       - `total_count` is the number of failures until the experiment is stopped
+       - `probs` is the success probability
+    2. (`mu`, `theta`) parameterization, which is the one used by scvi-tools, where:
+       - `mu` controls the mean of the distribution
+       - `theta` controls the inverse dispersion of the distribution
 
-    In the (`mu`, `theta`) parameterization, samples from the negative
-    binomial are generated as follows:
+    In the (`mu`, `theta`) parameterization, samples from the negative binomial are generated as follows:
+    
+    
+    .. math::
 
-    1. :math:`w \sim \textrm{Gamma}(\underbrace{\theta}_{\text{shape}},
-        \underbrace{\theta/\mu}_{\text{rate}})`
-    2. :math:`x \sim \textrm{Poisson}(w)`
+        w \sim \textrm{Gamma}\left(\theta, \frac{\theta}{\mu}\right)
 
-    Parameters
-    ----------
-    total_count
-        Number of failures until the experiment is stopped.
-    probs
-        The success probability.
-    mu
-        Mean of the distribution.
-    theta
-        Inverse dispersion.
-    scale
-        Normalized mean expression of the distribution.
-    validate_args
-        Raise ValueError if arguments do not match constraints
+        x \sim \textrm{Poisson}(w)
+
+    :param total_count: Number of failures until the experiment is stopped.
+    :type total_count: torch.Tensor, optional
+    :param probs: The success probability.
+    :type probs: torch.Tensor, optional
+    :param mu: Mean of the distribution.
+    :type mu: torch.Tensor, optional
+    :param theta: Inverse dispersion.
+    :type theta: torch.Tensor, optional
+    :param scale: Normalized mean expression of the distribution.
+    :type scale: torch.Tensor, optional
+    :param validate_args: Raise ValueError if arguments do not match constraints.
+    :type validate_args: bool, optional
+    
+    .. attribute:: arg_constraints
+
+       Dictionary of argument constraints for the distribution parameters:
+       
+       - `mu` must be greater than or equal to 0
+       - `theta` must be greater than or equal to 0  
+       - `scale` must be greater than or equal to 0
+
+    .. attribute:: support
+
+       Constraints on the support of the distribution (non-negative integers).
     """
 
     arg_constraints = {
@@ -278,26 +297,30 @@ class ZeroInflatedNegativeBinomial(NegativeBinomial):
     In the (`mu`, `theta`) parameterization, samples from the negative
     binomial are generated as follows:
 
-    1. :math:`w \sim \textrm{Gamma}(\underbrace{\theta}_{\text{shape}},
-        \underbrace{\theta/\mu}_{\text{rate}})`
-    2. :math:`x \sim \textrm{Poisson}(w)`
+    .. math::
 
-    Parameters
-    ----------
-    total_count
-        Number of failures until the experiment is stopped.
-    probs
-        The success probability.
-    mu
-        Mean of the distribution.
-    theta
-        Inverse dispersion.
-    zi_logits
-        Logits scale of zero inflation probability.
-    scale
-        Normalized mean expression of the distribution.
-    validate_args
-        Raise ValueError if arguments do not match constraints
+        w \sim \textrm{Gamma}\left(\theta, \frac{\theta}{\mu}\right)
+
+        x \sim \textrm{Poisson}(w)
+        
+    where :math:`\theta` is the shape parameter and :math:`\frac{\theta}{\mu}` is the rate parameter of the Gamma distribution.
+
+
+    :param total_count: Number of failures until the experiment is stopped.
+    :type total_count: torch.Tensor, optional
+    :param probs: The success probability.
+    :type probs: torch.Tensor, optional
+    :param mu: Mean of the distribution.
+    :type mu: torch.Tensor, optional
+    :param theta: Inverse dispersion.
+    :type theta: torch.Tensor, optional
+    :param zi_logits: Logits scale of zero inflation probability.
+    :type zi_logits: torch.Tensor, optional
+    :param scale: Normalized mean expression of the distribution.
+    :type scale: torch.Tensor, optional
+    :param validate_args: Raise ValueError if arguments do not match constraints.
+    :type validate_args: bool, optional
+        
     """
 
     arg_constraints = {
@@ -424,22 +447,29 @@ def log_nb_positive(
 ):
     """Log likelihood (scalar) of a minibatch according to a nb model.
 
-    Parameters
-    ----------
-    x
-        data
-    mu
-        mean of the negative binomial (has to be positive support)
-            (shape: minibatch x vars)
-    theta
-        inverse dispersion parameter (has to be positive support)
-            (shape: minibatch x vars)
-    eps
-        numerical stability constant
-    log_fn
-        log function
-    lgamma_fn
-        log gamma function
+    :param x: The input data tensor.
+    :type x: torch.Tensor
+    :param mu: The mean parameter of the negative binomial distribution (must be positive).
+               Shape: (minibatch, vars)
+    :type mu: torch.Tensor  
+    :param theta: The inverse dispersion parameter of the negative binomial distribution (must be positive).
+                  Shape: (minibatch, vars)
+    :type theta: torch.Tensor
+    :param eps: A small constant for numerical stability (default: 1e-8).
+    :type eps: float, optional
+    :param log_fn: The logarithm function to use (default: torch.log).
+    :type log_fn: callable, optional
+    :param lgamma_fn: The log-gamma function to use (default: torch.lgamma).
+    :type lgamma_fn: callable, optional
+
+    :return: The log likelihood of the input data under the specified negative binomial distribution.
+    :rtype: torch.Tensor
+    
+    Returns
+    -------
+    torch.Tensor
+        The log likelihood of the input data under the specified negative binomial distribution.
+        
     """
     log = log_fn
     lgamma = lgamma_fn
@@ -469,25 +499,26 @@ def log_zinb_positive(
 ):
     """Log likelihood (scalar) of a minibatch according to a zinb model.
 
-    Parameters
-    ----------
-    x
-        Data
-    mu
-        mean of the negative binomial (has to be positive support)
-            (shape: minibatch x vars)
-    theta
-        inverse dispersion parameter (has to be positive support)
-            (shape: minibatch x vars)
-    pi
-        logit of the dropout parameter (real support) (shape: minibatch x vars)
-    eps
-        numerical stability constant
+    :param x: The observed count data.
+    :type x: torch.Tensor
+    :param mu: The mean parameter of the negative binomial component (must be positive).
+               Shape: (minibatch, vars)
+    :type mu: torch.Tensor
+    :param theta: The inverse dispersion parameter of the negative binomial component (must be positive).
+                  Shape: (minibatch, vars)
+    :type theta: torch.Tensor
+    :param pi: The logit of the zero-inflation probability parameter (has real support).
+               Shape: (minibatch, vars)  
+    :type pi: torch.Tensor
+    :param eps: A small constant for numerical stability (default: 1e-8).
+    :type eps: float
 
-    Notes
-    -----
-    We parametrize the bernoulli using the logits,
-        hence the softplus functions appearing.
+    :return: The log-likelihood of the input data under the ZINB model.
+    :rtype: torch.Tensor
+
+
+    .. note::
+        - We parametrize the Bernoulli component using logits, hence the appearance of the softplus function.
     """
 
     # theta is the dispersion rate.

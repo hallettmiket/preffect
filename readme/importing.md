@@ -47,7 +47,7 @@ Data to be used for training, validation, and testing are expected to be within 
     ├── anndata_test_data.tau_2.h5ad
 ```
 
-Data for multiple tissues must be provided as separate AnnData files and placed in the same sub-folder. File names must include the suffix ".tau_#.h5ad", where # is an integer that is assigned to a particular tissue. The lowest integer is selected by PREFFECT as the "primary" tissue of interest (the other tissue(s) feed information into the network). Files without a suffix are ignored. 
+Data for multiple tissues must be provided as separate AnnData files and placed in the same sub-folder. File names must include the suffix '_.tau_#.h5ad_', where # is an integer that is assigned to a particular tissue. The lowest integer is selected by PREFFECT as the "primary" tissue of interest (the other tissue(s) feed information into the network). Files without a suffix are ignored. 
 
 Each AnnData matrix is expected to indexed by the identical set of $N$ genes (when performing tasks across multiple tissues, or between train/validation/test data sets). 
 
@@ -144,13 +144,13 @@ $ print (adata_single.obsm['sample_sample_adj'])
 (40, 3)	1
 ...
 ```
-Use of the adjacency matrix can be disabled by setting the "adj_exist" parameter to False within __config.py_. PREFFECT will terminate if `adj_exist` is set to True but no adjacency matrix is found within the input AnnData `obsm`.
+Use of the adjacency matrix can be disabled by setting the `adj_exist` parameter to False within __config.py_. PREFFECT will terminate if `adj_exist` is set to True but no adjacency matrix is found within the input AnnData `obsm`.
 
 We recommend forming the adjacency matrix by computing Pearson correlation from transformed (e.g. square root and mean trimming) count data. When designing PREFFECT, we set sample-sample correlations >= 0.8 as an edge (set to 1; all other entries set to 0). However, we encourage users to estimate interactions/edges in whatever manner they deem appropriate for their data set.
 
 <a id="preparing_assoc"></a>
 ## Preparing expression matrices for multiple tissues
-PREFFECT allows users to include data from multiple tissues to inform the network, where each data set is provided as a separate AnnData file within the same subfolder (see: "AnnData File Path and Naming"). PREFFECT does not assume $M$ samples are similarly ordered across raw expression matrices, as some tissues may not be matched. Instead, PREFFECT automates the reorganization of samples across tissues in order to align all `X` expression matrices. 
+PREFFECT allows users to include data from multiple tissues to inform the network, where each data set is provided as a separate AnnData file within the same subfolder (see: [_Organization & Naming of AnnData Input Files_](#input_org)). PREFFECT does not assume $M$ samples are similarly ordered across raw expression matrices, as some tissues may not be matched. Instead, PREFFECT automates the reorganization of samples across tissues in order to align all `X` expression matrices. 
 
 To do this, PREFFECT requires a sample association table for multi-tissue datasets, which is included in the `obsm` of each AnnData input file named _sample_association_. This table is expected to have a column for each tissue to be evaluated that relates samples together by their sample name.
 
@@ -187,12 +187,11 @@ Here is an example of a 'sample_association' table with missing data:
 | ...            | ...            | ...             | ...              | 
 ```
 
-This table includes $(\tau)$ columns (e.g. $(\tau_1)$, $(\tau_2)$, $\ldots$), where the first column provides sample names in $X^{(\tau)}_{i, \cdot}$ order (for that particular AnnData structure, e.g. $(\tau_1)$), with each subsequent column providing the name of its matching pair in the separate AnnData structure (e.g. $(\tau_2)$). If a sample is unmatched (i.e. the sample had too poor QC to sequence), then $NaN$ should be entered in its place. 
+This table includes $(\tau)$ columns (e.g. $(\tau_1)$, $(\tau_2)$, $\ldots$), where the first column provides sample names in $X^{(\tau)}_{i, \cdot}$ order (for that particular AnnData structure, e.g. $(\tau\_1)$), with each subsequent column providing the name of its matching pair in the separate AnnData structure (e.g. $(\tau\_2)$). If a sample is unmatched (i.e. the sample had too poor QC to sequence), then $NaN$ should be entered in its place. 
 
-Each tissue should have its own _sample_association_ table. AnnData requires that the number of rows for each table within `obsm` must equal to the number of samples in the `X` count matrix. The row order of _sample_association_ should also match the order of the AnnData structure it is being added to. If a particular sample was not sequenced in tissue $(\tau_1)$, then it will not appear in the $(\tau_1)$ _sample_association_ table. PREFFECT therefore requires that all input AnnData files have their own independent _sample_association_ table to have a record of every sample. 
+Each tissue should have its own _sample_association_ table. AnnData requires that the number of rows for each table within `obsm` must equal to the number of samples in the `X` count matrix. The row order of _sample_association_ should also match the order of the AnnData structure it is being added to. If a particular sample was not sequenced in tissue $(\tau\_1)$, then it will not appear in the $(\tau\_1)$ _sample_association_ table. PREFFECT therefore requires that all input AnnData files have their own independent _sample_association_ table to have a record of every sample. 
 
-The _sample_association_ table is used by PREFFECT to re-arrange the sample order of the expression tables (along with tables in \textit{obs} and \textit{obsm}) to ensure matched $M$ samples are identically ordered. 
-A placeholder entry (which we colloquially call a "ghost" sample) is added to the $X^{(\tau)}_{i, \cdot}$ matrix with the average expression for each gene (where all metadata for this sample appears as $NaN$) to maintain its structure. These "ghost" samples are ignored when computing loss and accuracy measures. 
+The _sample_association_ table is used by PREFFECT to re-arrange the sample order of the expression tables (along with tables in `obs` and `obsm`) to ensure matched $M$ samples are identically ordered. A placeholder entry (which we colloquially call a "ghost" sample) is added to the $X^{(\tau)}_{i, \cdot}$ matrix with the average expression for each gene (where all metadata for this sample appears as $NaN$) to maintain its structure. These "ghost" samples are ignored when computing loss and accuracy measures. 
 
 
 ##
