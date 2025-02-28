@@ -71,7 +71,7 @@ PREFFECT allows the user to perform a series of tasks to clean, impute and evalu
 
 ## Differential Expression (In Development)
 
-# [Code Reference](https://hallettmiket.github.io/preffect/)
+## [Code Reference](https://hallettmiket.github.io/preffect/)
 
 Additional documentation detailing the specific contents (i.e., functions, classes, modules) of PREFFECT. It is meant to serve developers or advanced users who need to understand the code’s capabilities and usage.
 
