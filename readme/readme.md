@@ -20,7 +20,7 @@ PREFFECT is designed to accomplish the following tasks:
 **Aryamaan Saha -**
 *Department of Biological Engineering and Data Science, Indian Institute of Technology, Madras, India*
 
-**S Trabinjac -**
+**Sabina Trabinjac -**
 *Department of Radiation Oncology, Sunnybrook Health Sciences Centre
 Department of Laboratory Medicine and Pathobiology, University of Toronto Toronto, Canada*
 
@@ -70,3 +70,9 @@ PREFFECT allows the user to perform a series of tasks to clean, impute and evalu
 ## [Transfer Learning](./transfer_learning.md)
 
 ## Differential Expression (In Development)
+
+# [Code Reference](https://hallettmiket.github.io/preffect/)
+
+Additional documentation detailing the specific contents (i.e., functions, classes, modules) of PREFFECT. It is meant to serve developers or advanced users who need to understand the code’s capabilities and usage.
+
+https://hallettmiket.github.io/preffect/

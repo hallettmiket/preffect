@@ -1175,11 +1175,16 @@ class VAE(nn.Module):
         Removes ghost samples from tensors, distributions and lists of 
         vectors and matrices
 
-        Args:
-            adj_Rs_batch (tensor): Expression of current minibatch of smaples
-            idx_batch (list of indices): Indices of samples in the minibatch
-            dataset: Dataset created in _data_loader.py
-            adjusted_generative_outputs: Output from the VAE
+        :param adj_Rs_batch: Expression tensor of the current minibatch of samples.
+        :type adj_Rs_batch: torch.Tensor
+        :param idx_batch: List of indices of samples in the minibatch.
+        :type idx_batch: List[int]
+        :param dataset: Dataset object created in `_data_loader.py`.
+        :type dataset: Dataset
+        :param adjusted_generative_outputs: Output dictionary from the VAE containing tensors, distributions, and lists of vectors and matrices.
+        :type adjusted_generative_outputs: Dict[str, Union[torch.distributions.Distribution, List[torch.Tensor], Dict[str, torch.Tensor]]]
+
+        :return: None
         """
 
         def mask_and_delete(target, idxs_master_order):
@@ -1187,19 +1192,17 @@ class VAE(nn.Module):
             Filters the target object by removing elements at specified indices. This function
             can handle different types of objects like tensors, distributions, and lists of tensors.
 
-            Args:
-                target (torch.Tensor | torch.distributions.Distribution | list): The object to filter.
-                    This can be a single tensor, a distribution, or a list of tensors.
-                idxs_master_order (list): Indices of the elements to be removed from the target. 
-                    This list or lists within it should correspond to the batch or sub-batch indices
-                    in the target object.
+            :param target: The object to filter. This can be a single tensor, a list of distributions, or a list of tensors.
+            :type target: Union[torch.Tensor, List[torch.distributions.Distribution], List[torch.Tensor]]
+            :param idxs_master_order: List of indices of the elements to be removed from the target.
+                                    Each sublist should correspond to the batch or sub-batch indices in the target object.
+            :type idxs_master_order: List[List[int]]
 
-            Returns:
-                The modified target with elements at the specified indices removed. The type of the
-                returned object matches the input type (tensor, distribution, or list of tensors).
+            :return: The modified target with elements at the specified indices removed.
+                    The type of the returned object matches the input type (tensor, list of distributions, or list of tensors).
+            :rtype: Union[torch.Tensor, List[torch.distributions.Distribution], List[torch.Tensor]]
 
-            Raises:
-                ValueError: If the input target type is not supported.
+            :raises ValueError: If the input target type is not supported.
             """
 
             # case where it's an expression matrix
@@ -1315,16 +1318,17 @@ class VAE(nn.Module):
         """
         Computes a loss based on the Euclidean distance between centroids of each experimental batch in the latent space.
 
-        Args:
-            counts (List[torch.Tensor]): List of tensors containing the latent representations per batch. Each element
-                corresponds to a different tissue or condition and has shape [num_samples, latent_dim].
-            Ks (List[torch.Tensor]): List of tensors where the first column indicates batch membership for each sample in `counts`.
+        :param counts: List of tensors containing the latent representations per batch. Each element corresponds to a
+                   different tissue or condition and has shape [num_samples, latent_dim].
+        :type counts: List[torch.Tensor]
+        :param Ks: List of tensors where the first column indicates batch membership for each sample in `counts`.
                 Each tensor corresponds to a different tissue or condition and has shape [num_samples, num_batches].
+        :type Ks: List[torch.Tensor]
 
-        Returns:
-            torch.Tensor: A tensor containing the mean of the upper triangular non-zero Euclidean distances between batch
-                centroids for each tissue or condition. Each element in the tensor corresponds to the computed distance for
-                one of the tissues or conditions.
+        :return: A tensor containing the mean of the upper triangular non-zero Euclidean distances between batch
+                centroids for each tissue or condition. Each element in the tensor corresponds to the computed
+                distance for one of the tissues or conditions.
+        :rtype: torch.Tensor
         """
         batch_correction_terms = []
         for tissue in range(self.calT):
@@ -1361,22 +1365,27 @@ class VAE(nn.Module):
         """
         Calculates and records various losses during training or validation.
 
-        Args:
-            Rs_batch (list of torch.Tensor): Raw expression matrices for the current minibatch, where each tensor
-                corresponds to a batch from a specific condition or tissue.
-            idx_batch (list of int): List of indices corresponding to samples in the current minibatch.
-            adj_batch (list of torch.Tensor): Adjacency matrices for samples in the minibatch, applicable for models
-            considering sample-sample interactions.
-            dataset (FFPE_Dataset): Dataset object providing access to dataset properties and helper methods.
-            prefix (str): Indicates the phase of the model ('train' or 'val') during which the loss is being computed.
-            epoch (int): The current epoch number in the training/validation process.
-            generative_outputs (dict): Outputs from the forward pass of the VAE model including latent variables and
-            other intermediate data.
-            losses (dict): Dictionary to record and update the computed losses over training epochs.
+        :param Rs_batch: Raw expression matrices for the current minibatch, where each tensor corresponds to a batch from a specific condition or tissue.
+        :type Rs_batch: List[torch.Tensor]
+        :param idx_batch: List of indices corresponding to samples in the current minibatch.
+        :type idx_batch: List[int]
+        :param adj_batch: Adjacency matrices for samples in the minibatch, applicable for models considering sample-sample interactions.
+        :type adj_batch: List[torch.Tensor]
+        :param dataset: Dataset object providing access to dataset properties and helper methods.
+        :type dataset: FFPE_Dataset
+        :param prefix: Indicates the phase of the model ('train' or 'val') during which the loss is being computed.
+        :type prefix: str
+        :param epoch: The current epoch number in the training/validation process.
+        :type epoch: int
+        :param generative_outputs: Outputs from the forward pass of the VAE model including latent variables and other intermediate data.
+        :type generative_outputs: Dict[str, Any]
+        :param losses: Dictionary to record and update the computed losses over training epochs.
+        :type losses: Dict[str, float]
+        :param log: Logger object for logging the computed losses.
+        :type log: Logger
 
-        Returns:
-            torch.Tensor: The average loss computed across different metrics for the current minibatch, which is also
-                logged and stored within the provided 'losses' dictionary.
+        :return: The average loss computed across different metrics for the current minibatch.
+        :rtype: torch.Tensor
         """
 
         model_type = self.configs['type']
@@ -1432,14 +1441,13 @@ class VAE(nn.Module):
             tensors, and returns a stacked tensor of KL divergence values. This term helps regularize the latent
             space by measuring how closely the approximate posterior matches the prior distribution.
 
-            Args:
-                mu_values (list of torch.Tensor): A list of mean tensors, each representing the latent distribution
-                    mean for a particular sample (or element in a batch).
-                logvar_values (list of torch.Tensor): A list of log-variance tensors, each representing the latent
-                    distribution log-variance for a particular sample.
+            :param mu_values: A list of mean tensors, each representing the latent distribution mean for a particular sample.
+            :type mu_values: List[torch.Tensor]
+            :param logvar_values: A list of log-variance tensors, each representing the latent distribution log-variance for a particular sample.
+            :type logvar_values: List[torch.Tensor]
 
-            Returns:
-                torch.Tensor: A tensor containing the KL divergence values for each sample.
+            :return: A tensor containing the KL divergence values for each sample.
+            :rtype: torch.Tensor
             """
 
             def kl_divergence(mu, logvar):
@@ -1492,12 +1500,13 @@ class VAE(nn.Module):
             Calculate the Mean Squared Error (MSE) loss between the predicted
             and true library sizes
 
-            Args:
-                lib_pred (torch.Tensor): Predicted library sizes
-                lib_orig (torch.Tensor): Target (actual) library sizes
+            :param lib_pred: Predicted library sizes.
+            :type lib_pred: torch.Tensor
+            :param lib_orig: Target (actual) library sizes.
+            :type lib_orig: torch.Tensor
 
-            Returns:
-                torch.Tensor: Scalar tensor representing the MSE loss.
+            :return: Scalar tensor representing the MSE loss.
+            :rtype: torch.Tensor
             """
             lib_loss_fn = nn.MSELoss()
             lib_pred = lib_pred.squeeze()  # to make torch shape [mini_batch_size]
@@ -1516,19 +1525,19 @@ class VAE(nn.Module):
             """
             Calculates the binary cross-entropy loss between original and reconstructed graph adjacency matrices.
 
-            Args:
-                graphs_orig (list of torch.Tensor): Original adjacency matrices, one for each graph in the minibatch.
-                graphs_hat (list of torch.Tensor): Reconstructed adjacency matrices, corresponding to `graphs_orig`.
-                idx_batch (list of torch.Tensor): Indices of the minibatch samples, used to filter and map entries when `all` is False.
-                datset (Dataset): Dataset object that may contain additional information or utilities such as ghost indices 
-                                or mask indices for processing adjacency matrices.
-                all (bool, optional): If True, the loss is calculated across all elements of each graph. If False, the loss 
-                                    calculation is masked to consider only specific elements according to the dataset's 
-                                    specifications. Defaults to True.
+            :param graphs_orig: Original adjacency matrices, one for each graph in the minibatch.
+            :type graphs_orig: List[torch.Tensor]
+            :param graphs_hat: Reconstructed adjacency matrices, corresponding to `graphs_orig`.
+            :type graphs_hat: List[torch.Tensor]
+            :param idx_batch: Indices of the minibatch samples, used to filter and map entries when `all` is False.
+            :type idx_batch: List[torch.Tensor]
+            :param datset: Dataset object that may contain additional information or utilities such as ghost indices or mask indices for processing adjacency matrices.
+            :type datset: Dataset
+            :param all: If True, the loss is calculated across all elements of each graph. If False, the loss calculation is masked to consider only specific elements according to the dataset's specifications. Defaults to True.
+            :type all: bool, optional
 
-            Returns:
-                torch.Tensor: A tensor containing the computed binary cross-entropy loss for each graph in the minibatch.
-                            The losses are stacked into a single tensor.
+            :return: A tensor containing the computed binary cross-entropy loss for each graph in the minibatch. The losses are stacked into a single tensor.
+            :rtype: torch.Tensor
             """
 
             # all must be true if masking is off or if lambda_edges is zero
@@ -1609,19 +1618,16 @@ class VAE(nn.Module):
             Calculate the negative log-likelihood (NLL) between the predicted
             and true gene expressions
     
-            Parameters:
-            X_hat (list of tensors): Decoded expression of minibatch
-            adj_R_batch (tensor): Expression of current minibatch of samples
-            all (Boolean): To perform calculation on the full matrix or just
-                just the masked values
-   
-            Returns:
-            - torch.Tensor: If 'all' is True, tensor [mini-batch M,N] with NLL
-              for each gene in each sample returned. If False, a tensor
-              containing NLL only for masked values is returned
+            :param X_hat: Decoded expression of the minibatch, represented as a list of tensors.
+            :type X_hat: List[torch.Tensor]
+            :param adj_R_batch: Expression of the current minibatch of samples.
+            :type adj_R_batch: torch.Tensor
+
+            :return: Tensor containing the NLL loss for each gene in each sample of the minibatch.
+            :rtype: torch.Tensor
     
-            Notes:
-            - Ghost samples are eliminated from the calculation
+            .. note::
+                - Ghost samples are eliminated from the calculation.
             """
             return X_hat.log_prob(adj_R_batch)
 
@@ -1630,11 +1636,11 @@ class VAE(nn.Module):
             Computes the Jensen–Shannon divergence between a given probability distribution X
             and a corresponding uniform distribution of the same length.
 
-            Args:
-                X (torch.Tensor): Probability distribution to compare.
+            :param X: Probability distribution to compare against the uniform distribution. It can be either a PyTorch tensor or a NumPy array.
+            :type X: Union[torch.Tensor, np.ndarray]
 
-            Returns:
-                float: The Jensen–Shannon divergence value.
+            :return: The Jensen-Shannon divergence value between the input distribution and the uniform distribution.
+            :rtype: float
             """
             if torch.is_tensor(X):
                 X = X.clone().detach().cpu().numpy()
@@ -1649,12 +1655,11 @@ class VAE(nn.Module):
             """
             Computes the mean Jensen–Shannon (JS) divergence across multiple distributions.
 
-            Args:
-                Y: A list of probability distributions. Each element of Y 
-                    represents a single distribution.
+            :param Y: A list of probability distributions. Each element of `Y` represents a single distribution and should be a NumPy array.
+            :type Y: List[np.ndarray]
 
-            Returns:
-                float: The mean JS divergence value across all rows in Y.
+            :return: The mean JS divergence value across all distributions in `Y`.
+            :rtype: float
             """
             js_divs = []
             for row in Y:
@@ -1712,13 +1717,13 @@ class VAE(nn.Module):
             """
             Adjust losses by multiplying it with given scalars
     
-            Parameters:
-            - param (list of float): A list of scalar values
-            - raw_kl (list of torch.Tensor): A list of tensors representing
-              loss values
+            :param param: A list of scalar values used to adjust the loss values.
+            :type param: List[float]
+            :param raw_kl: A list of tensors representing loss values to be adjusted.
+            :type raw_kl: List[torch.Tensor]
 
-            Returns:
-            - torch.Tensor: A stacked tensor of adjusted loss values
+            :return: A stacked tensor containing the adjusted loss values.
+            :rtype: torch.Tensor
             """
             adjusted_loss = []
             for tensor, scalar in zip(raw_kl, param):
