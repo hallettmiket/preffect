@@ -98,19 +98,35 @@
 <dt class="sig sig-object py" id="wrappers._ZINBEstimator.ZINBEstimator">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wrappers._ZINBEstimator.</span></span><span class="sig-name descname"><span class="pre">ZINBEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_pi_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1e-05,</span> <span class="pre">0.0001,</span> <span class="pre">0.001,</span> <span class="pre">0.005,</span> <span class="pre">0.01,</span> <span class="pre">0.1,</span> <span class="pre">0.5,</span> <span class="pre">0.9]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._ZINBEstimator.ZINBEstimator" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for estimating the parameters of a Zero-Inflated Negative Binomial (ZINB) distribution from count data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>initial_pi_values</strong> (<em>list</em><em>, </em><em>optional</em>) -- Initial values of pi to perform a grid search to find the optimal 'pi' parameter.</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="wrappers._ZINBEstimator.ZINBEstimator.compute_zinb_params">
 <span class="sig-name descname"><span class="pre">compute_zinb_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">counts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._ZINBEstimator.ZINBEstimator.compute_zinb_params" title="Permalink to this definition"></a></dt>
 <dd><p>Estimates the Zero-Inflated Negative Binomial (ZINB) parameters and AIC from a given set of count data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>counts</strong> (<em>numpy.ndarray</em>) -- A set of counts to estimate ZINB parameters from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing the estimated parameters (mu, theta, pi, aic) where:</p>
+<ul class="simple">
+<li><p>mu: The mean of the Negative Binomial component.</p></li>
+<li><p>theta: The dispersion parameter of the Negative Binomial component.</p></li>
+<li><p>pi: The zero-inflation parameter.</p></li>
+<li><p>aic: The Akaike Information Criterion value for the fit.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 <dl class="simple">
-<dt>Parameters:</dt><dd><p>counts (numpy array): A set of counts to estimate ZINB parameters from.</p>
-</dd>
-<dt>Returns:</dt><dd><p>tuple: A tuple containing the estimated parameters (mu, theta, pi, aic) where:
-mu: The mean of the Negative Binomial component.
-theta: The dispersion parameter of the Negative Binomial component.
-pi: The zero-inflation parameter.
-aic: The Akaike Information Criterion value for the fit.</p>
-</dd>
 <dt>Usage:</dt><dd><p>zinb_estimator = ZINBEstimator()
 mu, theta, pi, aic = zinb_estimator.compute_zinb_params(counts)</p>
 </dd>

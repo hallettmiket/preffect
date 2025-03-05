@@ -97,10 +97,15 @@
 <dt class="sig sig-object py" id="preffect_cli.read_config_file">
 <span class="sig-prename descclassname"><span class="pre">preffect_cli.</span></span><span class="sig-name descname"><span class="pre">read_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_cli.read_config_file" title="Permalink to this definition"></a></dt>
 <dd><p>Reads and parses a configuration file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>file_path (str): The path to the configuration file (_config.py) to be read.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) -- The path to the configuration file (_config.py) to be read.</p>
 </dd>
-<dt>Returns:</dt><dd><p>ConfigParser: A ConfigParser object containing the data from the configuration file.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A <cite>ConfigParser</cite> object containing the data from the configuration file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>configparser.ConfigParser</p>
 </dd>
 </dl>
 </dd></dl>
@@ -109,16 +114,20 @@
 <dt class="sig sig-object py" id="preffect_cli.str2bool">
 <span class="sig-prename descclassname"><span class="pre">preffect_cli.</span></span><span class="sig-name descname"><span class="pre">str2bool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_cli.str2bool" title="Permalink to this definition"></a></dt>
 <dd><p>Converts a string representation of truth to a boolean.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>v (str or bool): The value to convert into a boolean. Accepts 'yes', 'true', 't',</dt><dd><p>'y', '1', and their respective false values 'no', 'false', 'f', 'n', '0'.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em><em> or </em><em>bool</em>) -- The value to convert into a boolean. Accepts 'yes', 'true', 't', 'y', '1', and their respective
+false values 'no', 'false', 'f', 'n', '0'. Also accepts and returns a boolean value directly if
+<cite>v</cite> is already of type boolean.</p>
 </dd>
-</dl>
-<p>Accepts and returns a boolean value directly if 'v' is already of type boolean.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The boolean value corresponding to the input.</p>
 </dd>
-<dt>Returns:</dt><dd><p>bool: The boolean value corresponding to the input.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
 </dd>
-<dt>Raises:</dt><dd><p>argparse.ArgumentTypeError: If the input string does not correspond to expected true or false values.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>argparse.ArgumentTypeError</strong> -- If the input string does not correspond to expected true or false values.</p>
 </dd>
 </dl>
 </dd></dl>

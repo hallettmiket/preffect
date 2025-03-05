@@ -21,19 +21,19 @@ class Preffect:
         Initializes a new Preffect instance by either preparing a new session or 
         restoring from an existing session based on the `existing_session` flag.
 
-        Args:
-            forward_log (logging.Logger): Logger used for outputting information 
-                during the setup and operational phases.
-            existing_session (bool, optional): A flag to indicate whether to restore 
-                an existing session. Defaults to False.
-            configs (dict, optional): Configuration parameters used to set up the 
-                session. This includes paths, model settings, and other operational
-                parameters. If not provided, defaults are assumed or an error is raised.
+        :param forward_log: Logger used for outputting information during the setup and operational phases.
+        :type forward_log: logging.Logger
+        :param existing_session: A flag to indicate whether to restore an existing session. If True, the method attempts to
+                                restore from a previous session using the provided `configs`. If False, a new session is
+                                prepared. Defaults to False.
+        :type existing_session: bool, optional
+        :param configs: Configuration parameters used to set up the session. This includes paths, model settings, and other
+                        operational parameters. If not provided, default values are assumed or an error is raised.
+        :type configs: dict, optional
 
-        Raises:
-            Exception: Exceptions can be raised depending on the failure modes in either 
-                `prep_from_existing_session` or `prep_new_session`. This might include
-                file not found, access violations, or configuration errors.
+        :raises Exception: Exceptions can be raised depending on the failure modes in either `prep_from_existing_session` or
+                        `prep_new_session`. This might include file not found errors, access violations, or configuration
+                        errors.
         """
         if existing_session:
             self.prep_from_existing_session(configs)
@@ -47,15 +47,14 @@ class Preffect:
         Prepares a new session for training by setting up datasets, model, optimizer, 
         and other configurations necessary for training and validation.
 
-        Args:
-            configs (dict): Configuration parameters including dataset paths, model settings, 
-                            training parameters, and device settings.
-            forward_log (logging.Logger): Logger used for recording operational messages 
-                                        and errors during the setup process.
+        :param configs: Configuration parameters including dataset paths, model settings, 
+                    training parameters, and device settings.
+        :type configs: dict
+        :param forward_log: Logger used for recording operational messages and errors during the setup process.
+        :type forward_log: logging.Logger
 
-        Raises:
-            Exception: Raises an exception if there are misconfigurations, file path errors, 
-                    or other issues during the initialization of datasets or model components.
+        :raises Exception: Raises an exception if there are misconfigurations, file path errors, 
+                        or other issues during the initialization of datasets or model components.
         """
         self.configs = configs.copy()
         set_seeds(configs['seed'])
@@ -106,16 +105,12 @@ class Preffect:
         """
         Restores the Preffect object from a saved session file.
 
-        Args:
-            configs (dict): Configuration dictionary containing necessary paths and 
-                            settings, which should include keys for 'output_path' and 
-                            'endogenous_file_name' to construct the file path.
-            
+        :param configs: Configuration dictionary containing necessary paths and settings, which should
+                    include keys for 'output_path' and 'input_existing_session' to construct the file path.
+        :type configs: dict
 
-        Raises:
-            Exception: An error occurred while trying to restore the session from the 
-                    file, which could be due to missing file, corrupted data, or 
-                    incompatible configurations.
+        :raises PreffectError: If an error occurs while trying to restore the session from the file, which
+                            could be due to a missing file, corrupted data, or incompatible configurations.
         """
         try:
             loaded_session = torch.load(os.path.join(configs['output_path'], configs['input_existing_session'] + '.pth'))
@@ -154,11 +149,11 @@ class Preffect:
         This method searches the internal dictionary that stores inference objects and returns
         the object associated with the given name if it exists. If no such object exists, it returns None.
 
-        Args:
-            ir_name (str): The name of the inference object to retrieve.
+        :param ir_name: The name of the inference object to retrieve.
+        :type ir_name: str
 
-        Returns:
-            The inference object associated with `ir_name` if it exists in the dictionary; otherwise, None.
+        :return: The inference object associated with `ir_name` if it exists in the dictionary; otherwise, None.
+        :rtype: Optional[Any]
         """
         if ir_name in self.inference_dict:
             return self.inference_dict[ir_name]
@@ -169,11 +164,10 @@ class Preffect:
         """
         Saves the FFPE_dataset and trained model to a file on disk.
 
-        Args:
-            fname (str, optional): The filename under which to save the model. If not specified,
-                                the model is saved under the 'nick_name' specified in the
-                                configuration concatenated with '.pth'. The file is saved
-                                in the directory specified by 'output_path' in the configuration.
+        :param fname: The filename under which to save the model. If not specified, the model is saved under
+                  the 'input_existing_session' specified in the configuration concatenated with '.pth'.
+                  The file is saved in the directory specified by 'output_path' in the configuration.
+        :type fname: str, optional
         """
 
         if fname is None:
@@ -189,13 +183,14 @@ class Preffect:
         """
         Extracts a single batch from the given batches dictionary based on the specified index.
 
-        Args:
-            batches (dict): A dictionary where each key maps to a list or array of batched data.
-            idx (int): The index of the data to extract from each batch list in the batches dictionary.
+        :param batches: A dictionary where each key maps to a list or array of batched data.
+        :type batches: Dict[str, List[Any]]
+        :param idx: The index of the data to extract from each batch list in the `batches` dictionary.
+        :type idx: int
 
-        Returns:
-            dict: A dictionary containing the extracted data for each key in the input batches dictionary.
+        :return: A dictionary containing the extracted data for each key in the input `batches` dictionary.
                 The keys remain the same, but the values are the data items at the specified index.
+        :rtype: Dict[str, Any]
         """
         batch = {}
         for key, value in batches.items():
@@ -207,14 +202,10 @@ class Preffect:
         This function initializes the model, prepares data loaders for training and validation sets, 
         and performs  training of VAE model for FFPE dataset.
 
-        Args:
-            forward_log (Logger): From _logger_config.py
+        :param forward_log: Logger object used for logging training progress and metrics.
+        :type forward_log: logging.Logger
 
-        Raises:
-            AssertionError: If the configuration sanity checks fail from _config.py
-
-        Returns:
-            None. 
+        :raises AssertionError: If the configuration sanity checks fail.
         """
 
 

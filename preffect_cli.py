@@ -28,11 +28,11 @@ def read_config_file(file_path):
     """
     Reads and parses a configuration file.
 
-    Args:
-        file_path (str): The path to the configuration file (_config.py) to be read.
+    :param file_path: The path to the configuration file (_config.py) to be read.
+    :type file_path: str
 
-    Returns:
-        ConfigParser: A ConfigParser object containing the data from the configuration file.
+    :return: A `ConfigParser` object containing the data from the configuration file.
+    :rtype: configparser.ConfigParser
     """
     config = configparser.ConfigParser()
     config.read(file_path)
@@ -42,16 +42,15 @@ def str2bool(v):
     """
     Converts a string representation of truth to a boolean.
 
-    Args:
-        v (str or bool): The value to convert into a boolean. Accepts 'yes', 'true', 't',
-            'y', '1', and their respective false values 'no', 'false', 'f', 'n', '0'. 
-        Accepts and returns a boolean value directly if 'v' is already of type boolean. 
+    :param v: The value to convert into a boolean. Accepts 'yes', 'true', 't', 'y', '1', and their respective
+              false values 'no', 'false', 'f', 'n', '0'. Also accepts and returns a boolean value directly if
+              `v` is already of type boolean.
+    :type v: str or bool
 
-    Returns:
-        bool: The boolean value corresponding to the input.
+    :return: The boolean value corresponding to the input.
+    :rtype: bool
 
-    Raises:
-        argparse.ArgumentTypeError: If the input string does not correspond to expected true or false values.
+    :raises argparse.ArgumentTypeError: If the input string does not correspond to expected true or false values.
     """
     if isinstance(v, bool):
         return v

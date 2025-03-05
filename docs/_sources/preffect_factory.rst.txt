@@ -1,5 +1,5 @@
 preffect_factory.py module
-=========================
+==========================
 
 .. automodule:: preffect_factory
    :members:

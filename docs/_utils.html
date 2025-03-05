@@ -120,12 +120,20 @@
 <dt class="sig sig-object py" id="utils.To">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">To</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.To" title="Permalink to this definition"></a></dt>
 <dd><p>Transfers each object in the provided dictionary to the specified device using PyTorch's <cite>.to()</cite> method.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dev (torch.device or str): The target device to which the tensors or models should be moved.
-objects (dict): A dictionary where each key-value pair consists of a name (key) and a PyTorch tensor or model
-(value). The value can either be a single tensor/model or a list of tensors/models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dev</strong> (<em>torch.device</em><em> or </em><em>str</em>) -- The target device to which the tensors or models should be moved. It can be a <cite>torch.device</cite> object
+or a string specifying the device (e.g., 'cpu', 'cuda').</p></li>
+<li><p><strong>objects</strong> (<em>dict</em>) -- A dictionary where each key-value pair consists of a name (key) and a PyTorch tensor, model, or
+a list of tensors/models (value) [[6]][[7]][[8]].</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>dict: A dictionary with the same keys as the input but with each tensor or model moved to the specified device.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary with the same keys as the input, but with each tensor or model moved to the specified device.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -134,11 +142,19 @@ objects (dict): A dictionary where each key-value pair consists of a name (key) 
 <dt class="sig sig-object py" id="utils.ZINB_expected_value">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">ZINB_expected_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.ZINB_expected_value" title="Permalink to this definition"></a></dt>
 <dd><p>Calculate the expected value from a Zero-Inflated Negative Binomial (ZINB) or Negative Binomial (NB) distribution.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>mu (torch.Tensor): The mean of the negative binomial distribution.
-logits (torch.Tensor): The logits for the zero-inflation component.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>torch.Tensor</em>) -- The mean of the negative binomial distribution.</p></li>
+<li><p><strong>logits</strong> (<em>torch.Tensor</em>) -- The logits for the zero-inflation component.</p></li>
+<li><p><strong>distribution</strong> (<em>str</em>) -- The type of distribution, either &quot;ZINB&quot; or &quot;NB&quot;.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>torch.Tensor: The expected values computed from the NB/ZINB distribution.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The expected values computed from the NB/ZINB distribution.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -148,13 +164,25 @@ logits (torch.Tensor): The logits for the zero-inflation component.</p>
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">adjusted_categorical_correction_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.adjusted_categorical_correction_variable" title="Permalink to this definition"></a></dt>
 <dd><p>One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
 where only the target value is active.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>df (DataFrame): The input DataFrame containing the categorical variable.
-cat_var (str): The column name to be one-hot encoded.
-target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- The input DataFrame containing the categorical variable.</p></li>
+<li><p><strong>cat_var</strong> (<em>str</em>) -- The column name of the categorical variable to be encoded.</p></li>
+<li><p><strong>target_value</strong> (<em>int</em><em> or </em><em>str</em>) -- The specific category value to be assigned a fixed index.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
-and all other category values are 0.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<ul class="simple">
+<li><p><strong>indices</strong> (torch.Tensor): The adjusted indices for the categorical variable.</p></li>
+<li><p><strong>named_cat_map</strong> (dict): A dictionary mapping the categorical variable name to a dictionary of category-to-index mappings.</p></li>
+<li><p><strong>num_unique</strong> (int): The number of unique categories in the categorical variable.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -163,11 +191,20 @@ and all other category values are 0.</p>
 <dt class="sig sig-object py" id="utils.calculate_and_sort_by_iqr">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">calculate_and_sort_by_iqr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_pam50</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_bc_genes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.calculate_and_sort_by_iqr" title="Permalink to this definition"></a></dt>
 <dd><p>Function to calculate IQR in a table by column, then sort the table</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>expr (table): A table of expression data where columns represent a gene and rows are samples
-gene_names: Name of genes (only needed if force_pam50 is True)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<em>numpy.ndarray</em>) -- A table of expression data where columns represent a gene and rows are samples.</p></li>
+<li><p><strong>gene_names</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) -- Name of genes (only needed if <cite>force_pam50</cite> is True).</p></li>
+<li><p><strong>force_pam50</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Flag indicating whether to force the use of PAM50 genes (not used in the function).</p></li>
+<li><p><strong>force_bc_genes</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Flag indicating whether to force the use of BC genes (not used in the function).</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>torch.Tensor: Sorted index for the data frame based on IQR</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sorted indices for the columns of the input table based on IQR in descending order.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,20 +212,46 @@ gene_names: Name of genes (only needed if force_pam50 is True)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.categorical_correction_variable">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">categorical_correction_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.categorical_correction_variable" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Prepare a categorical variable for one-hot encoding.</p>
+<p>This function prepares a categorical variable in a DataFrame for one-hot encoding. It returns the indices, a mapping of
+categories to indices, and the number of unique categories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- The input DataFrame containing the categorical variable.</p></li>
+<li><p><strong>cat_var</strong> (<em>str</em>) -- The column name of the categorical variable to be encoded.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<ul class="simple">
+<li><p><strong>indices</strong> (torch.Tensor): The indices for the categorical variable.</p></li>
+<li><p><strong>named_cat_map</strong> (dict): A dictionary mapping the categorical variable name to a dictionary of category-to-index mappings.</p></li>
+<li><p><strong>num_unique</strong> (int): The number of unique categories in the categorical variable.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.check_folder_access">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_folder_access</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_folder_access" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if the specified folder path exists, is accessible, and adheres to the required format.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>path (str): The filesystem path of the directory to check. This path should be absolute or relative to the current working directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) -- The filesystem path of the directory to check. This path should be absolute or relative to the current
+working directory.</p>
 </dd>
-<dt>Raises:</dt><dd><p>FileNotFoundError: If the directory does not exist at the specified path.
-PermissionError: If the directory exists but does not have read permissions enabled.
-ValueError: If the directory path does not end with a '/'.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None, raises error on failure.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> -- If the directory does not exist at the specified path.</p></li>
+<li><p><strong>PermissionError</strong> -- If the directory exists but does not have read permissions enabled.</p></li>
+<li><p><strong>ValueError</strong> -- If the directory path does not end with a '/'.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -197,11 +260,15 @@ ValueError: If the directory path does not end with a '/'.</p>
 <dt class="sig sig-object py" id="utils.check_for_nans">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_for_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_for_nans" title="Permalink to this definition"></a></dt>
 <dd><p>Checks for NaN values in a PyTorch tensor and raises an error if found.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>obj (torch.Tensor): The tensor to check for NaN values.
-msg (str): The error message to display if NaN values are found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<em>torch.Tensor</em>) -- The tensor to check for NaN values.</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) -- The error message to display if NaN values are found.</p></li>
+</ul>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If NaN values are found in the <cite>obj</cite> tensor.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If NaN values are found in the <cite>obj</cite> tensor.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -210,12 +277,12 @@ msg (str): The error message to display if NaN values are found.</p>
 <dt class="sig sig-object py" id="utils.check_int_and_uniq">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">check_int_and_uniq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_nums</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.check_int_and_uniq" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if list contains unique integers.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>file_nums (list): A list of values from filenames after the phrase &quot;tau&quot;.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_nums</strong> (<em>list</em><em> of </em><em>int</em>) -- A list of values from filenames after the phrase &quot;tau&quot;.</p>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If any element in the list is not an integer or if integers are not unique.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None: Raises ValueError on failure.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- If any element in the list is not an integer or if integers are not unique.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -224,17 +291,19 @@ msg (str): The error message to display if NaN values are found.</p>
 <dt class="sig sig-object py" id="utils.copy_file">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">copy_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.copy_file" title="Permalink to this definition"></a></dt>
 <dd><p>Copies a file from the source path to the destination path.</p>
-<dl>
-<dt>Args:</dt><dd><p>source_path (str): The path to the source file that needs to be copied. 
-destination_path (str): The path to the destination where the file should be copied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_path</strong> (<em>str</em>) -- The path to the source file that needs to be copied.</p></li>
+<li><p><strong>destination_path</strong> (<em>str</em>) -- The path to the destination where the file should be copied.</p></li>
+</ul>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>IOError: An error occurred during the file copying process, such as the source file not existing,</dt><dd><p>no permission to read the file, or issues with the destination path.</p>
-</dd>
-</dl>
-<p>Exception: Catches any other unforeseen exceptions that could occur during the copying process.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>IOError</strong> -- If an error occurs during the file copying process, such as the source file not
+existing, no permission to read the file, or issues with the destination path.</p></li>
+<li><p><strong>Exception</strong> -- If any other unforeseen exception occurs during the copying process.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -244,10 +313,9 @@ destination_path (str): The path to the destination where the file should be cop
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">ensure_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.ensure_directory" title="Permalink to this definition"></a></dt>
 <dd><p>Ensures that a directory exists at the specified path. If the directory does not exist, it is created with specific
 permissions. If it already exists, the function does nothing.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>directory_path (str): The filesystem path where the directory should exist.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory_path</strong> (<em>str</em>) -- The filesystem path where the directory should exist.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -256,9 +324,12 @@ permissions. If it already exists, the function does nothing.</p>
 <dt class="sig sig-object py" id="utils.logging_helper">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">logging_helper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.logging_helper" title="Permalink to this definition"></a></dt>
 <dd><p>Logs tensor values along with their corresponding keys from a dictionary.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>dic (dict): The dictionary containing keys and tensor values to be logged.
-log (logging.Logger): Logger used for outputting tensor information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dic</strong> (<em>dict</em>) -- The dictionary containing keys and tensor values to be logged.</p></li>
+<li><p><strong>log</strong> (<em>logging.Logger</em>) -- Logger used for outputting tensor information.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -268,10 +339,13 @@ log (logging.Logger): Logger used for outputting tensor information.</p>
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">logging_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.logging_tensor" title="Permalink to this definition"></a></dt>
 <dd><p>Logs the details of a tensor or a list of tensors, including its size,
 dtype, minimum, maximum values, and checks for NaNs or infinities.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>log (logging.Logger): The logging object used for logging the details.
-tensor (torch.Tensor or list[torch.Tensor]): The tensor or list of tensors to be logged.
-msg (str): The message to be printed before logging the tensor details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log</strong> (<em>logging.Logger</em>) -- The logging object used for logging the tensor details.</p></li>
+<li><p><strong>tensor</strong> (<em>torch.Tensor</em><em> or </em><em>list</em><em>[</em><em>torch.Tensor</em><em>]</em>) -- The tensor or list of tensors to be logged.</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) -- The message to be printed before logging the tensor details.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -282,14 +356,15 @@ msg (str): The message to be printed before logging the tensor details.</p>
 <dd><p>Logs details of multiple tensors from a list of lists, where each sublist contains parameters 
 intended for the <cite>logging_tensor</cite> function. This allows for batch logging of tensor details for efficient monitoring 
 of tensor states across different stages or components of a model.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>things (list of list): Each inner list should contain three elements corresponding to the </dt><dd><p>parameters expected by the <cite>logging_tensor</cite> function:
-1. log (logging.Logger): The logger object used for logging.
-2. tensor (torch.Tensor or list[torch.Tensor]): The tensor(s) to be logged.
-3. msg (str): A descriptive message that precedes the tensor details in the log.</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>things</strong> (<em>list</em><em> of </em><em>tuple</em>) -- <p>A list of tuples, where each tuple contains three elements:</p>
+<ol class="arabic simple">
+<li><p>log (logging.Logger): The logger object used for logging.</p></li>
+<li><p>tensor (torch.Tensor or list[torch.Tensor]): The tensor(s) to be logged.</p></li>
+<li><p>msg (str): A descriptive message that precedes the tensor details in the log.</p></li>
+</ol>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -297,20 +372,33 @@ of tensor states across different stages or components of a model.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.one_hot_encode">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">one_hot_encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.one_hot_encode" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Perform one-hot encoding on a tensor.</p>
+<p>This function takes a tensor representing a categorical variable and performs one-hot encoding on it. If the categorical
+variable is invariant (i.e., has only one unique value), it returns a tensor of ones with the same number of rows as the
+input tensor and one column. Otherwise, it applies one-hot encoding using PyTorch's <cite>F.one_hot</cite> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>column_tensor</strong> (<em>torch.Tensor</em>) -- The tensor representing the categorical variable to be one-hot encoded.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The one-hot encoded tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.plot_progression">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">plot_progression</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.plot_progression" title="Permalink to this definition"></a></dt>
 <dd><p>Plots the progression of average loss across mini-batches and epochs.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>target (list or ndarray): A list or NumPy array containing average loss values</dt><dd><p>at each mini-batch or epoch.</p>
-</dd>
-</dl>
-<p>title (str): The title to display on the plot.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None: This function plots the graph but does not return any value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> (<em>list</em><em> or </em><em>numpy.ndarray</em>) -- A list or NumPy array containing average loss values at each mini-batch or epoch.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) -- The title to display on the plot.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -319,18 +407,15 @@ of tensor states across different stages or components of a model.</p>
 <dt class="sig sig-object py" id="utils.plot_progression_all">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">plot_progression_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">losses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.plot_progression_all" title="Permalink to this definition"></a></dt>
 <dd><p>Plots the progression of multiple types of loss metrics during training and validation across epochs.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>losses (dict): A dictionary containing loss values for various metrics, </dt><dd><p>like 'average_loss', 'kl_gene', etc., categorized into 'train' and 'val'.</p>
-</dd>
-</dl>
-<p>epoch (int): The current epoch number for which the losses are being plotted.
-x_dim (int): The number of rows in the subplot grid.
-y_dim (int): The number of columns in the subplot grid.
-file_path (str, optional): The file path where the plot should be saved. If not specified,
-the plot is not saved to a file.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None: This function plots the graphs but does not return any value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>epoch</strong> (<em>int</em>) -- The current epoch number for which the losses are being plotted.</p></li>
+<li><p><strong>x_dim</strong> (<em>int</em><em>, </em><em>optional</em>) -- The number of rows in the subplot grid. Default is 2.</p></li>
+<li><p><strong>y_dim</strong> (<em>int</em><em>, </em><em>optional</em>) -- The number of columns in the subplot grid. Default is 4.</p></li>
+<li><p><strong>override</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If True, overrides the default subplot grid dimensions and sets them based on the number of unique plots. Default is False.</p></li>
+<li><p><strong>file_path</strong> (<em>str</em><em>, </em><em>optional</em>) -- The file path where the plot should be saved. If not specified, the plot is saved as 'loss_progression_epoch_{epoch}.pdf'.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -339,14 +424,14 @@ the plot is not saved to a file.</p>
 <dt class="sig sig-object py" id="utils.print_loss_table">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">print_loss_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.print_loss_table" title="Permalink to this definition"></a></dt>
 <dd><p>Prints a well-formatted table for loss metrics or other numerical data.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>data (list of lists): The data to be printed. Each sublist is considered a row in the table.</dt><dd><p>The first row is assumed to be the header. Cells can contain numerical values (int, float),
-NumPy arrays, or strings.</p>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><p>None: Prints the table to the standard output but does not return any value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em><em> of </em><em>lists</em>) -- The data to be printed. Each sublist is considered a row in the table. The first row is
+assumed to be the header. Cells can contain numerical values (int, float), NumPy arrays,
+or strings.</p></li>
+<li><p><strong>log</strong> (<em>logging.Logger</em>) -- The logger object used for printing the table.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -355,14 +440,19 @@ NumPy arrays, or strings.</p>
 <dt class="sig sig-object py" id="utils.reparameterize_gaussian">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">reparameterize_gaussian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.reparameterize_gaussian" title="Permalink to this definition"></a></dt>
 <dd><p>Reparameterizes a Gaussian distribution and samples from it.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>mu (torch.Tensor): The mean of the Gaussian distribution.
-var (torch.Tensor): The variance of the Gaussian distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>torch.Tensor</em>) -- The mean of the Gaussian distribution.</p></li>
+<li><p><strong>var</strong> (<em>torch.Tensor</em>) -- The variance of the Gaussian distribution.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>torch.Tensor: A sample from the Gaussian distribution parameterized</dt><dd><p>by <cite>mu</cite> and <cite>var</cite>, with the same shape as <cite>mu</cite> and <cite>var</cite>.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sample from the Gaussian distribution parameterized by <cite>mu</cite> and <cite>var</cite>, with the same shape
+as <cite>mu</cite> and <cite>var</cite>.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -372,12 +462,19 @@ var (torch.Tensor): The variance of the Gaussian distribution.</p>
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">sanity_check_on_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preffect_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_ds_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_ds_con</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.sanity_check_on_configs" title="Permalink to this definition"></a></dt>
 <dd><p>Performs a series of assertions on configuration variables to ensure they meet
 predefined criteria necessary for PREFFECT to function.</p>
-<dl class="simple">
-<dt>Raises:</dt><dd><p>PreffectE: If any of the configuration variables do not pass their respective checks.
-This indicates a critical mismatch in the expected environment setup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>preffect_con</strong> (<em>dict</em><em>, </em><em>optional</em>) -- The configuration dictionary for the PREFFECT system. Defaults to None.</p></li>
+<li><p><strong>train_ds_con</strong> (<em>dict</em><em>, </em><em>optional</em>) -- The configuration dictionary for the training dataset. Defaults to None.</p></li>
+<li><p><strong>valid_ds_con</strong> (<em>dict</em><em>, </em><em>optional</em>) -- The configuration dictionary for the validation dataset. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>PreffectE</strong> -- If any of the configuration variables do not pass their respective checks, indicating
+a critical mismatch in the expected environment setup.</p>
 </dd>
 </dl>
-<p>No parameters are read and no values are returned.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -397,10 +494,9 @@ cat_var (str): The column name to be one-hot encoded.</p>
 <dt class="sig sig-object py" id="utils.set_seeds">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">set_seeds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_seed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.set_seeds" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the seed for generating random numbers to ensure reproducibility across various random number generators.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>config_seed (int): The seed value to use for all random number generators.</p>
-</dd>
-<dt>Returns:</dt><dd><p>None</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_seed</strong> (<em>int</em><em>, </em><em>optional</em>) -- The seed value to use for all random number generators. If <cite>None</cite>, no seed is set.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -410,13 +506,19 @@ cat_var (str): The column name to be one-hot encoded.</p>
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">target_specific_one_hot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cat_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.target_specific_one_hot" title="Permalink to this definition"></a></dt>
 <dd><p>One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
 where only the target value is active.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>df (DataFrame): The input DataFrame containing the categorical variable.
-cat_var (str): The column name to be one-hot encoded.
-target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em>) -- The input DataFrame containing the categorical variable.</p></li>
+<li><p><strong>cat_var</strong> (<em>str</em>) -- The column name to be one-hot encoded.</p></li>
+<li><p><strong>target_value</strong> (<em>int</em><em> or </em><em>str</em>) -- The specific category value in the column to encode as 1; all others are set to 0.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><p>DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
-and all other category values are 0.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tensor with the one-hot encoded column where only the target value is 1, and all other category values are 0.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -425,12 +527,20 @@ and all other category values are 0.</p>
 <dt class="sig sig-object py" id="utils.torch_mtx_unbatching">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">torch_mtx_unbatching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mtx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_batches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.torch_mtx_unbatching" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if list contains unique integers</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>file_nums (list): A list of values from filenames after the phrase &quot;tau&quot;</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mtx</strong> (<em>torch.Tensor</em>) -- A list of mini-batched torch matrices.</p></li>
+<li><p><strong>idx_batches</strong> (<em>list</em><em> of </em><em>tuple</em><em> of </em><em>torch.Tensor</em>) -- A list of mini-batch indices, where each element is a tuple containing a tensor of indices.</p></li>
+<li><p><strong>dataset</strong> (<em>Dataset</em>) -- The dataset object used to retrieve ghost indices.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) -- The device on which to perform the computations.</p></li>
+</ul>
 </dd>
-<dt>Raises:</dt><dd><p>ValueError: If any element in the list is not an integer or if integers are not unique.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The rearranged matrix with rows sorted based on the indices.</p>
 </dd>
-<dt>Returns:</dt><dd><p>None: Raises ValueError on failure</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -438,12 +548,41 @@ and all other category values are 0.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.umap_draw_latent">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">umap_draw_latent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results_from_forward</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.umap_draw_latent" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Visualize the latent space using UMAP dimensionality reduction.</p>
+<p>This function takes the latent variables from the forward pass results and applies UMAP (Uniform Manifold
+Approximation and Projection) dimensionality reduction to visualize the latent space. It plots
+the reduced latent space in a 2D scatter plot, where each point represents a sample and is colored based
+on the corresponding batch information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>results_from_forward</strong> (<em>dict</em>) -- A dictionary containing the results from the forward pass, including the latent variables.</p></li>
+<li><p><strong>batch_info</strong> (<em>numpy.ndarray</em>) -- An array containing the batch information for each sample.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.update_composite_configs">
 <span class="sig-prename descclassname"><span class="pre">_utils.</span></span><span class="sig-name descname"><span class="pre">update_composite_configs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.update_composite_configs" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Update the composite configuration dictionary with derived paths.</p>
+<p>This function takes a configuration dictionary <cite>configs</cite> and updates it with derived paths for logs,
+inference results, and output files. It ensures that the <cite>output_path</cite> ends with a forward slash ('/') and
+constructs the derived paths by joining the <cite>output_path</cite> with the respective subdirectories using <cite>os.path.join</cite>
+and <cite>os.sep</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em><em>, </em><em>optional</em>) -- The configuration dictionary to be updated. If None, the function returns None.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The updated configuration dictionary with derived paths, or None if the input <cite>configs</cite> is None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict, optional</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

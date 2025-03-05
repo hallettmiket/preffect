@@ -38,6 +38,17 @@ possible_inference_visualizations = {
     'visualize_latent_recons_umap': Inference.visualize_latent_recons_umap, 'visualize_batch_adjustment': Inference.visualize_batch_adjustment}
 
 def setup_cuda(configs):
+    r"""
+    Set up the CUDA device based on the provided configurations.
+
+    :param configs: A dictionary containing configuration settings. Expected keys include:
+        - **'cuda_device_num'**: Integer specifying the CUDA device number to use.
+        - **'no_cuda'**: Boolean that if True, forces the use of CPU even if CUDA is available.
+    :type configs: dict
+
+    :return: The configured PyTorch device (either CUDA or CPU).
+    :rtype: torch.device
+    """
     # Set up cuda device if necessary
     cuda_device_number = configs['cuda_device_num']
     configs['cuda_device']=torch.device(
@@ -48,6 +59,10 @@ def setup_cuda(configs):
 def generate_and_save_visualizations(inference_instance):
     """
     Function which calls visualization tasks and saves the images within `preffect_factory.py`.
+
+    :param inference_instance: An instance of the Inference class representing the inference process.
+    :type inference_instance: Inference
+
     """
 
     filepath = os.path.join(inference_instance.configs_inf['inference_path'], inference_instance.configs_inf['inference_key'])
@@ -66,25 +81,32 @@ def factory_setup(configs):
     Sets up the factory environment for processing by initializing paths, ensuring directory 
     existence, and setting up logging and CUDA device configurations.
 
-    Args:
-        configs (dict): A dictionary containing configuration settings. Expected keys include:
-            - 'input_anndata_path': Path to input Anndata files for basic checks.
-            - 'input_inference_anndata_path': Path for input inference Anndata files.
-            - 'output_path': Base path where logs and results directories will be created.
-            - 'cuda_device_num': Integer specifying the CUDA device number to use.
-            - 'no_cuda': Boolean that if True, forces the use of CPU even if CUDA is available.
+    :param configs: A dictionary containing configuration settings. Expected keys include:
+        
+        - **'input_anndata_path'**: Path to input Anndata files for basic checks.
+        
+        - **'input_inference_anndata_path'**: Path for input inference Anndata files.
+        
+        - **'output_path'**: Base path where logs and results directories will be created.
+        
+        - **'cuda_device_num'**: Integer specifying the CUDA device number to use.
+        
+        - **'no_cuda'**: Boolean that if True, forces the use of CPU even if CUDA is available.
+    :type configs: dict
 
-    Returns:
-        tuple: A tuple containing:
-            - cuda_device_number (int): The CUDA device number from the configs.
-            - input_log (Logger): Logger for input operations.
-            - forward_log (Logger): Logger for forward operations.
-            - inference_log (Logger): Logger for inference operations.
-            - configs (dict): The updated configurations dictionary.
+    :return: A tuple containing:
+        
+        - **input_log** (logging.Logger): Logger for input operations.
+        
+        - **forward_log** (logging.Logger or None): Logger for forward operations. None if the task is not 'train'.
+        
+        - **inference_log** (logging.Logger or None): Logger for inference operations. None if the task is not 'train'.
+        
+        - **configs** (dict): The updated configurations dictionary.
+    :rtype: tuple
 
-    Raises:
-        Exception: If there is an issue accessing the required Anndata paths, an exception is raised
-            with a message indicating the inaccessible path.
+    :raises Exception: If there is an issue accessing the required Anndata paths, an exception is raised with a message indicating the inaccessible path.
+
     """
 
     configs = update_composite_configs(configs)
@@ -126,27 +148,38 @@ def factory(
     Calls _preffect class to perform tasks such as training, inference, reinstatement, clustering, and visualization 
     based on specified configurations.
 
-    Args:
-        always_save (bool): If True, the current state of the process (preffect or inference) will 
-                            always be saved after execution.
-        trigger_setup (bool): If True, triggers the setup process for the environment before execution.
-        configs (dict): Configuration dictionary specifying details such as paths, device  settings, 
-        and the specific task to be executed ('train', 'inference', etc.).
-        pr (Preffect, optional): An instance of the Preffect class, if already instantiated; otherwise, 
-        it is created based on the task requirements.
-        ir (Inference, optional): An instance of the Inference class, if already instantiated.
-        inference_obj_name (str, optional): The name identifier for an Inference instance to be fetched from a register.
-        fname (str, optional): The filename to be used for saving outputs, specifically in inference tasks.
+    :param task: The specific task to be executed. Valid options include 'train', 'inference', 'reinstate',
+                 'cluster_latent', 'cluster_counts', and 'visualize_lib_size'.
+    :type task: str, optional
+    :param always_save: If True, the current state of the process (Preffect or Inference) will always be saved after execution.
+    :type always_save: bool, optional
+    :param trigger_setup: If True, triggers the setup process for the environment before execution.
+    :type trigger_setup: bool, optional
+    :param configs: Configuration dictionary specifying details such as paths, device settings, and the specific task to be executed.
+    :type configs: dict, optional
+    :param preffect_obj: An instance of the Preffect class, if already instantiated; otherwise, it is created based on the task requirements.
+    :type preffect_obj: Preffect, optional
+    :param inference_obj: An instance of the Inference class, if already instantiated.
+    :type inference_obj: Inference, optional
+    :param inference_key: The name identifier for an Inference instance to be fetched from a register.
+    :type inference_key: str, optional
+    :param fname: The filename to be used for saving outputs, specifically in inference tasks.
+    :type fname: str, optional
+    :param visualize: If True, enables visualization for relevant tasks.
+    :type visualize: bool, optional
+    :param error_type: The type of error to be used for error handling and reporting.
+    :type error_type: str, optional
+    :param cluster_omega: If True, enables clustering of omega values.
+    :type cluster_omega: bool, optional
 
-    Returns:
-        Depending on the task specified in `configs['task']`:
-            Preffect instance for 'train', 'inference', and 'reinstate' tasks.
-            Cluster instance for 'cluster_latent' and 'cluster_counts' tasks.
-            Visualization object for 'visualize_lib_size' task.
+    :return: Depending on the task specified in `configs['task']`:
+        - Preffect instance for 'train', 'inference', and 'reinstate' tasks.
+        - Cluster instance for 'cluster_latent' and 'cluster_counts' tasks.
+        - Visualization object for 'visualize_lib_size' task.
+    :rtype: Union[Preffect, Cluster, Visualization]
 
-    Raises:
-        PreffectError: If an invalid task is specified or if required resources (like Preffect or Inference instances)
-                       are not provided or found for the requested operation.
+    :raises PreffectError: If an invalid task is specified or if required resources (like Preffect or Inference instances)
+                           are not provided or found for the requested operation.
     """
 
     pr, ir, ir_name = preffect_obj, inference_obj, inference_key

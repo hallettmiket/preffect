@@ -19,10 +19,13 @@ def logging_tensor(log, tensor, msg):
     Logs the details of a tensor or a list of tensors, including its size,
     dtype, minimum, maximum values, and checks for NaNs or infinities.
 
-    Args:
-        log (logging.Logger): The logging object used for logging the details.
-        tensor (torch.Tensor or list[torch.Tensor]): The tensor or list of tensors to be logged.
-        msg (str): The message to be printed before logging the tensor details.
+    :param log: The logging object used for logging the tensor details.
+    :type log: logging.Logger
+    :param tensor: The tensor or list of tensors to be logged.
+    :type tensor: torch.Tensor or list[torch.Tensor]
+    :param msg: The message to be printed before logging the tensor details.
+    :type msg: str
+
     """
     log.info("\n" + msg)
     if isinstance(tensor, list):
@@ -70,9 +73,10 @@ def logging_helper(dic, log):
     """
     Logs tensor values along with their corresponding keys from a dictionary.
 
-    Args:
-        dic (dict): The dictionary containing keys and tensor values to be logged.
-        log (logging.Logger): Logger used for outputting tensor information.
+    :param dic: The dictionary containing keys and tensor values to be logged.
+    :type dic: dict
+    :param log: Logger used for outputting tensor information.
+    :type log: logging.Logger
     """
     for key, value in dic.items():
         logging_tensor(log, value, "\t ******  - " + str(key))
@@ -83,12 +87,13 @@ def multi_logging_tensor(things):
     intended for the `logging_tensor` function. This allows for batch logging of tensor details for efficient monitoring 
     of tensor states across different stages or components of a model.
 
-    Args:
-        things (list of list): Each inner list should contain three elements corresponding to the 
-            parameters expected by the `logging_tensor` function:
-            1. log (logging.Logger): The logger object used for logging.
-            2. tensor (torch.Tensor or list[torch.Tensor]): The tensor(s) to be logged.
-            3. msg (str): A descriptive message that precedes the tensor details in the log.
+    :param things: A list of tuples, where each tuple contains three elements:
+        
+        1. log (logging.Logger): The logger object used for logging.
+        2. tensor (torch.Tensor or list[torch.Tensor]): The tensor(s) to be logged.
+        3. msg (str): A descriptive message that precedes the tensor details in the log.
+    :type things: list of tuple
+
     """
     if len(things)>0:
         for thing in things:
@@ -98,6 +103,14 @@ def multi_logging_tensor(things):
 def _indices_to_tensor(zero_indices, shape):
     """
     Helper function to convert indices to a tensor efficiently and avoid a warning
+
+    :param zero_indices: An array of flat indices.
+    :type zero_indices: numpy.ndarray
+    :param shape: The shape of the original tensor.
+    :type shape: tuple of int
+
+    :return: A tensor containing the coordinate arrays corresponding to the flat indices.
+    :rtype: torch.Tensor
     """
     zero_indices_2d = np.unravel_index(zero_indices, shape)
     all_indices_np = np.array(zero_indices_2d)
@@ -107,12 +120,12 @@ def check_for_nans(obj, msg):
     """
     Checks for NaN values in a PyTorch tensor and raises an error if found.
 
-    Args:
-        obj (torch.Tensor): The tensor to check for NaN values.
-        msg (str): The error message to display if NaN values are found.
+    :param obj: The tensor to check for NaN values.
+    :type obj: torch.Tensor
+    :param msg: The error message to display if NaN values are found.
+    :type msg: str
 
-    Raises:
-        ValueError: If NaN values are found in the `obj` tensor.
+    :raises ValueError: If NaN values are found in the `obj` tensor.
     """
     if torch.isnan(obj).any():
         print(obj.shape)
@@ -127,14 +140,15 @@ def target_specific_one_hot(df, cat_var, target_value):
     One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
     where only the target value is active.
 
-    Args:
-        df (DataFrame): The input DataFrame containing the categorical variable.
-        cat_var (str): The column name to be one-hot encoded.
-        target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.
+    :param df: The input DataFrame containing the categorical variable.
+    :type df: pandas.DataFrame
+    :param cat_var: The column name to be one-hot encoded.
+    :type cat_var: str
+    :param target_value: The specific category value in the column to encode as 1; all others are set to 0.
+    :type target_value: int or str
 
-    Returns:
-        DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
-        and all other category values are 0.
+    :return: A tensor with the one-hot encoded column where only the target value is 1, and all other category values are 0.
+    :rtype: torch.Tensor
     """
     
     n_unique = df[cat_var].nunique()
@@ -162,14 +176,21 @@ def adjusted_categorical_correction_variable(df, cat_var, target_value):
     One-hot encodes a specific column in a DataFrame for a target value. It provides a one-hot encoded representation
     where only the target value is active.
 
-    Args:
-        df (DataFrame): The input DataFrame containing the categorical variable.
-        cat_var (str): The column name to be one-hot encoded.
-        target_value (int or str): The specific category value in the column to encode as 1; all others are set to 0.
+    :param df: The input DataFrame containing the categorical variable.
+    :type df: pandas.DataFrame
+    :param cat_var: The column name of the categorical variable to be encoded.
+    :type cat_var: str
+    :param target_value: The specific category value to be assigned a fixed index.
+    :type target_value: int or str
 
-    Returns:
-        DataFrame: A DataFrame with the one-hot encoded column where only the target value is 1,
-        and all other category values are 0.
+    :return: A tuple containing:
+        
+        - **indices** (torch.Tensor): The adjusted indices for the categorical variable.
+        
+        - **named_cat_map** (dict): A dictionary mapping the categorical variable name to a dictionary of category-to-index mappings.
+        
+        - **num_unique** (int): The number of unique categories in the categorical variable.
+    :rtype: tuple
     """
     named_cat_map = {}
     #cat_map = {label: idx for idx, label in enumerate(set(df[cat_var]))} # this needs to be changed to the OG model's cat_map.
@@ -186,6 +207,26 @@ def adjusted_categorical_correction_variable(df, cat_var, target_value):
     return indices, named_cat_map, len(unique_labels)
 
 def categorical_correction_variable(df, cat_var):
+    r"""
+    Prepare a categorical variable for one-hot encoding.
+
+    This function prepares a categorical variable in a DataFrame for one-hot encoding. It returns the indices, a mapping of
+    categories to indices, and the number of unique categories.
+
+    :param df: The input DataFrame containing the categorical variable.
+    :type df: pandas.DataFrame
+    :param cat_var: The column name of the categorical variable to be encoded.
+    :type cat_var: str
+
+    :return: A tuple containing:
+        
+        - **indices** (torch.Tensor): The indices for the categorical variable.
+        
+        - **named_cat_map** (dict): A dictionary mapping the categorical variable name to a dictionary of category-to-index mappings.
+        
+        - **num_unique** (int): The number of unique categories in the categorical variable.
+    :rtype: tuple
+    """
     named_cat_map = {}
 
     unique_labels = sorted(set(df[cat_var]))  # Extract unique labels and sort them to maintain order between datasets
@@ -196,6 +237,19 @@ def categorical_correction_variable(df, cat_var):
     return label_indices, named_cat_map, len(unique_labels)
 
 def one_hot_encode(column_tensor):
+    r"""
+    Perform one-hot encoding on a tensor.
+
+    This function takes a tensor representing a categorical variable and performs one-hot encoding on it. If the categorical
+    variable is invariant (i.e., has only one unique value), it returns a tensor of ones with the same number of rows as the
+    input tensor and one column. Otherwise, it applies one-hot encoding using PyTorch's `F.one_hot` function.
+
+    :param column_tensor: The tensor representing the categorical variable to be one-hot encoded.
+    :type column_tensor: torch.Tensor
+
+    :return: The one-hot encoded tensor.
+    :rtype: torch.Tensor
+    """
     num_classes = column_tensor.max().item() + 1
     
     # needed conditional if categorical variable is invariant
@@ -246,17 +300,17 @@ def plot_progression_all(losses, epoch, x_dim=2, y_dim=4, override=False, file_p
     """
     Plots the progression of multiple types of loss metrics during training and validation across epochs.
 
-    Args:
-        losses (dict): A dictionary containing loss values for various metrics, 
-            like 'average_loss', 'kl_gene', etc., categorized into 'train' and 'val'.
-        epoch (int): The current epoch number for which the losses are being plotted.
-        x_dim (int): The number of rows in the subplot grid.
-        y_dim (int): The number of columns in the subplot grid.
-        file_path (str, optional): The file path where the plot should be saved. If not specified,
-        the plot is not saved to a file.
-
-    Returns:
-        None: This function plots the graphs but does not return any value.
+    :type losses: dict
+    :param epoch: The current epoch number for which the losses are being plotted.
+    :type epoch: int
+    :param x_dim: The number of rows in the subplot grid. Default is 2.
+    :type x_dim: int, optional
+    :param y_dim: The number of columns in the subplot grid. Default is 4.
+    :type y_dim: int, optional
+    :param override: If True, overrides the default subplot grid dimensions and sets them based on the number of unique plots. Default is False.
+    :type override: bool, optional
+    :param file_path: The file path where the plot should be saved. If not specified, the plot is saved as 'loss_progression_epoch_{epoch}.pdf'.
+    :type file_path: str, optional
     """
 
     if file_path is None:
@@ -304,13 +358,10 @@ def plot_progression(target, title):
     """
     Plots the progression of average loss across mini-batches and epochs.
 
-    Args:
-        target (list or ndarray): A list or NumPy array containing average loss values
-            at each mini-batch or epoch.
-        title (str): The title to display on the plot.
-
-    Returns:
-        None: This function plots the graph but does not return any value.
+    :param target: A list or NumPy array containing average loss values at each mini-batch or epoch.
+    :type target: list or numpy.ndarray
+    :param title: The title to display on the plot.
+    :type title: str
     """
     plt.plot(target, marker="o")
     plt.xlabel("Mini-Batch * Epoch")
@@ -325,13 +376,12 @@ def print_loss_table(data, log):
     """
     Prints a well-formatted table for loss metrics or other numerical data.
 
-    Args:
-        data (list of lists): The data to be printed. Each sublist is considered a row in the table.
-            The first row is assumed to be the header. Cells can contain numerical values (int, float),
-            NumPy arrays, or strings.
-
-    Returns:
-        None: Prints the table to the standard output but does not return any value.
+    :param data: The data to be printed. Each sublist is considered a row in the table. The first row is
+                 assumed to be the header. Cells can contain numerical values (int, float), NumPy arrays,
+                 or strings.
+    :type data: list of lists
+    :param log: The logger object used for printing the table.
+    :type log: logging.Logger
     """
     np.set_printoptions(formatter={"float": "{: .2e}".format})
     max_widths = [max(len(str(row[i])) for row in data) for i in range(len(data[0]))]
@@ -360,13 +410,14 @@ def reparameterize_gaussian(mu, var):
     """
     Reparameterizes a Gaussian distribution and samples from it.
 
-    Args:
-        mu (torch.Tensor): The mean of the Gaussian distribution.
-        var (torch.Tensor): The variance of the Gaussian distribution.
+    :param mu: The mean of the Gaussian distribution.
+    :type mu: torch.Tensor
+    :param var: The variance of the Gaussian distribution.
+    :type var: torch.Tensor
 
-    Returns:
-        torch.Tensor: A sample from the Gaussian distribution parameterized
-            by `mu` and `var`, with the same shape as `mu` and `var`.
+    :return: A sample from the Gaussian distribution parameterized by `mu` and `var`, with the same shape
+             as `mu` and `var`.
+    :rtype: torch.Tensor
     """
     return Normal(mu, var.sqrt()).rsample()
 
@@ -377,12 +428,15 @@ def ZINB_expected_value(mu, logits, distribution):
     """
     Calculate the expected value from a Zero-Inflated Negative Binomial (ZINB) or Negative Binomial (NB) distribution.
 
-    Args:
-        mu (torch.Tensor): The mean of the negative binomial distribution.
-        logits (torch.Tensor): The logits for the zero-inflation component.
+    :param mu: The mean of the negative binomial distribution.
+    :type mu: torch.Tensor
+    :param logits: The logits for the zero-inflation component.
+    :type logits: torch.Tensor
+    :param distribution: The type of distribution, either "ZINB" or "NB".
+    :type distribution: str
 
-    Returns:
-        torch.Tensor: The expected values computed from the NB/ZINB distribution.
+    :return: The expected values computed from the NB/ZINB distribution.
+    :rtype: torch.Tensor
     """
     if distribution == "ZINB":
         pi_matrix = 1 / (1 + torch.exp(-logits))
@@ -401,14 +455,17 @@ def torch_mtx_unbatching(mtx, idx_batches, dataset, device):
     """
     Checks if list contains unique integers
 
-    Args:
-        file_nums (list): A list of values from filenames after the phrase "tau"
+    :param mtx: A list of mini-batched torch matrices.
+    :type mtx: torch.Tensor
+    :param idx_batches: A list of mini-batch indices, where each element is a tuple containing a tensor of indices.
+    :type idx_batches: list of tuple of torch.Tensor
+    :param dataset: The dataset object used to retrieve ghost indices.
+    :type dataset: Dataset
+    :param device: The device on which to perform the computations.
+    :type device: torch.device
 
-    Raises:
-        ValueError: If any element in the list is not an integer or if integers are not unique.
-
-    Returns:
-        None: Raises ValueError on failure
+    :return: The rearranged matrix with rows sorted based on the indices.
+    :rtype: torch.Tensor
     """
     # provide a list of mini-batched torch matrices and the list of mini-batch indices
     # this function will re-arrange them by row (default) or by column
@@ -433,14 +490,10 @@ def check_int_and_uniq(file_nums):
     """
     Checks if list contains unique integers.
 
-    Args:
-        file_nums (list): A list of values from filenames after the phrase "tau".
+    :param file_nums: A list of values from filenames after the phrase "tau".
+    :type file_nums: list of int
 
-    Raises:
-        ValueError: If any element in the list is not an integer or if integers are not unique.
-
-    Returns:
-        None: Raises ValueError on failure.
+    :raises ValueError: If any element in the list is not an integer or if integers are not unique.
     """
     if not all(isinstance(x, int) for x in file_nums):
         raise ValueError(
@@ -459,12 +512,17 @@ def calculate_and_sort_by_iqr(
     """
     Function to calculate IQR in a table by column, then sort the table
 
-    Args:
-        expr (table): A table of expression data where columns represent a gene and rows are samples
-        gene_names: Name of genes (only needed if force_pam50 is True)
+    :param expr: A table of expression data where columns represent a gene and rows are samples.
+    :type expr: numpy.ndarray
+    :param gene_names: Name of genes (only needed if `force_pam50` is True).
+    :type gene_names: list of str, optional
+    :param force_pam50: Flag indicating whether to force the use of PAM50 genes (not used in the function).
+    :type force_pam50: bool, optional
+    :param force_bc_genes: Flag indicating whether to force the use of BC genes (not used in the function).
+    :type force_bc_genes: bool, optional
 
-    Returns:
-        torch.Tensor: Sorted index for the data frame based on IQR
+    :return: Sorted indices for the columns of the input table based on IQR in descending order.
+    :rtype: numpy.ndarray
     """
 
     # sub-function to calculate IQR; ignores NaNs
@@ -485,13 +543,15 @@ def To(dev, objects):
     """
     Transfers each object in the provided dictionary to the specified device using PyTorch's `.to()` method.
 
-    Args:
-        dev (torch.device or str): The target device to which the tensors or models should be moved.
-        objects (dict): A dictionary where each key-value pair consists of a name (key) and a PyTorch tensor or model
-        (value). The value can either be a single tensor/model or a list of tensors/models.
+    :param dev: The target device to which the tensors or models should be moved. It can be a `torch.device` object
+                or a string specifying the device (e.g., 'cpu', 'cuda').
+    :type dev: torch.device or str
+    :param objects: A dictionary where each key-value pair consists of a name (key) and a PyTorch tensor, model, or
+                    a list of tensors/models (value) [[6]][[7]][[8]].
+    :type objects: dict
 
-    Returns:
-        dict: A dictionary with the same keys as the input but with each tensor or model moved to the specified device.
+    :return: A dictionary with the same keys as the input, but with each tensor or model moved to the specified device.
+    :rtype: dict
     """
     # Initialize an empty dictionary to store the modified objects
     modified_objects = {}
@@ -514,11 +574,8 @@ def ensure_directory(directory_path):
     Ensures that a directory exists at the specified path. If the directory does not exist, it is created with specific
     permissions. If it already exists, the function does nothing.
 
-    Args:
-        directory_path (str): The filesystem path where the directory should exist.
-
-    Returns:
-        None
+    :param directory_path: The filesystem path where the directory should exist.
+    :type directory_path: str
     """
     if not os.path.exists(directory_path):
         os.makedirs(directory_path, exist_ok=True)  # exist_ok=True to avoid raising an error if the directory exists
@@ -531,16 +588,13 @@ def check_folder_access(path):
     """
     Checks if the specified folder path exists, is accessible, and adheres to the required format.
 
-    Args:
-        path (str): The filesystem path of the directory to check. This path should be absolute or relative to the current working directory.
+    :param path: The filesystem path of the directory to check. This path should be absolute or relative to the current
+                 working directory.
+    :type path: str
 
-    Raises:
-        FileNotFoundError: If the directory does not exist at the specified path.
-        PermissionError: If the directory exists but does not have read permissions enabled.
-        ValueError: If the directory path does not end with a '/'.
-    
-    Returns:
-        None, raises error on failure.
+    :raises FileNotFoundError: If the directory does not exist at the specified path.
+    :raises PermissionError: If the directory exists but does not have read permissions enabled.
+    :raises ValueError: If the directory path does not end with a '/'.
     """
     if not os.path.exists(path):
         raise FileNotFoundError(f"The path {path} does not exist.")
@@ -556,17 +610,14 @@ def copy_file(source_path, destination_path):
     """
     Copies a file from the source path to the destination path.
 
-    Args:
-        source_path (str): The path to the source file that needs to be copied. 
-        destination_path (str): The path to the destination where the file should be copied.
+    :param source_path: The path to the source file that needs to be copied.
+    :type source_path: str
+    :param destination_path: The path to the destination where the file should be copied.
+    :type destination_path: str
 
-    Raises:
-        IOError: An error occurred during the file copying process, such as the source file not existing,
-               no permission to read the file, or issues with the destination path.
-        Exception: Catches any other unforeseen exceptions that could occur during the copying process.
-
-    Returns:
-        None
+    :raises IOError: If an error occurs during the file copying process, such as the source file not
+                     existing, no permission to read the file, or issues with the destination path.
+    :raises Exception: If any other unforeseen exception occurs during the copying process.
     """
     try:
         shutil.copy(source_path, destination_path)
@@ -581,11 +632,8 @@ def set_seeds(config_seed):
     """
     Sets the seed for generating random numbers to ensure reproducibility across various random number generators. 
 
-    Args:
-        config_seed (int): The seed value to use for all random number generators. 
-    
-    Returns:
-        None
+    :param config_seed: The seed value to use for all random number generators. If `None`, no seed is set.
+    :type config_seed: int, optional
     """
     if config_seed is None:
         return
@@ -603,11 +651,15 @@ def sanity_check_on_configs(preffect_con=None, train_ds_con=None, valid_ds_con=N
     Performs a series of assertions on configuration variables to ensure they meet
     predefined criteria necessary for PREFFECT to function.
 
-    Raises:
-        PreffectE: If any of the configuration variables do not pass their respective checks.
-        This indicates a critical mismatch in the expected environment setup.
+    :param preffect_con: The configuration dictionary for the PREFFECT system. Defaults to None.
+    :type preffect_con: dict, optional
+    :param train_ds_con: The configuration dictionary for the training dataset. Defaults to None.
+    :type train_ds_con: dict, optional
+    :param valid_ds_con: The configuration dictionary for the validation dataset. Defaults to None.
+    :type valid_ds_con: dict, optional
 
-    No parameters are read and no values are returned.
+    :raises PreffectE: If any of the configuration variables do not pass their respective checks, indicating
+                       a critical mismatch in the expected environment setup.
     """
 
     if preffect_con is None or train_ds_con is None or valid_ds_con is None:
@@ -692,6 +744,20 @@ def sanity_check_on_configs(preffect_con=None, train_ds_con=None, valid_ds_con=N
 
 
 def update_composite_configs(configs):
+    r"""
+    Update the composite configuration dictionary with derived paths.
+
+    This function takes a configuration dictionary `configs` and updates it with derived paths for logs,
+    inference results, and output files. It ensures that the `output_path` ends with a forward slash ('/') and
+    constructs the derived paths by joining the `output_path` with the respective subdirectories using `os.path.join`
+    and `os.sep`.
+
+    :param configs: The configuration dictionary to be updated. If None, the function returns None.
+    :type configs: dict, optional
+
+    :return: The updated configuration dictionary with derived paths, or None if the input `configs` is None.
+    :rtype: dict, optional
+    """
     if configs is None:
         return None
     if not configs['output_path'].endswith('/'):
@@ -705,6 +771,19 @@ def update_composite_configs(configs):
 
 
 def umap_draw_latent(results_from_forward, batch_info):
+    r"""
+    Visualize the latent space using UMAP dimensionality reduction.
+
+    This function takes the latent variables from the forward pass results and applies UMAP (Uniform Manifold
+    Approximation and Projection) dimensionality reduction to visualize the latent space. It plots
+    the reduced latent space in a 2D scatter plot, where each point represents a sample and is colored based
+    on the corresponding batch information.
+
+    :param results_from_forward: A dictionary containing the results from the forward pass, including the latent variables.
+    :type results_from_forward: dict
+    :param batch_info: An array containing the batch information for each sample.
+    :type batch_info: numpy.ndarray
+    """
     # to investigate batch adjustment to latent space - will remove
     reducer = umap.UMAP(metric="cosine", n_neighbors=30, random_state=42, n_jobs=1, verbose=False, low_memory=True)
     embedding = reducer.fit_transform(results_from_forward['latent_variables']['Z_simples'][0].cpu().detach().numpy())

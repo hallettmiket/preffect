@@ -24,7 +24,7 @@ PREFFECT is designed to accomplish the following tasks:
 *Department of Radiation Oncology, Sunnybrook Health Sciences Centre
 Department of Laboratory Medicine and Pathobiology, University of Toronto Toronto, Canada*
 
-**Sharon Nofech-Moses -**
+**Sharon Nofech-Mozes -**
 *Department of Anatomic Pathology, Sunnybrook Health Sciences Centre*
 *Department of Laboratory Medicine and Pathobiology, University of Toronto, Toronto, Canada*
 

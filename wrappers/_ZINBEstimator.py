@@ -8,12 +8,18 @@ from scipy.special import expit, logit
 # Compute ZINB parameters from a numpy array of count data
 
 class ZINBEstimator:
+    r"""
+    A class for estimating the parameters of a Zero-Inflated Negative Binomial (ZINB) distribution from count data.
+
+    :param initial_pi_values: Initial values of pi to perform a grid search to find the optimal 'pi' parameter.
+    :type initial_pi_values: list, optional
+    """
     def __init__(self, initial_pi_values=[0.00001, 0.0001, 0.001, 0.005, 0.01, 0.1, 0.5, 0.9]):
         """
         Initialize the ZINBEstimator with optional initial values for pi.
         
-        Parameters:
-            initial_pi_values (list, optional): Initial values of pi to perform a grid search to find the optimal 'pi' parameter.
+        :param initial_pi_values: Initial values of pi to perform a grid search to find the optimal 'pi' parameter.
+        :type initial_pi_values: list, optional
         """
 
         self.initial_pi_values = initial_pi_values
@@ -22,15 +28,16 @@ class ZINBEstimator:
         """
         Computes the negative log-likelihood for the ZINB distribution given parameters and count data.
 
-        Parameters:
-        params (list): A list containing the parameters [mu, variance, logit_pi] where:
-            mu: The mean of the Negative Binomial component.
-            variance: The variance of the count data.
-            logit_pi: The logit-transformed zero-inflation parameter.
-            counts (numpy array): A set of counts to estimate ZINB parameters from.
+        :param params: A list containing the parameters [mu, variance, logit_pi] where:
+            - mu: The mean of the Negative Binomial component.
+            - variance: The variance of the count data.
+            - logit_pi: The logit-transformed zero-inflation parameter.
+        :type params: list
+        :param counts: A set of counts to estimate ZINB parameters from.
+        :type counts: numpy.ndarray
 
-        Returns:
-            float: The negative log-likelihood value.
+        :return: The negative log-likelihood value.
+        :rtype: float
         """
         mu, variance, logit_pi = params
         pi = expit(logit_pi)
@@ -55,15 +62,19 @@ class ZINBEstimator:
         """
         Estimates the Zero-Inflated Negative Binomial (ZINB) parameters and AIC from a given set of count data.
 
-        Parameters:
-            counts (numpy array): A set of counts to estimate ZINB parameters from.
+        :param counts: A set of counts to estimate ZINB parameters from.
+        :type counts: numpy.ndarray
 
-        Returns:
-            tuple: A tuple containing the estimated parameters (mu, theta, pi, aic) where:
-            mu: The mean of the Negative Binomial component.
-            theta: The dispersion parameter of the Negative Binomial component.
-            pi: The zero-inflation parameter.
-            aic: The Akaike Information Criterion value for the fit.
+        :return: A tuple containing the estimated parameters (mu, theta, pi, aic) where:
+            
+            - mu: The mean of the Negative Binomial component.
+            
+            - theta: The dispersion parameter of the Negative Binomial component.
+            
+            - pi: The zero-inflation parameter.
+            
+            - aic: The Akaike Information Criterion value for the fit.
+        :rtype: tuple
 
         Usage:
             zinb_estimator = ZINBEstimator()

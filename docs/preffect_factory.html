@@ -94,9 +94,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="preffect-factory-py-module">
-<h1>preffect_factory.py module<a class="headerlink" href="#preffect-factory-py-module" title="Permalink to this heading"></a></h1>
-<span class="target" id="module-preffect_factory"></span><dl class="py function">
+  <section id="module-preffect_factory">
+<span id="preffect-factory-py-module"></span><h1>preffect_factory.py module<a class="headerlink" href="#module-preffect_factory" title="Permalink to this heading"></a></h1>
+<dl class="py function">
 <dt class="sig sig-object py" id="preffect_factory.core_only_copy">
 <span class="sig-prename descclassname"><span class="pre">preffect_factory.</span></span><span class="sig-name descname"><span class="pre">core_only_copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">old</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_factory.core_only_copy" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
@@ -106,31 +106,35 @@
 <span class="sig-prename descclassname"><span class="pre">preffect_factory.</span></span><span class="sig-name descname"><span class="pre">factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trigger_setup</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preffect_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_factory.factory" title="Permalink to this definition"></a></dt>
 <dd><p>Calls _preffect class to perform tasks such as training, inference, reinstatement, clustering, and visualization 
 based on specified configurations.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="simple">
-<dt>always_save (bool): If True, the current state of the process (preffect or inference) will </dt><dd><p>always be saved after execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<em>str</em><em>, </em><em>optional</em>) -- The specific task to be executed. Valid options include 'train', 'inference', 'reinstate',
+'cluster_latent', 'cluster_counts', and 'visualize_lib_size'.</p></li>
+<li><p><strong>always_save</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If True, the current state of the process (Preffect or Inference) will always be saved after execution.</p></li>
+<li><p><strong>trigger_setup</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If True, triggers the setup process for the environment before execution.</p></li>
+<li><p><strong>configs</strong> (<em>dict</em><em>, </em><em>optional</em>) -- Configuration dictionary specifying details such as paths, device settings, and the specific task to be executed.</p></li>
+<li><p><strong>preffect_obj</strong> (<a class="reference internal" href="_preffect.html#preffect.Preffect" title="_preffect.Preffect"><em>Preffect</em></a><em>, </em><em>optional</em>) -- An instance of the Preffect class, if already instantiated; otherwise, it is created based on the task requirements.</p></li>
+<li><p><strong>inference_obj</strong> (<a class="reference internal" href="_inference.html#inference.Inference" title="_inference.Inference"><em>Inference</em></a><em>, </em><em>optional</em>) -- An instance of the Inference class, if already instantiated.</p></li>
+<li><p><strong>inference_key</strong> (<em>str</em><em>, </em><em>optional</em>) -- The name identifier for an Inference instance to be fetched from a register.</p></li>
+<li><p><strong>fname</strong> (<em>str</em><em>, </em><em>optional</em>) -- The filename to be used for saving outputs, specifically in inference tasks.</p></li>
+<li><p><strong>visualize</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If True, enables visualization for relevant tasks.</p></li>
+<li><p><strong>error_type</strong> (<em>str</em><em>, </em><em>optional</em>) -- The type of error to be used for error handling and reporting.</p></li>
+<li><p><strong>cluster_omega</strong> (<em>bool</em><em>, </em><em>optional</em>) -- If True, enables clustering of omega values.</p></li>
+</ul>
 </dd>
-</dl>
-<p>trigger_setup (bool): If True, triggers the setup process for the environment before execution.
-configs (dict): Configuration dictionary specifying details such as paths, device  settings, 
-and the specific task to be executed ('train', 'inference', etc.).
-pr (Preffect, optional): An instance of the Preffect class, if already instantiated; otherwise, 
-it is created based on the task requirements.
-ir (Inference, optional): An instance of the Inference class, if already instantiated.
-inference_obj_name (str, optional): The name identifier for an Inference instance to be fetched from a register.
-fname (str, optional): The filename to be used for saving outputs, specifically in inference tasks.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Depending on the task specified in <cite>configs['task']</cite>:
+- Preffect instance for 'train', 'inference', and 'reinstate' tasks.
+- Cluster instance for 'cluster_latent' and 'cluster_counts' tasks.
+- Visualization object for 'visualize_lib_size' task.</p>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>Depending on the task specified in <cite>configs['task']</cite>:</dt><dd><p>Preffect instance for 'train', 'inference', and 'reinstate' tasks.
-Cluster instance for 'cluster_latent' and 'cluster_counts' tasks.
-Visualization object for 'visualize_lib_size' task.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Union[<a class="reference internal" href="_preffect.html#preffect.Preffect" title="_preffect.Preffect">Preffect</a>, <a class="reference internal" href="_cluster.html#wrappers._cluster.Cluster" title="wrappers._cluster.Cluster">Cluster</a>, Visualization]</p>
 </dd>
-</dl>
-</dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>PreffectError: If an invalid task is specified or if required resources (like Preffect or Inference instances)</dt><dd><p>are not provided or found for the requested operation.</p>
-</dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If an invalid task is specified or if required resources (like Preffect or Inference instances)
+are not provided or found for the requested operation.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -140,33 +144,33 @@ Visualization object for 'visualize_lib_size' task.</p>
 <span class="sig-prename descclassname"><span class="pre">preffect_factory.</span></span><span class="sig-name descname"><span class="pre">factory_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_factory.factory_setup" title="Permalink to this definition"></a></dt>
 <dd><p>Sets up the factory environment for processing by initializing paths, ensuring directory 
 existence, and setting up logging and CUDA device configurations.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>configs (dict): A dictionary containing configuration settings. Expected keys include:</dt><dd><ul class="simple">
-<li><p>'input_anndata_path': Path to input Anndata files for basic checks.</p></li>
-<li><p>'input_inference_anndata_path': Path for input inference Anndata files.</p></li>
-<li><p>'output_path': Base path where logs and results directories will be created.</p></li>
-<li><p>'cuda_device_num': Integer specifying the CUDA device number to use.</p></li>
-<li><p>'no_cuda': Boolean that if True, forces the use of CPU even if CUDA is available.</p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em>) -- <p>A dictionary containing configuration settings. Expected keys include:</p>
+<ul class="simple">
+<li><p><strong>'input_anndata_path'</strong>: Path to input Anndata files for basic checks.</p></li>
+<li><p><strong>'input_inference_anndata_path'</strong>: Path for input inference Anndata files.</p></li>
+<li><p><strong>'output_path'</strong>: Base path where logs and results directories will be created.</p></li>
+<li><p><strong>'cuda_device_num'</strong>: Integer specifying the CUDA device number to use.</p></li>
+<li><p><strong>'no_cuda'</strong>: Boolean that if True, forces the use of CPU even if CUDA is available.</p></li>
 </ul>
+</p>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>tuple: A tuple containing:</dt><dd><ul class="simple">
-<li><p>cuda_device_number (int): The CUDA device number from the configs.</p></li>
-<li><p>input_log (Logger): Logger for input operations.</p></li>
-<li><p>forward_log (Logger): Logger for forward operations.</p></li>
-<li><p>inference_log (Logger): Logger for inference operations.</p></li>
-<li><p>configs (dict): The updated configurations dictionary.</p></li>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:</p>
+<ul class="simple">
+<li><p><strong>input_log</strong> (logging.Logger): Logger for input operations.</p></li>
+<li><p><strong>forward_log</strong> (logging.Logger or None): Logger for forward operations. None if the task is not 'train'.</p></li>
+<li><p><strong>inference_log</strong> (logging.Logger or None): Logger for inference operations. None if the task is not 'train'.</p></li>
+<li><p><strong>configs</strong> (dict): The updated configurations dictionary.</p></li>
 </ul>
+</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
 </dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>Exception: If there is an issue accessing the required Anndata paths, an exception is raised</dt><dd><p>with a message indicating the inaccessible path.</p>
-</dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> -- If there is an issue accessing the required Anndata paths, an exception is raised with a message indicating the inaccessible path.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -175,12 +179,31 @@ existence, and setting up logging and CUDA device configurations.</p>
 <dt class="sig sig-object py" id="preffect_factory.generate_and_save_visualizations">
 <span class="sig-prename descclassname"><span class="pre">preffect_factory.</span></span><span class="sig-name descname"><span class="pre">generate_and_save_visualizations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inference_instance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_factory.generate_and_save_visualizations" title="Permalink to this definition"></a></dt>
 <dd><p>Function which calls visualization tasks and saves the images within <cite>preffect_factory.py</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inference_instance</strong> (<a class="reference internal" href="_inference.html#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- An instance of the Inference class representing the inference process.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="preffect_factory.setup_cuda">
 <span class="sig-prename descclassname"><span class="pre">preffect_factory.</span></span><span class="sig-name descname"><span class="pre">setup_cuda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect_factory.setup_cuda" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set up the CUDA device based on the provided configurations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em>) -- A dictionary containing configuration settings. Expected keys include:
+- <strong>'cuda_device_num'</strong>: Integer specifying the CUDA device number to use.
+- <strong>'no_cuda'</strong>: Boolean that if True, forces the use of CPU even if CUDA is available.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The configured PyTorch device (either CUDA or CPU).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.device</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 

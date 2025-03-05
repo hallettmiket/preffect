@@ -16,16 +16,27 @@ from _utils import (
 from _error import ( PreffectError )
 
 class Cluster:
+    r"""
+    A class for performing clustering on the latent space representation of data from a PREFFECT inference object.
+
+    :param infer_obj: The inference PREFFECT instance. Found in the PREFFECT object (preffect_object.inference_dict[inference_key]).
+    :type infer_obj: Inference
+    :param configs_cluster: Configuration settings for the clustering run, which includes various operational parameters.
+    :type configs_cluster: dict
+    :param cluster_file_name: Optional name for the cluster file. If not provided, it is taken from the configs_cluster dictionary.
+    :type cluster_file_name: str, optional
+    """
 
     def __init__(self, infer_obj, configs_cluster, cluster_file_name=None):
         """
         Initialization of the clustering class.
 
-        Args:
-            infer_obj: The inference PREFFECT instance. Found in the PREFFECT object (preffect_object.inference_dict[inference_key])
-            configs (dict): Configuration settings for the inference run, which includes various operational parameters 
-                            such as 'inference_key'.
-    
+        :param infer_obj: The inference PREFFECT instance. Found in the PREFFECT object (preffect_object.inference_dict[inference_key]).
+        :type infer_obj: Inference
+        :param configs_cluster: Configuration settings for the clustering run, which includes various operational parameters.
+        :type configs_cluster: dict
+        :param cluster_file_name: Optional name for the cluster file. If not provided, it is taken from the configs_cluster dictionary.
+        :type cluster_file_name: str, optional
         """
         self.parent = infer_obj
         self.configs_cluster = configs_cluster
@@ -46,9 +57,7 @@ class Cluster:
         is already registered in ``self.parent.clusters``. If not found, it deep-copies
         the current cluster and stores it under ``self.cluster_file_name``.
 
-        Raises:
-            PreffectError: If the cluster name already exists and overwrite permission
-            is set to False.
+        :raises PreffectError: If the cluster name already exists and overwrite permission is set to False.
         """
         if self.cluster_file_name not in self.parent.clusters.keys() or self.configs_cluster['cluster_overwrite']:
             self.parent.clusters[self.cluster_file_name] = copy.deepcopy(self)
@@ -57,24 +66,29 @@ class Cluster:
 
     def cluster_latent_space(self, color_by='leiden', umap_nneighbors = 10, cluster_aim=5):
         """
-        Extract the latent representation of the data from the parent Inference object, 
+        Extract the latent representation of the data from the parent Inference object,
         apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
         using UMAP.
 
         This method:
-            1. Retrieves an AnnData object containing the latent space representation.
-            2. Constructs a neighborhood graph and computes a UMAP embedding.
-            3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-            are obtained (or a minimum resolution is reached).
-            4. Plots UMAP projections colored either by the specified column (``color_by``) 
-            or, if present, by additional attributes such as ``batch`` or ``subtype``.
 
-        Args:
-            color_by (str, optional): Column name in ``adata.obs`` by which to color 
-            the UMAP plot. Defaults to ``'leiden'``.
+        1. Retrieves an AnnData object containing the latent space representation.
 
-        Raises:
-            Any warnings are suppressed or handled internally when plotting. 
+        2. Constructs a neighborhood graph and computes a UMAP embedding.
+
+        3. Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).
+        
+        4. Plots UMAP projections colored either by the specified column (`color_by`) or, if present, by additional attributes such as `batch` or `subtype`.
+
+        :param color_by: Column name in `adata.obs` by which to color the UMAP plot. 
+                        Defaults to 'leiden'.
+        :type color_by: str, optional
+        :param umap_nneighbors: Number of neighbors to use for UMAP embedding. 
+                                Defaults to 10.
+        :type umap_nneighbors: int, optional
+        :param cluster_aim: Target number of clusters to aim for during Leiden clustering. 
+                            Defaults to 5.
+        :type cluster_aim: int, optional
         """
         adata = self.parent.return_latent_space_as_anndata()
 
@@ -143,24 +157,28 @@ class Cluster:
 
     def cluster_counts(self, color_by='leiden', cluster_omega = False, umap_nneighbors=10, cluster_aim=5):
         """
-        Extract the estimated counts (the mu of the gene-sample NB) from the Inference object, 
-        apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
+        Extract the estimated counts (the mu of the gene-sample NB) from the Inference object,
+        apply Leiden clustering (targeting up to 5 clusters), and visualize the results
         using UMAP.
 
         This method:
-            1. Retrieves an AnnData object containing the estimated counts for each gene-sample pair.
-            2. Constructs a neighborhood graph and computes a UMAP embedding.
-            3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-            are obtained (or a minimum resolution is reached).
-            4. Plots UMAP projections colored either by the specified column (``color_by``) 
-            or, by additional attributes such as ``batch`` or ``subtype`` (if available).
+        
+        1. Retrieves an AnnData object containing the estimated counts for each gene-sample pair.
+        
+        2. Constructs a neighborhood graph and computes a UMAP embedding.
 
-        Args:
-            color_by (str, optional): Column name in ``adata.obs`` by which to color 
-            the UMAP plot. Defaults to ``'leiden'``.
+        3. Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).        
+        
+        4. Plots UMAP projections colored either by the specified column (`color_by`) or, by additional attributes such as `batch` or `subtype` (if available).
 
-        Raises:
-            Any warnings are suppressed or handled internally when plotting. 
+        :param color_by: Column name in `adata.obs` by which to color the UMAP plot. Defaults to 'leiden'.
+        :type color_by: str, optional
+        :param cluster_omega: Whether to cluster the omega parameter. Defaults to False.
+        :type cluster_omega: bool, optional
+        :param umap_nneighbors: Number of neighbors to use for UMAP embedding. Defaults to 10.
+        :type umap_nneighbors: int, optional
+        :param cluster_aim: Target number of clusters to aim for during Leiden clustering. Defaults to 5.
+        :type cluster_aim: int, optional
         """
         adata = self.parent.return_counts_as_anndata()
 
@@ -250,24 +268,28 @@ class Cluster:
     # Clustering the original counts 
     def cluster_true_counts(self, color_by='leiden', umap_nneighbors=10, cluster_aim = 5):
         """
-        Extract the observed counts (those used as input for training) from the Inference object, 
-        apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
+        Extract the estimated counts (the mu of the gene-sample NB) from the Inference object,
+        apply Leiden clustering (targeting up to 5 clusters), and visualize the results
         using UMAP.
 
         This method:
-            1. Retrieves the original input data from the Inferene object.
-            2. Constructs a neighborhood graph and computes a UMAP embedding.
-            3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-            are obtained (or a minimum resolution is reached).
-            4. Plots UMAP projections colored either by the specified column (``color_by``) 
-            or, if present, by additional attributes such as ``batch`` or ``subtype``.
+        
+        1. Retrieves an AnnData object containing the estimated counts for each gene-sample pair.
+        
+        2. Constructs a neighborhood graph and computes a UMAP embedding.
+        
+        3. Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).
+        
+        4. Plots UMAP projections colored either by the specified column (`color_by`) or, by additional attributes such as `batch` or `subtype` (if available).
 
-        Args:
-            color_by (str, optional): Column name in ``adata.obs`` by which to color 
-            the UMAP plot. Defaults to ``'leiden'``.
-
-        Raises:
-            Any warnings are suppressed or handled internally when plotting. 
+        :param color_by: Column name in `adata.obs` by which to color the UMAP plot. Defaults to 'leiden'.
+        :type color_by: str, optional
+        :param cluster_omega: Whether to cluster the omega parameter. Defaults to False.
+        :type cluster_omega: bool, optional
+        :param umap_nneighbors: Number of neighbors to use for UMAP embedding. Defaults to 10.
+        :type umap_nneighbors: int, optional
+        :param cluster_aim: Target number of clusters to aim for during Leiden clustering. Defaults to 5.
+        :type cluster_aim: int, optional
         """
         adata = self.parent.return_counts_as_anndata()
 

@@ -108,14 +108,19 @@
 <dt class="sig sig-object py" id="preffect.Preffect.extract_batch">
 <span class="sig-name descname"><span class="pre">extract_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batches</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect.Preffect.extract_batch" title="Permalink to this definition"></a></dt>
 <dd><p>Extracts a single batch from the given batches dictionary based on the specified index.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>batches (dict): A dictionary where each key maps to a list or array of batched data.
-idx (int): The index of the data to extract from each batch list in the batches dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batches</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>Any</em><em>]</em><em>]</em>) -- A dictionary where each key maps to a list or array of batched data.</p></li>
+<li><p><strong>idx</strong> (<em>int</em>) -- The index of the data to extract from each batch list in the <cite>batches</cite> dictionary.</p></li>
+</ul>
 </dd>
-<dt>Returns:</dt><dd><dl class="simple">
-<dt>dict: A dictionary containing the extracted data for each key in the input batches dictionary.</dt><dd><p>The keys remain the same, but the values are the data items at the specified index.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the extracted data for each key in the input <cite>batches</cite> dictionary.
+The keys remain the same, but the values are the data items at the specified index.</p>
 </dd>
-</dl>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -126,10 +131,15 @@ idx (int): The index of the data to extract from each batch list in the batches 
 <dd><p>Retrieves an inference object from the inference dictionary based on its name.</p>
 <p>This method searches the internal dictionary that stores inference objects and returns
 the object associated with the given name if it exists. If no such object exists, it returns None.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>ir_name (str): The name of the inference object to retrieve.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ir_name</strong> (<em>str</em>) -- The name of the inference object to retrieve.</p>
 </dd>
-<dt>Returns:</dt><dd><p>The inference object associated with <cite>ir_name</cite> if it exists in the dictionary; otherwise, None.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The inference object associated with <cite>ir_name</cite> if it exists in the dictionary; otherwise, None.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[Any]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -138,18 +148,14 @@ the object associated with the given name if it exists. If no such object exists
 <dt class="sig sig-object py" id="preffect.Preffect.prep_from_existing_session">
 <span class="sig-name descname"><span class="pre">prep_from_existing_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect.Preffect.prep_from_existing_session" title="Permalink to this definition"></a></dt>
 <dd><p>Restores the Preffect object from a saved session file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>configs (dict): Configuration dictionary containing necessary paths and </dt><dd><p>settings, which should include keys for 'output_path' and 
-'endogenous_file_name' to construct the file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>configs</strong> (<em>dict</em>) -- Configuration dictionary containing necessary paths and settings, which should
+include keys for 'output_path' and 'input_existing_session' to construct the file path.</p>
 </dd>
-</dl>
-</dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>Exception: An error occurred while trying to restore the session from the </dt><dd><p>file, which could be due to missing file, corrupted data, or 
-incompatible configurations.</p>
-</dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If an error occurs while trying to restore the session from the file, which
+could be due to a missing file, corrupted data, or incompatible configurations.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -159,18 +165,17 @@ incompatible configurations.</p>
 <span class="sig-name descname"><span class="pre">prep_new_session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect.Preffect.prep_new_session" title="Permalink to this definition"></a></dt>
 <dd><p>Prepares a new session for training by setting up datasets, model, optimizer, 
 and other configurations necessary for training and validation.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>configs (dict): Configuration parameters including dataset paths, model settings, </dt><dd><p>training parameters, and device settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configs</strong> (<em>dict</em>) -- Configuration parameters including dataset paths, model settings, 
+training parameters, and device settings.</p></li>
+<li><p><strong>forward_log</strong> (<em>logging.Logger</em>) -- Logger used for recording operational messages and errors during the setup process.</p></li>
+</ul>
 </dd>
-<dt>forward_log (logging.Logger): Logger used for recording operational messages </dt><dd><p>and errors during the setup process.</p>
-</dd>
-</dl>
-</dd>
-<dt>Raises:</dt><dd><dl class="simple">
-<dt>Exception: Raises an exception if there are misconfigurations, file path errors, </dt><dd><p>or other issues during the initialization of datasets or model components.</p>
-</dd>
-</dl>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> -- Raises an exception if there are misconfigurations, file path errors, 
+or other issues during the initialization of datasets or model components.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,13 +184,11 @@ and other configurations necessary for training and validation.</p>
 <dt class="sig sig-object py" id="preffect.Preffect.save">
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect.Preffect.save" title="Permalink to this definition"></a></dt>
 <dd><p>Saves the FFPE_dataset and trained model to a file on disk.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><dl class="simple">
-<dt>fname (str, optional): The filename under which to save the model. If not specified,</dt><dd><p>the model is saved under the 'nick_name' specified in the
-configuration concatenated with '.pth'. The file is saved
-in the directory specified by 'output_path' in the configuration.</p>
-</dd>
-</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fname</strong> (<em>str</em><em>, </em><em>optional</em>) -- The filename under which to save the model. If not specified, the model is saved under
+the 'input_existing_session' specified in the configuration concatenated with '.pth'.
+The file is saved in the directory specified by 'output_path' in the configuration.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -195,12 +198,12 @@ in the directory specified by 'output_path' in the configuration.</p>
 <span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forward_log</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#preffect.Preffect.train" title="Permalink to this definition"></a></dt>
 <dd><p>This function initializes the model, prepares data loaders for training and validation sets, 
 and performs  training of VAE model for FFPE dataset.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>forward_log (Logger): From _logger_config.py</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>forward_log</strong> (<em>logging.Logger</em>) -- Logger object used for logging training progress and metrics.</p>
 </dd>
-<dt>Raises:</dt><dd><p>AssertionError: If the configuration sanity checks fail from _config.py</p>
-</dd>
-<dt>Returns:</dt><dd><p>None.</p>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>AssertionError</strong> -- If the configuration sanity checks fail.</p>
 </dd>
 </dl>
 </dd></dl>

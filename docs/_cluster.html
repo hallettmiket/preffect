@@ -102,26 +102,37 @@
 <dt class="sig sig-object py" id="wrappers._cluster.Cluster">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wrappers._cluster.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">infer_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configs_cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._cluster.Cluster" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for performing clustering on the latent space representation of data from a PREFFECT inference object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>infer_obj</strong> (<a class="reference internal" href="_inference.html#inference.Inference" title="_inference.Inference"><em>Inference</em></a>) -- The inference PREFFECT instance. Found in the PREFFECT object (preffect_object.inference_dict[inference_key]).</p></li>
+<li><p><strong>configs_cluster</strong> (<em>dict</em>) -- Configuration settings for the clustering run, which includes various operational parameters.</p></li>
+<li><p><strong>cluster_file_name</strong> (<em>str</em><em>, </em><em>optional</em>) -- Optional name for the cluster file. If not provided, it is taken from the configs_cluster dictionary.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="wrappers._cluster.Cluster.cluster_counts">
 <span class="sig-name descname"><span class="pre">cluster_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leiden'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_omega</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_nneighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_aim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._cluster.Cluster.cluster_counts" title="Permalink to this definition"></a></dt>
-<dd><p>Extract the estimated counts (the mu of the gene-sample NB) from the Inference object, 
-apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
+<dd><p>Extract the estimated counts (the mu of the gene-sample NB) from the Inference object,
+apply Leiden clustering (targeting up to 5 clusters), and visualize the results
 using UMAP.</p>
-<dl>
-<dt>This method:</dt><dd><ol class="arabic simple">
+<p>This method:</p>
+<ol class="arabic simple">
 <li><p>Retrieves an AnnData object containing the estimated counts for each gene-sample pair.</p></li>
 <li><p>Constructs a neighborhood graph and computes a UMAP embedding.</p></li>
+<li><p>Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).</p></li>
+<li><p>Plots UMAP projections colored either by the specified column (<cite>color_by</cite>) or, by additional attributes such as <cite>batch</cite> or <cite>subtype</cite> (if available).</p></li>
 </ol>
-<p>3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-are obtained (or a minimum resolution is reached).
-4. Plots UMAP projections colored either by the specified column (<code class="docutils literal notranslate"><span class="pre">color_by</span></code>) 
-or, by additional attributes such as <code class="docutils literal notranslate"><span class="pre">batch</span></code> or <code class="docutils literal notranslate"><span class="pre">subtype</span></code> (if available).</p>
-</dd>
-<dt>Args:</dt><dd><p>color_by (str, optional): Column name in <code class="docutils literal notranslate"><span class="pre">adata.obs</span></code> by which to color 
-the UMAP plot. Defaults to <code class="docutils literal notranslate"><span class="pre">'leiden'</span></code>.</p>
-</dd>
-<dt>Raises:</dt><dd><p>Any warnings are suppressed or handled internally when plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color_by</strong> (<em>str</em><em>, </em><em>optional</em>) -- Column name in <cite>adata.obs</cite> by which to color the UMAP plot. Defaults to 'leiden'.</p></li>
+<li><p><strong>cluster_omega</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Whether to cluster the omega parameter. Defaults to False.</p></li>
+<li><p><strong>umap_nneighbors</strong> (<em>int</em><em>, </em><em>optional</em>) -- Number of neighbors to use for UMAP embedding. Defaults to 10.</p></li>
+<li><p><strong>cluster_aim</strong> (<em>int</em><em>, </em><em>optional</em>) -- Target number of clusters to aim for during Leiden clustering. Defaults to 5.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -129,23 +140,26 @@ the UMAP plot. Defaults to <code class="docutils literal notranslate"><span clas
 <dl class="py method">
 <dt class="sig sig-object py" id="wrappers._cluster.Cluster.cluster_latent_space">
 <span class="sig-name descname"><span class="pre">cluster_latent_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leiden'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_nneighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_aim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._cluster.Cluster.cluster_latent_space" title="Permalink to this definition"></a></dt>
-<dd><p>Extract the latent representation of the data from the parent Inference object, 
+<dd><p>Extract the latent representation of the data from the parent Inference object,
 apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
 using UMAP.</p>
-<dl>
-<dt>This method:</dt><dd><ol class="arabic simple">
+<p>This method:</p>
+<ol class="arabic simple">
 <li><p>Retrieves an AnnData object containing the latent space representation.</p></li>
 <li><p>Constructs a neighborhood graph and computes a UMAP embedding.</p></li>
+<li><p>Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).</p></li>
+<li><p>Plots UMAP projections colored either by the specified column (<cite>color_by</cite>) or, if present, by additional attributes such as <cite>batch</cite> or <cite>subtype</cite>.</p></li>
 </ol>
-<p>3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-are obtained (or a minimum resolution is reached).
-4. Plots UMAP projections colored either by the specified column (<code class="docutils literal notranslate"><span class="pre">color_by</span></code>) 
-or, if present, by additional attributes such as <code class="docutils literal notranslate"><span class="pre">batch</span></code> or <code class="docutils literal notranslate"><span class="pre">subtype</span></code>.</p>
-</dd>
-<dt>Args:</dt><dd><p>color_by (str, optional): Column name in <code class="docutils literal notranslate"><span class="pre">adata.obs</span></code> by which to color 
-the UMAP plot. Defaults to <code class="docutils literal notranslate"><span class="pre">'leiden'</span></code>.</p>
-</dd>
-<dt>Raises:</dt><dd><p>Any warnings are suppressed or handled internally when plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color_by</strong> (<em>str</em><em>, </em><em>optional</em>) -- Column name in <cite>adata.obs</cite> by which to color the UMAP plot. 
+Defaults to 'leiden'.</p></li>
+<li><p><strong>umap_nneighbors</strong> (<em>int</em><em>, </em><em>optional</em>) -- Number of neighbors to use for UMAP embedding. 
+Defaults to 10.</p></li>
+<li><p><strong>cluster_aim</strong> (<em>int</em><em>, </em><em>optional</em>) -- Target number of clusters to aim for during Leiden clustering. 
+Defaults to 5.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -153,23 +167,24 @@ the UMAP plot. Defaults to <code class="docutils literal notranslate"><span clas
 <dl class="py method">
 <dt class="sig sig-object py" id="wrappers._cluster.Cluster.cluster_true_counts">
 <span class="sig-name descname"><span class="pre">cluster_true_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leiden'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_nneighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_aim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#wrappers._cluster.Cluster.cluster_true_counts" title="Permalink to this definition"></a></dt>
-<dd><p>Extract the observed counts (those used as input for training) from the Inference object, 
-apply Leiden clustering (targeting up to 5 clusters), and visualize the results 
+<dd><p>Extract the estimated counts (the mu of the gene-sample NB) from the Inference object,
+apply Leiden clustering (targeting up to 5 clusters), and visualize the results
 using UMAP.</p>
-<dl>
-<dt>This method:</dt><dd><ol class="arabic simple">
-<li><p>Retrieves the original input data from the Inferene object.</p></li>
+<p>This method:</p>
+<ol class="arabic simple">
+<li><p>Retrieves an AnnData object containing the estimated counts for each gene-sample pair.</p></li>
 <li><p>Constructs a neighborhood graph and computes a UMAP embedding.</p></li>
+<li><p>Iteratively reduces the Leiden resolution until five or fewer clusters are obtained (or a minimum resolution is reached).</p></li>
+<li><p>Plots UMAP projections colored either by the specified column (<cite>color_by</cite>) or, by additional attributes such as <cite>batch</cite> or <cite>subtype</cite> (if available).</p></li>
 </ol>
-<p>3. Iteratively reduces the Leiden resolution until five or fewer clusters 
-are obtained (or a minimum resolution is reached).
-4. Plots UMAP projections colored either by the specified column (<code class="docutils literal notranslate"><span class="pre">color_by</span></code>) 
-or, if present, by additional attributes such as <code class="docutils literal notranslate"><span class="pre">batch</span></code> or <code class="docutils literal notranslate"><span class="pre">subtype</span></code>.</p>
-</dd>
-<dt>Args:</dt><dd><p>color_by (str, optional): Column name in <code class="docutils literal notranslate"><span class="pre">adata.obs</span></code> by which to color 
-the UMAP plot. Defaults to <code class="docutils literal notranslate"><span class="pre">'leiden'</span></code>.</p>
-</dd>
-<dt>Raises:</dt><dd><p>Any warnings are suppressed or handled internally when plotting.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color_by</strong> (<em>str</em><em>, </em><em>optional</em>) -- Column name in <cite>adata.obs</cite> by which to color the UMAP plot. Defaults to 'leiden'.</p></li>
+<li><p><strong>cluster_omega</strong> (<em>bool</em><em>, </em><em>optional</em>) -- Whether to cluster the omega parameter. Defaults to False.</p></li>
+<li><p><strong>umap_nneighbors</strong> (<em>int</em><em>, </em><em>optional</em>) -- Number of neighbors to use for UMAP embedding. Defaults to 10.</p></li>
+<li><p><strong>cluster_aim</strong> (<em>int</em><em>, </em><em>optional</em>) -- Target number of clusters to aim for during Leiden clustering. Defaults to 5.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -181,9 +196,9 @@ the UMAP plot. Defaults to <code class="docutils literal notranslate"><span clas
 <p>This method checks if a cluster with the same name as <code class="docutils literal notranslate"><span class="pre">self.cluster_file_name</span></code> 
 is already registered in <code class="docutils literal notranslate"><span class="pre">self.parent.clusters</span></code>. If not found, it deep-copies
 the current cluster and stores it under <code class="docutils literal notranslate"><span class="pre">self.cluster_file_name</span></code>.</p>
-<dl class="simple">
-<dt>Raises:</dt><dd><p>PreffectError: If the cluster name already exists and overwrite permission
-is set to False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="_error.html#error.PreffectError" title="_error.PreffectError"><strong>PreffectError</strong></a> -- If the cluster name already exists and overwrite permission is set to False.</p>
 </dd>
 </dl>
 </dd></dl>
