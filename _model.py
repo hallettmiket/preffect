@@ -125,12 +125,12 @@ class Encoder(nn.Module):
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
     
         h = lat_space
+        total_cat = None
+        
         if len(continuous_indices)>0:
-            #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
             h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
         
         if len(categorical_indices)> 0:
-            total_cat = None
             for idx in categorical_indices:
                 
                 num_embeddings = self.embeddings[0].num_embeddings
@@ -171,6 +171,8 @@ class Encoder(nn.Module):
         else:
             h = X
 
+        categorical_indices = [i for i, x in enumerate(k) if x is not None]
+
         if self.model_type in ('single', 'full'):
             h = self.layer1(h, ejs)
             h = F.elu(h)
@@ -189,7 +191,7 @@ class Encoder(nn.Module):
             mu = self.leaky_relu(self.mu(torch.cat((h, K_stack), dim=1)))
             logvar = self.leaky_relu(self.logvar(torch.cat((h, K_stack), dim=1)))
             
-            if correction is True:
+            if correction is True and len(categorical_indices) > 0:
                 mu += total_cat
 
             
@@ -205,7 +207,7 @@ class Encoder(nn.Module):
             
             mu = self.leaky_relu(self.mu_simple(h))
 
-            if correction is True:
+            if correction is True and len(categorical_indices) > 0:
                 mu += total_cat
                 unique_rows, counts = torch.unique(total_cat, dim=0, return_counts=True)
 
@@ -333,11 +335,12 @@ class Decoder(nn.Module):
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
         h = lat_space
+        total_cat = None
+
         if len(continuous_indices)>0:
             h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
 
         if len(categorical_indices)> 0:
-            total_cat = None
             for idx in categorical_indices:
                 holder = self.embeddings[idx](K[idx])
                 if total_cat is None:
@@ -479,12 +482,12 @@ class LibEncoder(nn.Module):
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
         h = lat_space
+        total_cat = None
+
         if len(continuous_indices)>0:
-            #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
             h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
 
         if len(categorical_indices)> 0:
-            total_cat = None
             for idx in categorical_indices:
                 holder = self.embeddings[idx](K[idx])
                 if total_cat is None:
@@ -519,13 +522,14 @@ class LibEncoder(nn.Module):
         else:
             h = log_lib.view(-1,1)
 
-        #h = self.leaky_relu(self.dropout1(self.layer_lib1(h)))
+        categorical_indices = [i for i, x in enumerate(k) if x is not None]
+
         h = self.dropout1(self.leaky_relu(self.layer_lib1(h)))
         
         mu = self.layer_lib_mu(h)
         logvar = self.layer_lib_logvar(h)
 
-        if correction is True:        
+        if correction is True and len(categorical_indices) > 0:
             mu += total_cat
 
         return mu, logvar
@@ -617,12 +621,12 @@ class LibDecoder(nn.Module):
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
         h = lat_space
+        total_cat = None
+
         if len(continuous_indices)>0:
-            #h = torch.cat((h, torch.stack(K[continuous_indices], dim=1)), dim=1) 
             h = torch.cat((h, torch.stack([K[i] for i in continuous_indices], dim=1)), dim=1)
 
         if len(categorical_indices)> 0:
-            total_cat = None
             for idx in categorical_indices:
                 holder = self.embeddings[idx](K[idx])
                 if total_cat is None:
