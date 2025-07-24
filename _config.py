@@ -61,6 +61,7 @@ configs = {
     
     'theta_transform' : True, # whether to log transform the theta parameter, improves performance when theta>1
     'gradient_clip' : True, # to perform gradient clipping
+    'gradient_clip_max_norm' : 10, # The upper‐limit threshold for the gradient norm
 
     # early stopping options
     'early_stopping' : False, # if you want training to halt after loss does not improve over a certain point of time

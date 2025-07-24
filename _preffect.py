@@ -252,7 +252,7 @@ class Preffect:
 
                 # Trimming testing
                 if self.configs['gradient_clip']:
-                    max_norm = 10
+                    max_norm = self.configs['gradient_clip_max_norm']
                     torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm)
 
                 self.optimizer.step()
