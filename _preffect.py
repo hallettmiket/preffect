@@ -2,6 +2,8 @@ import os
 import torch
 from torch.utils.tensorboard import SummaryWriter
 import time
+import numpy as np
+from copy import deepcopy
 from tqdm import tqdm
 
 from _utils import (
@@ -208,9 +210,13 @@ class Preffect:
         :raises AssertionError: If the configuration sanity checks fail.
         """
 
-
         start_time = time.time()
         writer = SummaryWriter()
+        
+        # for early stopping
+        best_loss = np.inf
+        patience, wait = int(round(self.configs['early_stopping_patience'])), 0
+
         for epoch in tqdm(range(self.configs['epochs']), desc="Training Progress"):
             train_loss_per_epoch = 0
             self.model.train()
@@ -296,9 +302,25 @@ class Preffect:
                 if (epoch + 1) % 10 == 0:
                     plot_progression_all(losses=self.losses, epoch=epoch+1, file_path=os.path.join(self.configs['results_path'], "losses.pdf"), override=True)
             
-            forward_log.info(f"\nAverage validation loss per epoch {val_loss_per_epoch / len(batch['X_batches'])}")
-            writer.add_scalar("Loss/valid ", val_loss_per_epoch / len(batch['X_batches']), epoch )
+            avg_val_loss_per_epoch = val_loss_per_epoch / len(batch['X_batches'])
+            forward_log.info(f"\nAverage validation loss per epoch {avg_val_loss_per_epoch}")
+            writer.add_scalar("Loss/valid ", avg_val_loss_per_epoch, epoch )
             writer.flush()
             forward_log.info('\nTime elapsed: %.2f min' % ((time.time() - start_time)/60))
+
+            # early stopping
+            if (self.configs['early_stopping'] is True): 
+                if (avg_val_loss_per_epoch < best_loss - self.configs['early_stopping_min_delta']):
+                    best_loss, wait = avg_val_loss_per_epoch, 0
+                    best_state = deepcopy(self.model.state_dict()) # save best model
+                else:
+                    wait += 1
+                    # stop if loss meets stopping criteria 'patience' times in a row
+                    if (wait >= patience): 
+                        print(f"Early stopping activated: Epoch {epoch}")
+                        self.model.load_state_dict(best_state) # load model state from its lowest loss epoch
+                        break
+
+
         forward_log.info('\nTotal Training Time: %.2f min' % ((time.time() - start_time)/60))
         writer.close()

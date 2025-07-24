@@ -220,6 +220,33 @@ Some losses pertain to individual tissues, while others are a singular loss valu
 </details>
 
 <details>
+<summary>Gradient Clipping</summary>
+Gradient clipping prevents exploding gradients in deep networks by capping the overall magnitude of the gradient vector.
+<br>
+| Variable               | Value       | Description                                           |
+|------------------------|-------------|-------------------------------------------------------|
+| gradient_clip          | True        | Activates gradient clipping                           |
+| gradient_clip_max_norm | 10          | The upper‐limit threshold for the gradient norm       |
+
+</details>
+
+
+<details>
+<summary>Early Stopping</summary>
+Early stopping halts training when validation performance stops improving, preventing the model from over-fitting by cutting off training before it begins to memorize noise.
+
+<br>
+| Variable                 | Value     | Description                                           |
+|--------------------------|-----------|-------------------------------------------------------|
+| early_stopping           | False     | Stop training due to trend in validation loss delta   |
+| early_stopping_min_delta | 0         | Amount avg val loss must improve per epoch            |
+| early_stopping_patience  | 5         | No. times min delta not reached before stopping       |
+
+Example: Using default parameters, PREFFECT will stop if the average validation loss doesn’t improve for 5 consecutive epochs. If the model starts improving after <5 epochs, then the process is reset.
+</details>
+
+
+<details>
 <summary>Delaying Loss Parameters</summary>
 
 Delay parameters are integers that indicate to PREFFECT at which epoch number should a particular loss value be adjusted for (where an epoch of 1 is the very start of training).

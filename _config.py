@@ -60,8 +60,12 @@ configs = {
     'small_clamp_value' : 10,  # for log var; exp(10) ~ 22K; max and min values
     
     'theta_transform' : True, # whether to log transform the theta parameter, improves performance when theta>1
-    'gradient_clip' : True, # to perform gradient clipping of a
+    'gradient_clip' : True, # to perform gradient clipping
 
+    # early stopping options
+    'early_stopping' : False, # if you want training to halt after loss does not improve over a certain point of time
+    'early_stopping_min_delta' : 0, # the amount the loss must improve per epoch (averaged across all minibatches)
+    'early_stopping_patience' : 5, # the amount of times the loss must not improve (sequentially) before stopping
 
     # delay of the application of losses (value = epoch)
     'delay_kl_lib' : 1,
