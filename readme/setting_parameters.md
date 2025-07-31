@@ -151,10 +151,13 @@ configs = {
 |------------------------|-------------|-------------------------------------------------------|
 | correct_vars           | True        | Correct categorical or continuous variables           |
 | vars_to_correct        | (Name,Type) | Correction variables; Type (categorical or continuous)|
+| set_NA_to_unique_corr  | value       | Set NA in correction variables to this value          |
 | adjust_vars            | False       | Whether to adjust for batch during inference step     |
 | adjust_to_batch_level  | value       | Set all samples as a certain batch during inference   |
 
-`vars_to_correct` [(Name [str],Type [str])] specifies what sample-based variable should be included into the network during **model training**. The _Name_ entered must match a column within the `obs` table of the AnnData input file (e.g. _batch_). The _Type_ indicates whether the variable input is categorical or continuous. This must be specified by the user. If categorical, the adjustment variable should have levels (e.g. from 0, 1, ..., n-1). Users can specify multiple correction and adjustment variables if desired (e.g. [('batch', 'categorical'), ('age', 'continuous)]). At the moment, PREFFECT requires this information to have no missing data (i.e. no NANs).
+`vars_to_correct` [(Name [str],Type [str])] specifies what sample-based variable should be included into the network during **model training**. The _Name_ entered must match a column within the `obs` table of the AnnData input file (e.g. _batch_). The _Type_ indicates whether the variable input is categorical or continuous. This must be specified by the user. If categorical, the adjustment variable should have levels (e.g. from 0, 1, ..., n-1). Users can specify multiple correction and adjustment variables if desired (e.g. [('batch', 'categorical'), ('age', 'continuous)]). 
+
+If the given correction variable contains missing data (e.g. NAs), PREFFECT will convert those NAs to the value given in `set_NA_to_unique_corr`. For now, this value will be used across all correction variables included. If you are including one or more continuous variables, then this value should be a number. 
 
 `adjust_vars` [Boolean] allows the user to alter the technical variable _batch_ during inference (only possible if _batch_ was included as a correction variable when training the PREFFECT model being used). `adjust_to_batch_level` [Int] indicates what batch value you wish to set all samples to during inference.
 
@@ -163,6 +166,7 @@ Example setup of these parameters:
 configs = {
   'correct_vars' : True,
   'vars_to_correct' : [('batch', 'categorical')], #[(var name, type)] where type is either categorical or continuous
+  'set_NA_to_unique_corr' : -1,
   'adjust_vars' : False, 
   'adjust_to_batch_level' : 0,
   ...

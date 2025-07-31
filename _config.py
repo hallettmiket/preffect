@@ -29,9 +29,10 @@ configs = {
 
     'correct_vars' : False,
     'vars_to_correct' : [], #[(var name, type)] where type is either categorical or continuous
+    'set_NA_to_unique_corr' : -1, # if correction variable contains an NA, set that sample to this value
 
-    'adjust_vars' : False, 
-    'adjust_to_batch_level' : 0,
+    'adjust_vars' : False, # Inference-specific variable 
+    'adjust_to_batch_level' : 0, # Inference-specific variable
 
     'select_samples' : float('inf'), # if this is an int M, then samples are randomly selected.  
     'select_sample_replacement' : False, # if select_samples > observed M, this is automatically True.

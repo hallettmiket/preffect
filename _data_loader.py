@@ -583,9 +583,7 @@ class FFPE_dataset(Dataset):
         """
         if not self.configs['correct_vars'] or self.configs['vars_to_correct'] is None or len(self.configs['vars_to_correct']) == 0:
            self.Ks = [ [torch.zeros(self.M, dtype=torch.int32)] for i in range(self.calT)]
-           
            self.ks = [[1] for i in range(self.calT)]
-
            self.cat_dict = dict()
            return
 
@@ -607,21 +605,26 @@ class FFPE_dataset(Dataset):
             for j, pr in enumerate(self.configs['vars_to_correct']):
                 var, typ = pr[0], pr[1]
                 
-
                 if var=='batch' and self.configs['adjust_vars']==True:
                     if typ=='categorical':
+                        metadata_df[var] = metadata_df[var].cat.add_categories([self.configs['set_NA_to_unique_corr']])
+                        metadata_df[var].fillna(self.configs['set_NA_to_unique_corr'], inplace=True)
                         batch_encoded_df, batch_cat_map, batch_levels = adjusted_categorical_correction_variable(metadata_df, var, self.configs['adjust_to_batch_level'])
                         # tmp_combined_cat_maps.append(cat_map)
                     else: # 'continuous':
+                        metadata_df[var] = metadata_df[var].astype('float').fillna(self.configs['set_NA_to_unique_corr'])
                         batch_encoded_df = torch.full((metadata_df.shape[0], 1), self.configs['adjust_to_batch_level'], dtype=torch.float)
                         batch_levels = float('inf')
                         batch_cat_map = None
                 else: # not the special case of adjusted batch variable
                     if typ=='categorical':
+                        metadata_df[var] = metadata_df[var].cat.add_categories([self.configs['set_NA_to_unique_corr']])
+                        metadata_df[var].fillna(self.configs['set_NA_to_unique_corr'], inplace=True)
                         encoded_df, cat_map, lvls = categorical_correction_variable(metadata_df, var)
                         lvls = len(metadata_df[var].unique())
                         tmp_combined_cat_maps.append(cat_map)
                     else: # 'continuous
+                        metadata_df[var] = metadata_df[var].astype('float').fillna(self.configs['set_NA_to_unique_corr'])
                         encoded_df = torch.tensor(metadata_df[var].values, dtype=torch.float)#.unsqueeze(1)
                         #lvls = float('inf')
                         lvls = None
@@ -715,17 +718,11 @@ class FFPE_dataset(Dataset):
         
         - **As**: Nans in Adjacency matrices are filtered.
         
-        - **Ks**: Converted to tensor after concatenating dataframes.
-        
-        - **ks**: Converted to tensor.
-        
         - **As_ej_index**: Indices of non-zeros in padded adjacencies.
 
         Note:
 
         - Assumes that self.Rs, As, and Ss are NumPy arrays or similar.
-        
-        - Assumes that self.Ks contains Pandas DataFrames.
         
         - Rs and Xs are logged.
 

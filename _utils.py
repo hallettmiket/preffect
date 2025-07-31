@@ -9,6 +9,7 @@ import shutil
 import torch.nn.functional as F
 import umap
 import math
+import numbers
 
 from _error import ( PreffectError )
 
@@ -688,17 +689,23 @@ def sanity_check_on_configs(preffect_con=None, train_ds_con=None, valid_ds_con=N
         "We expect r_prime to be larger than r"
     )
 
-    if preffect_con['correct_vars'] and preffect_con['adjust_vars']:
+    if preffect_con['correct_vars']:
         correction_types = {x[1] for x in preffect_con['vars_to_correct']}
         correction_vars = {x[0] for x in preffect_con['vars_to_correct']}
 
         assert correction_types.issubset({'categorical','continuous'}), (
             "Incorrect type for correction variable. Must be either continuous or categorical.")
-        assert 'batch' in correction_vars, "If you are adjusting for batch, the batch has to first be included in training as a correction variable."
+        
+        # this variable must be a string or number, not a list or tensor
+        assert isinstance(preffect_con['set_NA_to_unique_corr'], (str, numbers.Number)), "set_NA_to_unique_corr must be a string or number"
 
-        # ensure "adjust_to_batch_level" is a number
-        assert isinstance(preffect_con['adjust_to_batch_level'], (int, float)), "adjust_to_batch_level is not a number"
-        assert preffect_con['adjust_to_batch_level'] >= 0, "'adjust_to_batch_level' is negative."
+
+        if preffect_con['adjust_vars']:
+            assert 'batch' in correction_vars, "If you are adjusting for batch, the batch has to first be included in training as a correction variable."
+
+            # ensure "adjust_to_batch_level" is a number
+            assert isinstance(preffect_con['adjust_to_batch_level'], (int, float)), "adjust_to_batch_level is not a number"
+            assert preffect_con['adjust_to_batch_level'] >= 0, "'adjust_to_batch_level' is negative."
 
     assert preffect_con['model_likelihood'] in {'NB', 'ZINB'}, "Set model_likelihood ot either NB or ZINB."
 

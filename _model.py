@@ -1055,6 +1055,8 @@ class VAE(nn.Module):
                 lib_size_factors.append(
                     Xs_batch[i].sum(dim=1).unsqueeze(1))
 
+        #print(decode_outputs['distributional_parameters']['omega'])
+
         check_for_nans(decode_outputs['distributional_parameters']['omega'], "forward omega: ")
         check_for_nans(lib_size_factors[0].t(), "forward library size factors[0]: ")
         check_for_nans(decode_outputs['distributional_parameters']['theta'], "forward theta: ")
