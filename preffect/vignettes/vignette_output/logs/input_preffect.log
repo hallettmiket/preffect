@@ -1,0 +1,20 @@
+2025-08-01 09:14:57,500 - input - INFO - 2025-08-01 09:14:57.500171
+2025-08-01 09:15:13,961 - input - INFO - 2025-08-01 09:15:13.961369
+2025-08-01 09:15:13,966 - input - INFO - Cuda available: True Device: cuda:6
+2025-08-01 09:15:13,969 - input - INFO - 2025-08-01 09:15:13.969239
+2025-08-01 09:15:14,157 - input - INFO - Loading dataset: ./vignettes/full/ of type: train                
+Final calT: 2                
+Found anndata files: ['sim_full.train.tau_1.h5ad', 'sim_full.train.tau_2.h5ad']                
+Does Adjacency files exist?                True                
+Final model: full
+2025-08-01 09:16:41,527 - input - INFO - 2025-08-01 09:16:41.527440
+2025-08-01 09:16:41,532 - input - INFO - Cuda available: True Device: cuda:6
+2025-08-01 09:16:41,535 - input - INFO - 2025-08-01 09:16:41.535128
+2025-08-01 09:16:41,626 - input - INFO - Loading dataset: ./vignettes/full/ of type: train                
+Final calT: 2                
+Found anndata files: ['sim_full.train.tau_1.h5ad', 'sim_full.train.tau_2.h5ad']                
+Does Adjacency files exist?                True                
+Final model: full
+rain.tau_1.h5ad', 'sim_full.train.tau_2.h5ad']                
+Does Adjacency files exist?                True                
+Final model: full

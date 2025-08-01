@@ -607,7 +607,7 @@ class FFPE_dataset(Dataset):
                 
                 if var=='batch' and self.configs['adjust_vars']==True:
                     if typ=='categorical':
-                        metadata_df[var] = metadata_df[var].cat.add_categories([self.configs['set_NA_to_unique_corr']])
+                        metadata_df[var] = metadata_df[var].astype('category').cat.add_categories([self.configs['set_NA_to_unique_corr']])
                         metadata_df[var].fillna(self.configs['set_NA_to_unique_corr'], inplace=True)
                         batch_encoded_df, batch_cat_map, batch_levels = adjusted_categorical_correction_variable(metadata_df, var, self.configs['adjust_to_batch_level'])
                         # tmp_combined_cat_maps.append(cat_map)
@@ -618,7 +618,7 @@ class FFPE_dataset(Dataset):
                         batch_cat_map = None
                 else: # not the special case of adjusted batch variable
                     if typ=='categorical':
-                        metadata_df[var] = metadata_df[var].cat.add_categories([self.configs['set_NA_to_unique_corr']])
+                        metadata_df[var] = metadata_df[var].astype('category').cat.add_categories([self.configs['set_NA_to_unique_corr']])
                         metadata_df[var].fillna(self.configs['set_NA_to_unique_corr'], inplace=True)
                         encoded_df, cat_map, lvls = categorical_correction_variable(metadata_df, var)
                         lvls = len(metadata_df[var].unique())

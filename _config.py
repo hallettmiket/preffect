@@ -15,7 +15,7 @@ configs = {
     'type' : 'simple',  # 'simple', 'single', 'full' <- different type of train tasks.
     
     'mini_batch_size' : 200,  #  num. of samples per minibatch
-    'epochs' : 5, # Number of epochs to train
+    'epochs' : 1000, # Number of epochs during training
     'lr' : 0.001, # initial learning rate
     'weight_decay' : 5e-4, # L2 loss on parameters.
     'dropout' : 0.1, # dropout rate (1 - keep probability)
@@ -25,7 +25,7 @@ configs = {
 
     'model_likelihood' : 'NB', # ZINB or NB
     'dispersion' : 'gene-sample', # gene, gene-sample or gene-batch
-    'batch_present' : False,  # this is set by the data_loader; do not force.
+    'batch_present' : True,  # this is set by the data_loader; do not force.
 
     'correct_vars' : False,
     'vars_to_correct' : [], #[(var name, type)] where type is either categorical or continuous
@@ -38,7 +38,7 @@ configs = {
     'select_sample_replacement' : False, # if select_samples > observed M, this is automatically True.
     'select_genes' : float('inf'), # if this is an int n, then genes are randomly selected to level n
 
-    'alpha' : 0.2, # for leaky_relu
+    'alpha' : 0.2, # leaky_relu parameter
     'adj_exist' : False,       # whether the objects are found.
     'pos_edge_weight' : 1, # weight of edge for loss function
     'neg_edge_weight' : 1, # weight of non-edge for loss function
@@ -51,7 +51,7 @@ configs = {
     'h' : 8, # number of attention heads
     'r_prime' : 128, # intermediate hidden dimension
     'r' : 20, # size of latent space; also 2r is size of attention head
-    'r_embed' : 5, # size of the embedding space for categorical korrection variables.
+    'r_embed' : 5, # size of the embedding space for categorical correction variables.
     
     'logging_interval' : 1, # 1-number of batches between sending output to log file (forward)
 
