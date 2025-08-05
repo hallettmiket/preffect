@@ -1022,6 +1022,7 @@ class Inference:
         ax = fig.add_subplot(122)
         _plot_latent_umap(pref_obj, infer_obj, my_cmap=my_cmap, ax=ax, title="Reconstruction error")
         fig.tight_layout()
+        plt.close(fig)
         return fig
 
 

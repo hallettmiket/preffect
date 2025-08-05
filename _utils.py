@@ -297,7 +297,7 @@ def selective_one_hot(df, cat_var):
         raise ValueError(f"Column {cat_var} not found in DataFrame.")
 
 
-def plot_progression_all(losses, epoch, x_dim=2, y_dim=4, override=False, file_path=None):
+def plot_progression_all(losses, epoch, x_dim=2, y_dim=4, override=False, file_path=None, draw_to_screen=False):
     """
     Plots the progression of multiple types of loss metrics during training and validation across epochs.
 
@@ -344,11 +344,16 @@ def plot_progression_all(losses, epoch, x_dim=2, y_dim=4, override=False, file_p
             axs[x_loc, y_loc].plot(filtered_losses[new_key], marker="o", color="green", label="Validate")
             axs[x_loc, y_loc].set_title(simple_key)
             axs[x_loc, y_loc].legend()
-            axs[x_loc, y_loc].set_xlabel(f"Num minibatches * Epoch (total epochs: {epoch})")
+            if (draw_to_screen):
+                axs[x_loc, y_loc].set_xlabel(f"Num. minibatches * Epoch")
+            else:
+                axs[x_loc, y_loc].set_xlabel(f"Num minibatches * Epoch (total epochs: {epoch})")
             axs[x_loc, y_loc].set_ylabel("Log Loss")
             axs[x_loc, y_loc].set_yscale("log")
 
     plt.tight_layout()
+    if (draw_to_screen):
+        plt.show()
     plt.suptitle(f"Loss functions: Epoch {epoch}", fontsize=16, y=1.05)
     plt.savefig(file_path)
     plt.close(fig)  # Close the figure to free up memory

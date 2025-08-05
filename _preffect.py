@@ -320,6 +320,6 @@ class Preffect:
                         self.model.load_state_dict(best_state) # load model state from its lowest loss epoch
                         break
 
-
+        plot_progression_all(losses=self.losses, epoch=epoch+1, file_path=os.path.join(self.configs['results_path'], "losses.pdf"), override=True, draw_to_screen=True)
         forward_log.info('\nTotal Training Time: %.2f min' % ((time.time() - start_time)/60))
         writer.close()

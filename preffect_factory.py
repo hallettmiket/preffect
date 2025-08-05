@@ -303,7 +303,7 @@ def factory(
             configs['input_existing_session'] = fname
         return Preffect(inference_log, existing_session=True, configs=configs) # uses configs[input_existing_session]
 
-    elif task == 'cluster_latent':
+    elif task == 'cluster_samples_with_latent':
         if pr is not None:
             if ir is None and ir_name is not None:
                 ir = pr.find_inference_in_register(ir_name) 
@@ -320,7 +320,7 @@ def factory(
             raise PreffectError("For lib visualization, either an inference object must be provided, or a preffect object along \
                                 with the name of a valid inference object registered to in the Preffect object must be specified.")
 
-    elif task == 'cluster_counts':
+    elif task == 'cluster_samples_with_counts':
         if pr is not None:
             if ir is None and ir_name is not None:
                 ir = pr.find_inference_in_register(ir_name) 
@@ -336,7 +336,7 @@ def factory(
         else:
             raise PreffectError("For lib visualization, either an inference object must be provided, or a preffect object along \
                                 with the name of a valid inference object registered to in the Preffect object must be specified.")
-    elif task == 'cluster_true_counts':
+    elif task == 'cluster_samples_with_true_counts':
         if pr is not None:
             if ir is None and ir_name is not None:
                 ir = pr.find_inference_in_register(ir_name) 

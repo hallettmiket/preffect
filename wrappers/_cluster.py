@@ -122,30 +122,30 @@ class Cluster:
             # draw with colour of a particular correction variable (currently just one or the other)
             if 'batch' in adata.obs:
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
-                sc.pl.umap(adata, color=color_by, cmap=None, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
+                sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
 
                 adata.obs['batch'] = adata.obs['batch'].astype('category')
                 adata.obs['batch'] = adata.obs['batch'].cat.add_categories('unknown')
                 adata.obs['batch'] = adata.obs['batch'].fillna('unknown')
 
-                sc.pl.umap(adata, color='batch', cmap=None, ax=axes[1], show=False, title='Clustering of Latent: Batch')
+                sc.pl.umap(adata, color='batch', cmap=None, size=250, ax=axes[1], show=False, title='Clustering of Latent: Batch')
                 plt.tight_layout()
                 plt.show()
 
             if 'subtype' in adata.obs:
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
-                sc.pl.umap(adata, color=color_by, cmap=None, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
+                sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
                 # In case of missing data
                 adata.obs['subtype'] = adata.obs['subtype'].cat.add_categories('unknown')
                 adata.obs['subtype'] = adata.obs['subtype'].fillna('unknown')
 
-                sc.pl.umap(adata, color='subtype', cmap=None, ax=axes[1], show=False, title='Clustering of Latent: Subtype')
+                sc.pl.umap(adata, color='subtype', cmap=None, size=250, ax=axes[1], show=False, title='Clustering of Latent: Subtype')
                 plt.tight_layout()
                 plt.show()
 
             if 'subtype' not in adata.obs.columns and 'batch' not in adata.obs.columns: 
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
-                sc.pl.umap(adata, color=color_by, cmap=None, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
+                sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
                 plt.tight_layout()
                 plt.show()
             
@@ -217,9 +217,9 @@ class Cluster:
             if 'batch' in adata_hat.obs:
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
                 if (cluster_omega):
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
 
                 # draw with colour of a particular correction variable
                 # We create an "unknown" category in case of NaNs
@@ -228,9 +228,9 @@ class Cluster:
                 adata_hat.obs['batch'] = adata_hat.obs['batch'].fillna('unknown')
 
                 if (cluster_omega):
-                    sc.pl.umap(adata_hat, color='batch', cmap=None, ax=axes[1], show=False, title=r'Clustering of $\hat{\omega}$: Batch')
+                    sc.pl.umap(adata_hat, color='batch', cmap=None, size=250, ax=axes[1], show=False, title=r'Clustering of $\hat{\omega}$: Batch')
                 else:
-                    sc.pl.umap(adata_hat, color='batch', cmap=None, ax=axes[1], show=False, title=r'Clustering of Counts: Batch')
+                    sc.pl.umap(adata_hat, color='batch', cmap=None, size=250, ax=axes[1], show=False, title=r'Clustering of Counts: Batch')
                 plt.tight_layout()
                 plt.show()
                         
@@ -238,17 +238,17 @@ class Cluster:
             if 'subtype' in adata_hat.obs:
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
                 if (cluster_omega):
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
                 # In case of missing data
                 adata_hat.obs['subtype'] = adata_hat.obs['subtype'].cat.add_categories('unknown')
                 adata_hat.obs['subtype'] = adata_hat.obs['subtype'].fillna('unknown')
 
                 if (cluster_omega):
-                    sc.pl.umap(adata_hat, color='subtype', cmap=None, ax=axes[1], show=False, title=r'Clustering of $\hat{\omega}$: Subtype')
+                    sc.pl.umap(adata_hat, color='subtype', size=250, cmap=None, ax=axes[1], show=False, title=r'Clustering of $\hat{\omega}$: Subtype')
                 else:
-                    sc.pl.umap(adata_hat, color='subtype', cmap=None, ax=axes[1], show=False, title=r'Clustering of Counts: Subtype')
+                    sc.pl.umap(adata_hat, color='subtype', size=250, cmap=None, ax=axes[1], show=False, title=r'Clustering of Counts: Subtype')
                 plt.tight_layout()
                 plt.show()
 
@@ -256,9 +256,9 @@ class Cluster:
             if 'subtype' not in adata_hat.obs.columns and 'batch' not in adata_hat.obs.columns:
                 fig, axes = plt.subplots(1, 2, figsize=(12, 6))
                 if (cluster_omega):
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
-                    sc.pl.umap(adata_hat, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
+                    sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of Counts: ' + color_by)
                     
                 plt.tight_layout()
                 plt.show()
@@ -322,27 +322,27 @@ class Cluster:
         # draw with colour of a particular correction variable (currently just one or the other)
         if 'batch' in adata[0].obs:
             fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-            sc.pl.umap(adata_true, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
+            sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
             
             # In case of missing data
             adata_true.obs['batch'] = adata[0].obs['batch'].fillna(-1).astype('category')
 
-            sc.pl.umap(adata_true, color='batch', cmap=None, ax=axes[1], show=False, title=r'Clustering of True Counts: Batch')
+            sc.pl.umap(adata_true, color='batch', cmap=None, size=250, ax=axes[1], show=False, title=r'Clustering of True Counts: Batch')
             plt.tight_layout()
             plt.show()
   
         if 'subtype' in adata[0].obs:
             fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-            sc.pl.umap(adata_true, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
+            sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
             adata_true.obs['subtype'] = adata[0].obs['subtype'].copy()
-            sc.pl.umap(adata_true, color='subtype', cmap=None, ax=axes[1], show=False, title=r'Clustering of True Counts: Subtype')
+            sc.pl.umap(adata_true, color='subtype', cmap=None, size=250, ax=axes[1], show=False, title=r'Clustering of True Counts: Subtype')
                 
             plt.tight_layout()
             plt.show()
 
         if 'subtype' not in adata[0].obs.columns and 'batch' not in adata[0].obs.columns:
             fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-            sc.pl.umap(adata_true, color=color_by, cmap=None, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
+            sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
                 
             plt.tight_layout()
             plt.show()
