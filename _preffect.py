@@ -209,7 +209,6 @@ class Preffect:
 
         :raises AssertionError: If the configuration sanity checks fail.
         """
-
         start_time = time.time()
         writer = SummaryWriter()
         

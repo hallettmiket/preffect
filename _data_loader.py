@@ -604,9 +604,10 @@ class FFPE_dataset(Dataset):
             tmp_k, tmp_levels, tmp_combined_cat_maps, batch_encoded_df, batch_cat_map = [], [], [], [], []
             for j, pr in enumerate(self.configs['vars_to_correct']):
                 var, typ = pr[0], pr[1]
-                
+
                 if var=='batch' and self.configs['adjust_vars']==True:
                     if typ=='categorical':
+                        print("!!!")
                         metadata_df[var] = metadata_df[var].astype('category').cat.add_categories([self.configs['set_NA_to_unique_corr']])
                         metadata_df[var].fillna(self.configs['set_NA_to_unique_corr'], inplace=True)
                         batch_encoded_df, batch_cat_map, batch_levels = adjusted_categorical_correction_variable(metadata_df, var, self.configs['adjust_to_batch_level'])
