@@ -16,10 +16,10 @@ import logging
 import argparse
 import configparser
 
-from _config import configs
-from _logger_config import setup_loggers
+from preffect._config import configs
+from preffect._logger_config import setup_loggers
 
-from preffect_factory import(
+from preffect.preffect_factory import(
     factory_setup,
     factory
 )

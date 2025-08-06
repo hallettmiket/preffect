@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch_geometric.nn.conv import GATv2Conv
 from torch.distributions import Normal
 from torch.distributions import kl_divergence as kl
-from _distributions import (
+from preffect._distributions import (
     NegativeBinomial,
     ZeroInflatedNegativeBinomial
 )        
@@ -14,7 +14,7 @@ from _distributions import (
 from torch.nn.functional import linear
 
 import numpy as np
-from _utils import (
+from preffect._utils import (
     print_loss_table,
     check_for_nans,
     check_folder_access,

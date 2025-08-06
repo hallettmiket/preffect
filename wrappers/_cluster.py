@@ -9,11 +9,11 @@ import warnings
 import scanpy as sc
 import anndata as ad
 
-from _utils import (
+from preffect._utils import (
     To,
     set_seeds,
 )
-from _error import ( PreffectError )
+from preffect._error import ( PreffectError )
 
 class Cluster:
     r"""
@@ -121,7 +121,7 @@ class Cluster:
 
             # draw with colour of a particular correction variable (currently just one or the other)
             if 'batch' in adata.obs:
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))  # Adjust figsize as needed
                 sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
 
                 adata.obs['batch'] = adata.obs['batch'].astype('category')
@@ -133,7 +133,7 @@ class Cluster:
                 plt.show()
 
             if 'subtype' in adata.obs:
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))  # Adjust figsize as needed
                 sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
                 # In case of missing data
                 adata.obs['subtype'] = adata.obs['subtype'].cat.add_categories('unknown')
@@ -144,7 +144,7 @@ class Cluster:
                 plt.show()
 
             if 'subtype' not in adata.obs.columns and 'batch' not in adata.obs.columns: 
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Adjust figsize as needed
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))  # Adjust figsize as needed
                 sc.pl.umap(adata, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title='Clustering of Latent: ' + color_by)
                 plt.tight_layout()
                 plt.show()
@@ -215,7 +215,7 @@ class Cluster:
             warnings.simplefilter("ignore")
             # samples are colour coded by batch in UMAP if this information is available
             if 'batch' in adata_hat.obs:
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))
                 if (cluster_omega):
                     sc.pl.umap(adata_hat, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
@@ -236,7 +236,7 @@ class Cluster:
                         
             # samples are colour coded by subtype in UMAP if this information is available 
             if 'subtype' in adata_hat.obs:
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))
                 if (cluster_omega):
                     sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
@@ -254,7 +254,7 @@ class Cluster:
 
             # Sample colour will be uniform in this UMAP
             if 'subtype' not in adata_hat.obs.columns and 'batch' not in adata_hat.obs.columns:
-                fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+                fig, axes = plt.subplots(1, 2, figsize=(8, 4))
                 if (cluster_omega):
                     sc.pl.umap(adata_hat, color=color_by, size=250, cmap=None, ax=axes[0], show=False, title=r'Clustering of $\hat{\omega}$: ' + color_by)
                 else:
@@ -321,7 +321,7 @@ class Cluster:
 
         # draw with colour of a particular correction variable (currently just one or the other)
         if 'batch' in adata[0].obs:
-            fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+            fig, axes = plt.subplots(1, 2, figsize=(8, 4))
             sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
             
             # In case of missing data
@@ -332,7 +332,7 @@ class Cluster:
             plt.show()
   
         if 'subtype' in adata[0].obs:
-            fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+            fig, axes = plt.subplots(1, 2, figsize=(8, 4))
             sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
             adata_true.obs['subtype'] = adata[0].obs['subtype'].copy()
             sc.pl.umap(adata_true, color='subtype', cmap=None, size=250, ax=axes[1], show=False, title=r'Clustering of True Counts: Subtype')
@@ -341,7 +341,7 @@ class Cluster:
             plt.show()
 
         if 'subtype' not in adata[0].obs.columns and 'batch' not in adata[0].obs.columns:
-            fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+            fig, axes = plt.subplots(1, 2, figsize=(8, 4))
             sc.pl.umap(adata_true, color=color_by, cmap=None, size=250, ax=axes[0], show=False, title=r'Clustering of True Counts: ' + color_by)
                 
             plt.tight_layout()

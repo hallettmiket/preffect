@@ -18,16 +18,15 @@ import umap
 from matplotlib.colors import ListedColormap
 from torch import Tensor
 
-# this package kept printing a "seed" message I want to avoid
-from _distributions import (
+from preffect._distributions import (
     NegativeBinomial
 )    
 
-from _utils import (
+from preffect._utils import (
     To
 )
-from _data_loader import FFPE_dataset
-from _error import ( PreffectError )
+from preffect._data_loader import FFPE_dataset
+from preffect._error import ( PreffectError )
 
 class Inference:
     def __init__(self, preffect_obj=None, task='inference', inference_key=None, inference_overwrite=True, configs=None):
@@ -483,14 +482,13 @@ class Inference:
             full_idx = [item for sublist in full_idx for item in sublist]
 
             if self.ds.configs['number_padded'] != 0:
-                ### NOT TESTED ###
                 full_idx = full_idx[:-self.ds.configs['number_padded']]
 
             if 'Z_Ls' in data[0]['latent_variables'] and data[0]['latent_variables']['Z_Ls'] != []:
-                ### NOT TESTED ###
                 full_data['Z_Ls'] = [lst[full_idx] for lst in self.concatenate_2d_minibatch([data[i]['latent_variables']['Z_Ls'] for i in range(len(data))])]
                 minibatches = [data[i]['lib_size_factors'] for i in range(len(data))]
                 full_data['lib_size_factors'] = self.concatenate_1d_minibatch(minibatches, full_idx)
+                full_data['lib_size_factors'] = [ np.array(full_data['lib_size_factors'], dtype=np.float32)]
                     
             full_data['Z_As'] = [lst[full_idx] for lst in self.concatenate_2d_minibatch([data[i]['latent_variables']['Z_As'] for i in range(len(data))])]
             full_data['Z_Xs'] = [lst[full_idx] for lst in self.concatenate_2d_minibatch([data[i]['latent_variables']['Z_Xs'] for i in range(len(data))])]

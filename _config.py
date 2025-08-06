@@ -1,4 +1,4 @@
-from _utils import ( update_composite_configs )
+from preffect._utils import ( update_composite_configs )
 
 configs = {
     # Global Parameters
@@ -111,22 +111,22 @@ configs = {
 
 # The following parameters allow the user to adjust the  contribution of each 
 #   component of the loss. They are combined into a weighted average of the loss.
-configs['kl_weight'] = 0.1
+configs['kl_weight'] = 1
 # weight controlling Reconstruction vs KLDivergence loss
 # Next within the reconstruction losses, we can weight their contributions.
 # The general formula looks as follows:
 # reconstruction = (DA_weight[0]*l(DA^tau1) + DA2_weight[1]*l(DA^tau2) + DA3_weight[2]*l(DA^tau3)) +
 #   X_weight* NLL(X_hat)
-configs['DA_recon_weight'] = [1 for i in range(configs['calT'])]
+configs['DA_recon_weight'] = [100 for i in range(configs['calT'])]
 # Note the len() == calT
-configs['X_recon_weight'] = 20
+configs['X_recon_weight'] = 100
 # 'lib_recon_weight':1,
-configs['lib_recon_weight'] = [1 for i in range(configs['calT'])]
+configs['lib_recon_weight'] = [100 for i in range(configs['calT'])]
 # Finally within the KL-diverengce losses, you can weight the Ss versus As:
-configs['DA_KL_weight'] = [1 for i in range(configs['calT'])]
-configs['X_KL_weight'] = [1 for i in range(configs['calT'])]
-configs['DL_KL_weight'] = [1 for i in range(configs['calT'])]
-configs['simple_KL_weight'] = [1 for i in range(configs['calT'])]
+configs['DA_KL_weight'] = [0.1 for i in range(configs['calT'])]
+configs['X_KL_weight'] = [0.1 for i in range(configs['calT'])]
+configs['DL_KL_weight'] = [0.1 for i in range(configs['calT'])]
+configs['simple_KL_weight'] = [0.1 for i in range(configs['calT'])]
 configs['batch_centroid_weight'] = [1 for i in range(configs['calT'])]
 
 configs['input_inference_anndata_path'] = configs['input_anndata_path'] + 'train/'

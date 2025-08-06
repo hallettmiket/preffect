@@ -4,7 +4,7 @@
 # Martin Kim, Pierre Boyeau, Nir Yosef
 
 import warnings
-from _utils import check_for_nans
+from preffect._utils import check_for_nans
 from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F

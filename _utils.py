@@ -11,7 +11,7 @@ import umap
 import math
 import numbers
 
-from _error import ( PreffectError )
+from preffect._error import ( PreffectError )
 
 input_log = logging.getLogger('input')
 

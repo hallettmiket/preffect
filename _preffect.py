@@ -6,16 +6,16 @@ import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
 
-from _utils import (
+from preffect._utils import (
     plot_progression_all,
     logging_tensor,
     To,
     set_seeds,
     sanity_check_on_configs
 )
-from _data_loader import FFPE_dataset
-from _model import VAE
-from _error import ( PreffectError )
+from preffect._data_loader import FFPE_dataset
+from preffect._model import VAE
+from preffect._error import ( PreffectError )
 
 class Preffect:
     def __init__(self,  forward_log, existing_session=False, configs=None):

@@ -13,7 +13,7 @@ import warnings
 import logging
 import anndata as ad
 import itertools
-from _utils import (
+from preffect._utils import (
     logging_tensor, 
     categorical_correction_variable, 
     adjusted_categorical_correction_variable, 

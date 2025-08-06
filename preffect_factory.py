@@ -2,21 +2,23 @@ import torch
 import os
 import logging
 
-from _logger_config import setup_loggers
-from _preffect import ( Preffect )
-from _inference import( Inference )
-from _utils import (
+from preffect._logger_config import setup_loggers
+from preffect._preffect import ( Preffect )
+from preffect._inference import( Inference )
+from preffect._utils import (
     ensure_directory,
     check_folder_access, 
     check_folder_access,
     update_composite_configs
 )
-from wrappers._cluster import( Cluster )
-from _error import ( PreffectError )
+from preffect._config import configs 
+
+from preffect.wrappers._cluster import( Cluster )
+
+from preffect._error import ( PreffectError )
 
 def core_only_copy(old):
     # to save space and for clarity, we remove all non-necessary keys from a dictionary for the config in the subobject ofa  Preffect object (e.g. an Inference object)
-    
     remove_list = ['model_state_dict', 'optimizer_state_dict']
     knew = old.copy()
     for key in remove_list:
@@ -38,17 +40,6 @@ possible_inference_visualizations = {
     'visualize_latent_recons_umap': Inference.visualize_latent_recons_umap, 'visualize_batch_adjustment': Inference.visualize_batch_adjustment}
 
 def setup_cuda(configs):
-    r"""
-    Set up the CUDA device based on the provided configurations.
-
-    :param configs: A dictionary containing configuration settings. Expected keys include:
-        - **'cuda_device_num'**: Integer specifying the CUDA device number to use.
-        - **'no_cuda'**: Boolean that if True, forces the use of CPU even if CUDA is available.
-    :type configs: dict
-
-    :return: The configured PyTorch device (either CUDA or CPU).
-    :rtype: torch.device
-    """
     # Set up cuda device if necessary
     cuda_device_number = configs['cuda_device_num']
     configs['cuda_device']=torch.device(
@@ -59,12 +50,7 @@ def setup_cuda(configs):
 def generate_and_save_visualizations(inference_instance):
     """
     Function which calls visualization tasks and saves the images within `preffect_factory.py`.
-
-    :param inference_instance: An instance of the Inference class representing the inference process.
-    :type inference_instance: Inference
-
     """
-
     filepath = os.path.join(inference_instance.configs_inf['inference_path'], inference_instance.configs_inf['inference_key'])
 
     ensure_directory(filepath)  # this will be a subdirectory of the inference folder.
@@ -81,34 +67,26 @@ def factory_setup(configs):
     Sets up the factory environment for processing by initializing paths, ensuring directory 
     existence, and setting up logging and CUDA device configurations.
 
-    :param configs: A dictionary containing configuration settings. Expected keys include:
-        
-        - **'input_anndata_path'**: Path to input Anndata files for basic checks.
-        
-        - **'input_inference_anndata_path'**: Path for input inference Anndata files.
-        
-        - **'output_path'**: Base path where logs and results directories will be created.
-        
-        - **'cuda_device_num'**: Integer specifying the CUDA device number to use.
-        
-        - **'no_cuda'**: Boolean that if True, forces the use of CPU even if CUDA is available.
-    :type configs: dict
+    Args:
+        configs (dict): A dictionary containing configuration settings. Expected keys include:
+            - 'input_anndata_path': Path to input Anndata files for basic checks.
+            - 'input_inference_anndata_path': Path for input inference Anndata files.
+            - 'output_path': Base path where logs and results directories will be created.
+            - 'cuda_device_num': Integer specifying the CUDA device number to use.
+            - 'no_cuda': Boolean that if True, forces the use of CPU even if CUDA is available.
 
-    :return: A tuple containing:
-        
-        - **input_log** (logging.Logger): Logger for input operations.
-        
-        - **forward_log** (logging.Logger or None): Logger for forward operations. None if the task is not 'train'.
-        
-        - **inference_log** (logging.Logger or None): Logger for inference operations. None if the task is not 'train'.
-        
-        - **configs** (dict): The updated configurations dictionary.
-    :rtype: tuple
+    Returns:
+        tuple: A tuple containing:
+            - cuda_device_number (int): The CUDA device number from the configs.
+            - input_log (Logger): Logger for input operations.
+            - forward_log (Logger): Logger for forward operations.
+            - inference_log (Logger): Logger for inference operations.
+            - configs (dict): The updated configurations dictionary.
 
-    :raises Exception: If there is an issue accessing the required Anndata paths, an exception is raised with a message indicating the inaccessible path.
-
+    Raises:
+        Exception: If there is an issue accessing the required Anndata paths, an exception is raised
+            with a message indicating the inaccessible path.
     """
-
     configs = update_composite_configs(configs)
 
     try:
@@ -121,6 +99,7 @@ def factory_setup(configs):
     ensure_directory(configs['inference_path'])
     ensure_directory(configs['results_path'])
 
+    #print(f"factory set up task: {configs['task']}")
     if configs['task']=='train':
         input_log, forward_log, inference_log = setup_loggers(configs)
     else:
@@ -132,258 +111,388 @@ def factory_setup(configs):
 
     return input_log, forward_log, inference_log, configs
 
-def factory(
-        task=None, 
-        always_save=True, 
-        trigger_setup=False, 
-        configs=None, 
-        preffect_obj=None, 
-        inference_obj=None, 
-        inference_key=None, 
-        fname=None, 
+
+class factory:
+    def __init__(
+        self,
+        always_save=True,
+        trigger_setup=False,
+        preffect_obj=None,
+        inference_obj=None,
+        inference_key=None,
+        fname=None,
         visualize=True,
         error_type=None,
-        cluster_omega = False):
-    """
-    Calls _preffect class to perform tasks such as training, inference, reinstatement, clustering, and visualization 
-    based on specified configurations.
-
-    :param task: The specific task to be executed. Valid options include 'train', 'inference', 'reinstate',
-                 'cluster_latent', 'cluster_counts', and 'visualize_lib_size'.
-    :type task: str, optional
-    :param always_save: If True, the current state of the process (Preffect or Inference) will always be saved after execution.
-    :type always_save: bool, optional
-    :param trigger_setup: If True, triggers the setup process for the environment before execution.
-    :type trigger_setup: bool, optional
-    :param configs: Configuration dictionary specifying details such as paths, device settings, and the specific task to be executed.
-    :type configs: dict, optional
-    :param preffect_obj: An instance of the Preffect class, if already instantiated; otherwise, it is created based on the task requirements.
-    :type preffect_obj: Preffect, optional
-    :param inference_obj: An instance of the Inference class, if already instantiated.
-    :type inference_obj: Inference, optional
-    :param inference_key: The name identifier for an Inference instance to be fetched from a register.
-    :type inference_key: str, optional
-    :param fname: The filename to be used for saving outputs, specifically in inference tasks.
-    :type fname: str, optional
-    :param visualize: If True, enables visualization for relevant tasks.
-    :type visualize: bool, optional
-    :param error_type: The type of error to be used for error handling and reporting.
-    :type error_type: str, optional
-    :param cluster_omega: If True, enables clustering of omega values.
-    :type cluster_omega: bool, optional
-
-    :return: Depending on the task specified in `configs['task']`:
-        - Preffect instance for 'train', 'inference', and 'reinstate' tasks.
-        - Cluster instance for 'cluster_latent' and 'cluster_counts' tasks.
-        - Visualization object for 'visualize_lib_size' task.
-    :rtype: Union[Preffect, Cluster, Visualization]
-
-    :raises PreffectError: If an invalid task is specified or if required resources (like Preffect or Inference instances)
-                           are not provided or found for the requested operation.
-    """
-
-    pr, ir, ir_name = preffect_obj, inference_obj, inference_key
-    configs = update_composite_configs(configs)
-
-    if configs is not None:
-        configs = core_only_copy(configs)  # this strips (big) model information.
+        **kwargs
+    ):
         
-    if task == 'train':
-        configs['task'] = task
-        input_log, forward_log, inference_log, configs = factory_setup(configs)
+        self.configs = configs
+        self.configs.update(kwargs)
+
+        # store args
+        self.always_save   = always_save
+        self.trigger_setup = trigger_setup
+        self.configs       = update_composite_configs(self.configs)
+        self.pr            = preffect_obj
+        self.ir            = inference_obj
+        self.ir_key        = inference_key
+        self.fname         = fname
+        self.visualize     = visualize
+        self.error_type    = error_type
+
+        # strip out heavy model info if needed
+        if self.configs is not None:
+            self.configs = core_only_copy(self.configs)
+
+        # Optionally run the folder/log/CUDA setup immediately
+        if self.trigger_setup:
+            self._setup_factory_env()
+
+    def _setup_factory_env(self):
+        """
+        Run your existing factory_setup(...) to
+         - ensure directories exist
+         - configure loggers
+         - pick a CUDA device
+         - return updated configs
+        """
+        input_log, forward_log, inference_log, cfgs = factory_setup(self.configs)
+        # overwrite self.configs with any changes factory_setup made
+        self.configs        = cfgs
+        self.input_log      = input_log
+        self.forward_log    = forward_log
+        self.inference_log  = inference_log
+
+
+
+    def train(self):
+        # if user didn’t trigger setup in __init__, do it now
+        if not hasattr(self, 'input_log'):
+            self._setup_factory_env()
+
+
+        self.configs['task'] = 'train'
+
         
-        forward_log = setup_loggers(configs)
+        forward_log = setup_loggers(self.configs)
         forward_log = logging.getLogger('forward')
 
         # If pr is not provided, create a new Preffect instance
-        if pr is None:
-            pr = Preffect(forward_log, existing_session=False, configs=configs)
-            
-        pr.train(forward_log)
-        if always_save:
-            pr.save()
+        if self.pr is None:
+            self.pr = Preffect(forward_log, existing_session=False, configs=self.configs)
+        self.pr.train(forward_log)
+        if self.always_save:
+            self.pr.save()
 
-        # changed to pr.configs to ensure transfer of config changes by "sanity checks" 
-        configs_inf = pr.configs.copy()
+        # then automatically do inference after training
+        configs_inf = self.pr.configs.copy()
         configs_inf['task'] = 'inference'
-
         check_folder_access(configs_inf['input_inference_anndata_path'])
-        inference_instance = Inference(pr, task='inference', inference_key = configs_inf['inference_key'], configs=configs_inf)
-        inference_instance.run_inference()
-        inference_instance.configs_inf['inference_key'] = 'endogenous'
-        inference_instance.register_inference_run()
+        self.ir = Inference(
+            self.pr,
+            task='inference',
+            inference_key=configs_inf['inference_key'],
+            configs=configs_inf
+        )
+        self.ir.run_inference()
+        self.ir.configs_inf['inference_key'] = 'endogenous'
+        self.ir.register_inference_run()
+        if self.visualize:
+            generate_and_save_visualizations(self.ir)
 
-        
-        if always_save:
-            pr.save() # the endogenous inference is saved
+        return self.pr
 
-        # generate plots of results from endogenous inference
-        if visualize:
-            generate_and_save_visualizations(inference_instance)
-    
-        return pr
 
-    elif task == 'inference':
-        check_folder_access(configs['input_inference_anndata_path'])
-        
-        if trigger_setup: 
-            input_log, forward_log, inference_log, configs = factory_setup(configs)
-        else:
-            forward_log = logging.getLogger('forward')
+    def inference(self):
+        """
+        Run an inference pass.  
+        Returns the Preffect instance (pr), after running inference and optional save/visualize.
+        """
+        # Ensure environment is set up
+        if not hasattr(self, 'input_log') or self.trigger_setup:
+            self._setup_factory_env()
 
-        inference_log = setup_loggers(configs)
-        if configs['adjust_vars']:
-            if fname is None:
-                fname = 'inference_' + str(configs['adjust_to_batch_level'])
+        # Check for the existance of the input folder
+        path = self.configs['input_inference_anndata_path']
+        check_folder_access(path)
+
+        forward_log = self.forward_log or logging.getLogger('forward')
+
+        # (Re)configure inference logger
+        setup_loggers(self.configs)   # registers handlers
+        if self.configs.get('adjust_vars', False):
+            fname = self.fname or f"inference_{self.configs['adjust_to_batch_level']}"
         else:
             fname = 'endogenous'
         inference_log = logging.getLogger(fname)
+        self.inference_log = inference_log
 
         # If pr is not provided, create a new Preffect instance from file
-        if pr is None:  
-            pr = Preffect(forward_log, existing_session=True, configs=configs)
-        configs_inf = configs.copy()
+        if self.pr is None:
+            self.pr = Preffect(forward_log,
+                                existing_session=True,
+                                configs=self.configs)
+
+        configs_inf = self.configs.copy()
         configs_inf['inference_key'] = fname
-        inference_instance = Inference(task='inference', preffect_obj = pr, configs=configs_inf)
-        inference_instance.run_inference()
-        inference_instance.register_inference_run()
 
-        if always_save:
-            pr.save()
+        # Run inference
+        self.ir = Inference(
+            task='inference',
+            preffect_obj=self.pr,
+            configs=configs_inf
+        )
+        self.ir.run_inference()
+        self.ir.register_inference_run()
 
-        if visualize:
-            generate_and_save_visualizations(inference_instance)
-    
-        return pr
-    
-    elif task == 'impute_experiment':
-        if pr is None:  
-            raise PreffectError('Preffect object must be assigned and the setup triggered already.')
+        if self.always_save:
+            self.pr.save()
+        if self.visualize:
+            generate_and_save_visualizations(self.ir)
 
+        return self.pr
+
+
+    def impute_experiment(self, inference_key=None, error_type=None):
+        """
+        Perform masked‐value imputation and compute errors.
+        Returns:
+            infy (Inference): the inference object used for imputation
+            error_masked (array): errors on masked entries
+            error_unmasked (array): errors on unmasked entries
+            mse_error (float): overall MSE
+        """
+        # Must have run setup and trained/inferred previously
+        if self.pr is None:
+            raise PreffectError(
+                "Preffect object must be assigned and setup triggered already."
+            )
+
+        # Determine which inference_key to use
+        inference_key = inference_key or self.ir_key
         if inference_key is None:
-            raise PreffectError(f'You must provide the key for the inference object: {pr.inference_dict.keys()}')
+            valid_keys = list(self.pr.inference_dict.keys())
+            raise PreffectError(
+                f"You must provide inference_key; available keys: {valid_keys}"
+            )
 
-        # if 'masking_strategy' is None or lambda is zero, this function shouldn't run
-        if pr.configs['masking_strategy'] is None or pr.configs['lambda_counts'] == 0:
-            raise PreffectError("Task 'impute_experiment' cannot be performed if no values are masked.")
-            
+        # Masking must have been used during training to perform imputing
+        cfg = self.pr.configs
+        if cfg.get('masking_strategy') is None or cfg.get('lambda_counts', 0) == 0:
+            raise PreffectError(
+                "Task 'impute_experiment' cannot run if no values are masked."
+            )
 
-        configs = pr.configs
-        configs['task'] = 'impute_experiment'      
-        infy = Inference(task=task, preffect_obj=pr, configs=configs, inference_key = inference_key)    
+        cfg['task'] = 'impute_experiment'
+        cfg_inf = cfg.copy()
+        cfg_inf['inference_key'] = inference_key
+
+        # Run the inference pass for imputation
+        infy = Inference(
+            task='impute_experiment',
+            preffect_obj=self.pr,
+            configs=cfg_inf,
+            inference_key=inference_key
+        )
         infy.run_inference()
 
-        # plot imputation inference object, as it has masking (endogenous inference does not)
         infy.configs_inf['inference_key'] = 'impute_experiment'
         infy.register_inference_run()
-        if visualize:
+        if self.visualize:
             generate_and_save_visualizations(infy)
 
-
-        error_masked, error_unmasked, mse_error = infy.calculate_imputation_error(error_type=error_type)
+        # Compute imputation errors
+        error_masked, error_unmasked, mse_error = (
+            infy.calculate_imputation_error(error_type=self.error_type)
+        )
 
         return infy, error_masked, error_unmasked, mse_error
-        
-    
-    elif task == 'impute':
-        if pr is None:
-            raise PreffectError("Must specify a preffect object containing the inference object as the target for imputation.")
-        if ir is None:
-            ir = pr.find_inference_in_register(ir_name) 
+
+    def impute(self, inference_key=None):
+        """
+        Perform value imputation using an existing Inference instance.
+
+        If self.ir is already set, it will be used. Otherwise, we try to
+        look up the Inference object from self.pr by key.
+        Returns ir.impute_values()
+        """
+        # Preffect instance must have at least one registered inference
+        if self.pr is None:
+            raise PreffectError(
+                "Must specify a Preffect object containing an Inference run for imputation."
+            )
+
+        # Determine which key to use
+        key = inference_key or self.ir_key
+        if key is None:
+            valid = list(self.pr.inference_dict.keys())
+            raise PreffectError(
+                f"You must provide an inference_key; available keys: {valid}"
+            )
+
+        # Fetch or reuse the Inference object
+        ir = self.ir
+        if ir is None or getattr(ir, "configs_inf", {}).get("inference_key") != key:
+            ir = self.pr.find_inference_in_register(key)
             if ir is None:
-                raise PreffectError("Must specify a valid inference object in the Preffect object for imputation.")
+                raise PreffectError(
+                    f"No registered Inference found for key='{key}'."
+                )
+            self.ir = ir
+
         return ir.impute_values()
-    
 
-    elif task == 'reinstate':
-        if trigger_setup: 
-            input_log, forward_log, inference_log, configs = factory_setup(configs)
-            
+    def reinstate(self, fname=None):
+        """
+        Load an existing Preffect session from disk.
+
+        Args:
+            fname (str, optional): the name or path of the existing session to load.
+                                   If provided, this will override
+                                   configs['input_existing_session'].
+
+        Returns:
+            Preffect: a new Preffect instance loading the saved session.
+        """
+        # 1. Run factory setup if requested
+        if self.trigger_setup:
+            self._setup_factory_env()
+
+        # 2. If the user passed a filename, tell configs which session to load
         if fname is not None:
-            configs['input_existing_session'] = fname
-        return Preffect(inference_log, existing_session=True, configs=configs) # uses configs[input_existing_session]
+            self.configs['input_existing_session'] = fname
 
-    elif task == 'cluster_samples_with_latent':
-        if pr is not None:
-            if ir is None and ir_name is not None:
-                ir = pr.find_inference_in_register(ir_name) 
-            if ir is not None:
-                cl = Cluster(infer_obj=ir, configs_cluster=configs )
-                cl.cluster_latent_space(color_by = "leiden")
-                cl.register_cluster()
-                if always_save:
-                    pr.save()
-                return cl 
-            else:
-                raise PreffectError(f"Did not find registered Inference object {ir_name}.")
-        else:
-            raise PreffectError("For lib visualization, either an inference object must be provided, or a preffect object along \
-                                with the name of a valid inference object registered to in the Preffect object must be specified.")
+        # 3. Instantiate Preffect in existing-session mode
+        pr = Preffect(
+            self.inference_log,       # or self.forward_log if more appropriate
+            existing_session=True,
+            configs=self.configs
+        )
 
-    elif task == 'cluster_samples_with_counts':
-        if pr is not None:
-            if ir is None and ir_name is not None:
-                ir = pr.find_inference_in_register(ir_name) 
-            if ir is not None:
-                cl = Cluster(infer_obj=ir, configs_cluster=configs )
-                cl.cluster_counts(cluster_omega=cluster_omega)
-                cl.register_cluster()
-                if always_save:
-                    pr.save()
-                return cl 
-            else:
-                raise PreffectError(f"Did not find registered Inference object {ir_name}.")
-        else:
-            raise PreffectError("For lib visualization, either an inference object must be provided, or a preffect object along \
-                                with the name of a valid inference object registered to in the Preffect object must be specified.")
-    elif task == 'cluster_samples_with_true_counts':
-        if pr is not None:
-            if ir is None and ir_name is not None:
-                ir = pr.find_inference_in_register(ir_name) 
-            if ir is not None:
-                cl = Cluster(infer_obj=ir, configs_cluster=configs )
-                cl.cluster_true_counts()
-                cl.register_cluster()
-                if always_save:
-                    pr.save()
-                return cl 
-            else:
-                raise PreffectError(f"Did not find registered Inference object {ir_name}.")
-        else:
-            raise PreffectError("For lib visualization, either an inference object must be provided, or a preffect object along \
-                                with the name of a valid inference object registered to in the Preffect object must be specified.")
-    
-    # all Inference visualizations start with "visualize"
-    elif task == 'visualize_inference_all':
-        if pr is not None:
-            if ir is None and ir_name is not None:
-                ir = pr.find_inference_in_register(ir_name)
-                print(ir.configs_inf['output_path'])
-            if ir is not None:
-                generate_and_save_visualizations(ir)
-            else:
-                raise PreffectError(f"Did not find registered Inference object {ir_name}.")
-        else:
-            raise PreffectError("For visualization, either an inference object must be provided, or a preffect object along \
-                                with the name of a valid inference object registered to in the Preffect object must be specified.")
-        
-    elif task.startswith('visualize'):
-        if pr is not None:
-            if ir is None and ir_name is not None:
-                ir = pr.find_inference_in_register(ir_name)
-            if ir is not None:
-                vlib = possible_inference_visualizations[task](pr, ir)
-                if always_save:
-                    file = task + ".pdf"
-                    ir.save_visualization(vlib=vlib, configs=configs, filename=file)
-                return vlib
-            else:
-                raise PreffectError(f"Did not find registered Inference object {ir_name}.")
+        # 4. Store on self so later tasks (inference, impute, etc.) can reuse it
+        self.pr = pr
+        return pr
 
-        else:
-            raise PreffectError("For visualization, either an inference object must be provided, or a preffect object along \
-                                with the name of a valid inference object registered to in the Preffect object must be specified.")
+    def cluster_samples(self,
+                        mode: str,
+                        ir=None,
+                        ir_name=None,
+                        cluster_omega = False,
+                        color_by: str = "leiden") -> Cluster:
+        """
+        Generalized clustering for samples.
 
+        Args:
+            mode: one of "latent", "counts" or "true_counts"
+            ir:      an existing Inference instance (optional)
+            ir_name: key to look up an Inference in self.pr (if ir is None)
+            color_by: leiden, louvain, etc.
 
-    else:
-        raise PreffectError('Task not recognized.')
+        Returns:
+            A Cluster object
+        """
+        # We select which type of clustering we want to do
+        valid = {"latent", "counts", "true_counts"}
+        if mode not in valid:
+            raise PreffectError(f"Unknown mode '{mode}'.  Choose one of {valid}.")
+
+        # Make sure the Preffect object exists
+        if self.pr is None:
+            raise PreffectError(
+                "You must have a Preffect instance (self.pr) before clustering."
+            )
+
+        # Resolve the Inference object
+        if ir is None and ir_name is not None:
+            ir = self.pr.find_inference_in_register(ir_name)
+        if ir is None:
+            raise PreffectError(
+                f"Did not find registered Inference object '{ir_name}'."
+            )
+
+        # Build the Cluster and dispatch to the chosen method
+        cl = Cluster(infer_obj=ir, configs_cluster=self.configs)
+        if mode == "latent":
+            cl.cluster_latent_space(color_by=color_by)
+        elif mode == "counts":
+            cl.cluster_counts(cluster_omega = cluster_omega)
+        else:  # mode == "true_counts"
+            cl.cluster_true_counts()
+
+        cl.register_cluster()
+        if self.always_save:
+            self.pr.save()
+
+        self.cl = cl
+
+        return cl
+
+    def visualize_inference_all(self, inference_key: str = None):
+        """
+        Re‐generate and save *all* visualizations for a registered Inference run.
+
+        Args:
+            inference_key: the name of an existing Inference in self.pr.inference_dict.
+                           If omitted, uses self.ir_key.
+        """
+        if self.pr is None:
+            raise PreffectError(
+                "A Preffect object must exist before running visualization."
+            )
+
+        # Resolve Inference
+        key = inference_key or self.ir_key
+        ir = self.ir
+        if ir is None and key is not None:
+            ir = self.pr.find_inference_in_register(key)
+        if ir is None:
+            raise PreffectError(
+                f"Did not find registered Inference object '{key}'."
+            )
+        self.ir = ir
+
+        print(f"Writing visualizations to: {ir.configs_inf.get('output_path')}")
+
+        generate_and_save_visualizations(ir)
+
+    def visualize(self,
+                  task: str,
+                  ir=None,
+                  ir_name: str = None) :
+        """
+        Run any inference visualization by name, e.g. "visualize_umap",
+        "visualize_heatmap", etc., using the mapping in
+        possible_inference_visualizations.
+        """
+        if not task.startswith("visualize_"):
+            raise PreffectError(f"Task '{task}' is not a visualization task")
+
+        # Ensure we have a Preffect instance and resolve the Inference object
+        if self.pr is None:
+            raise PreffectError(
+                "Need a Preffect instance (self.pr) to visualize."
+            )
+
+        if ir is None and ir_name is not None:
+            ir = self.pr.find_inference_in_register(ir_name)
+        if ir is None:
+            raise PreffectError(
+                f"Did not find registered Inference object '{ir_name}'."
+            )
+        self.ir = ir
+
+        # Dispatch to the correct visualization function
+        try:
+            viz_fn = possible_inference_visualizations[task]
+        except KeyError:
+            raise PreffectError(f"No visualization registered under '{task}'")
+
+        vlib = viz_fn(self.pr, ir)
+
+        if self.always_save:
+            filename = f"{task}.pdf"
+            ir.save_visualization(vlib=vlib,
+                                  configs=self.configs,
+                                  filename=filename)
+
+        return vlib
