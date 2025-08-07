@@ -373,14 +373,16 @@ class factory:
         self.pr = pr
         return pr
 
-    def cluster_samples(self,
+    def visualize_embedding(self,
                         mode: str,
                         ir=None,
                         ir_name=None,
                         cluster_omega = False,
-                        color_by: str = "leiden") -> Cluster:
+                        color_by: str = "leiden",
+                        perform_leiden=False,
+                        cluster_aim = 5) -> Cluster:
         """
-        Generalized clustering for samples.
+        Visualize clustering for samples using UMAP.
 
         Args:
             mode: one of "latent", "counts" or "true_counts"
@@ -411,22 +413,76 @@ class factory:
             )
 
         # Build the Cluster and dispatch to the chosen method
-        cl = Cluster(infer_obj=ir, configs_cluster=self.configs)
+        cluster = Cluster(infer_obj=ir, configs_cluster=self.configs)
         if mode == "latent":
-            cl.cluster_latent_space(color_by=color_by)
+            cluster.cluster_latent_space(color_by=color_by, perform_leiden=perform_leiden, cluster_aim=cluster_aim)
         elif mode == "counts":
-            cl.cluster_counts(cluster_omega = cluster_omega)
+            cluster.cluster_counts(cluster_omega = cluster_omega, perform_leiden=perform_leiden, cluster_aim=cluster_aim)
         else:  # mode == "true_counts"
-            cl.cluster_true_counts()
+            cluster.cluster_true_counts(perform_leiden=perform_leiden, cluster_aim=cluster_aim)
 
-        cl.register_cluster()
+        cluster.register_cluster()
         if self.always_save:
             self.pr.save()
 
-        self.cl = cl
+        self.cluster = cluster
+        return cluster
 
-        return cl
+    def generate_embedding(self,
+                        mode: str,
+                        ir=None,
+                        ir_name=None,
+                        cluster_omega = False,
+                        color_by: str = "leiden",
+                        perform_leiden=False,
+                        cluster_aim = 5) -> Cluster:
+        """
+        Generate an embedding using Leiden clustering.
 
+        Args:
+            mode: one of "latent", "counts" or "true_counts"
+            ir:      an existing Inference instance (optional)
+            ir_name: key to look up an Inference in self.pr (if ir is None)
+            color_by: leiden, louvain, etc.
+
+        Returns:
+            A Cluster object
+        """
+        # We select which type of clustering we want to do
+        valid = {"latent", "counts", "true_counts"}
+        if mode not in valid:
+            raise PreffectError(f"Unknown mode '{mode}'.  Choose one of {valid}.")
+
+        # Make sure the Preffect object exists
+        if self.pr is None:
+            raise PreffectError(
+                "You must have a Preffect instance (self.pr) before clustering."
+            )
+
+        # Resolve the Inference object
+        if ir is None and ir_name is not None:
+            ir = self.pr.find_inference_in_register(ir_name)
+        if ir is None:
+            raise PreffectError(
+                f"Did not find registered Inference object '{ir_name}'."
+            )
+
+        # Build the Cluster and dispatch to the chosen method
+        cluster = Cluster(infer_obj=ir, configs_cluster=self.configs)
+        if mode == "latent":
+            cluster.cluster_latent_space(color_by=color_by, perform_leiden=perform_leiden, cluster_aim=cluster_aim, draw=False)
+        elif mode == "counts":
+            cluster.cluster_counts(cluster_omega = cluster_omega, perform_leiden=perform_leiden, cluster_aim=cluster_aim, draw=False)
+        else:  # mode == "true_counts"
+            cluster.cluster_true_counts(perform_leiden=perform_leiden, cluster_aim=cluster_aim, draw=False)
+
+        cluster.register_cluster()
+        if self.always_save:
+            self.pr.save()
+
+        self.cluster = cluster
+        return cluster
+    
     def visualize_inference_all(self, inference_key: str = None):
         """
         Re‐generate and save *all* visualizations for a registered Inference run.

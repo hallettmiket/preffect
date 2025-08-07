@@ -3,9 +3,9 @@ from preffect._utils import ( update_composite_configs )
 configs = {
     # Global Parameters
     'code_directory' : '/data/lab_vm/release/preffect/exp/preffect',   
-    'input_anndata_path' : '/data/lab_vm/refined/preffect/0_synthetic_data/anndata/main_synthetic/dataset_omega_batch_1/L_Million/',
+    'input_anndata_path' : '/data/lab_vm/release/preffect/vignettes/simple/',
 
-    'output_path' : '/data/lab_vm/refined/preffect/13_hyper_search/dataset_omega_batch_1/L_Million_rprime128/test',
+    'output_path' : '/data/lab_vm/release/preffect/vignettes/vignette_output/',
     'input_existing_session' : 'simple_py_direct', # for reinstating a session, this should be in the output_path directory
 
     'PREFFECT_version' : '0.1',
@@ -49,7 +49,7 @@ configs = {
  
     'calT' : 1, # number of tissues
     'h' : 8, # number of attention heads
-    'r_prime' : 128, # intermediate hidden dimension
+    'r_prime' : 50, # intermediate hidden dimension
     'r' : 20, # size of latent space; also 2r is size of attention head
     'r_embed' : 5, # size of the embedding space for categorical correction variables.
     
