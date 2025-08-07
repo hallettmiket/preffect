@@ -20,7 +20,7 @@ configs = {
     'weight_decay' : 5e-4, # L2 loss on parameters.
     'dropout' : 0.1, # dropout rate (1 - keep probability)
 
-    'infer_lib_size' : False,
+    'infer_lib_size' : True,
     'batch_centroid_loss' : False,
 
     'model_likelihood' : 'NB', # ZINB or NB
