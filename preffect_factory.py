@@ -203,7 +203,7 @@ class factory:
         return self.pr
 
 
-    def inference(self):
+    def inference(self, inference_key='endogenous'):
         """
         Run an inference pass.  
         Returns the Preffect instance (pr), after running inference and optional save/visualize.
@@ -223,7 +223,7 @@ class factory:
         if self.configs.get('adjust_vars', False):
             fname = self.fname or f"inference_{self.configs['adjust_to_batch_level']}"
         else:
-            fname = 'endogenous'
+            fname = inference_key
         inference_log = logging.getLogger(fname)
         self.inference_log = inference_log
 
