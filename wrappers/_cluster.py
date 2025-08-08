@@ -353,4 +353,4 @@ class Cluster:
             plt.tight_layout()
             plt.show()
 
-        self.leiden_assignment = adata.obs
+        self.leiden_assignment = adata_true.obs
