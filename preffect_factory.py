@@ -9,7 +9,8 @@ from preffect._utils import (
     ensure_directory,
     check_folder_access, 
     check_folder_access,
-    update_composite_configs
+    update_composite_configs,
+    sanity_check_on_configs
 )
 from preffect._config import configs 
 
@@ -128,6 +129,7 @@ class factory:
         
         self.configs = configs
         self.configs.update(kwargs)
+        sanity_check_on_configs(preffect_con=self.configs)
 
         # store args
         self.always_save   = always_save

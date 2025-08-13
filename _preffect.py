@@ -5,6 +5,7 @@ import time
 import numpy as np
 from copy import deepcopy
 from tqdm import tqdm
+import warnings
 
 from preffect._utils import (
     plot_progression_all,
@@ -115,6 +116,10 @@ class Preffect:
                             could be due to a missing file, corrupted data, or incompatible configurations.
         """
         try:
+            warnings.filterwarnings(
+                "ignore",
+                message=".*torch.load*"
+            )
             loaded_session = torch.load(os.path.join(configs['output_path'], configs['input_existing_session'] + '.pth'))
             self.configs = loaded_session.configs
 

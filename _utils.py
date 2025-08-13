@@ -352,10 +352,11 @@ def plot_progression_all(losses, epoch, x_dim=2, y_dim=4, override=False, file_p
             axs[x_loc, y_loc].set_yscale("log")
 
     plt.tight_layout()
-    if (draw_to_screen):
-        plt.show()
     plt.suptitle(f"Loss functions: Epoch {epoch}", fontsize=16, y=1.05)
     plt.savefig(file_path)
+
+    if (draw_to_screen):
+        plt.show()
     plt.close(fig)  # Close the figure to free up memory
 
 
@@ -668,7 +669,7 @@ def sanity_check_on_configs(preffect_con=None, train_ds_con=None, valid_ds_con=N
                        a critical mismatch in the expected environment setup.
     """
 
-    if preffect_con is None or train_ds_con is None or valid_ds_con is None:
+    if preffect_con is None:
         raise PreffectError('Must pass to sanity check the configs for the parent Preffect object and the train and validation confi')
 
     if preffect_con['dispersion']=='gene-batch':
@@ -749,8 +750,9 @@ def sanity_check_on_configs(preffect_con=None, train_ds_con=None, valid_ds_con=N
     if not delay_of_1_found:
         raise ValueError("At least one of the 'delay_' parameters should have a value of 1.")
 
-    if train_ds_con['N'] != valid_ds_con['N']:
-        raise ValueError(f"Number of transcripts must be the same between training and validation datasets: {train_ds_con['N']}, {valid_ds_con['N']}")
+    if train_ds_con is not None and valid_ds_con is not None:
+        if train_ds_con['N'] != valid_ds_con['N']:
+            raise ValueError(f"Number of transcripts must be the same between training and validation datasets: {train_ds_con['N']}, {valid_ds_con['N']}")
 
     return
 

@@ -22,6 +22,28 @@ from preffect._utils import (
     one_hot_encode
 )
 
+class FiLM(nn.Module):
+    def __init__(self, cond_dim, num_features):
+        """
+        cond_dim     - dimensionality of K
+        num_features - size of the feature vector or hidden layer to modulate
+        """
+        super().__init__()
+        # one linear layer that outputs 2 * num_features parameters
+        self.linear = nn.Linear(cond_dim, 2 * num_features)
+
+    def forward(self, h, cond):
+        """
+        h    - tensor of shape [batch, num_features]
+        cond - conditioning tensor K of shape [batch, cond_dim]
+        """
+        cond = cond.float()
+        # produce a [batch, 2*num_features] tensor and split it
+        gamma, beta = self.linear(cond).chunk(2, dim=-1)
+        # feature‐wise affine modulation
+        return gamma * h + beta
+
+
 
 class Encoder(nn.Module):
     """
@@ -41,7 +63,7 @@ class Encoder(nn.Module):
     :vartype leaky_relu: nn.LeakyReLU
     """
 
-    def __init__(self, in_channels, k, r_prime, r, h, alpha, dropout, model_type, correction):
+    def __init__(self, in_channels, k, r_prime, r, r_embed, h, alpha, dropout, model_type, correction):
         """
         Initialize the Encoder instance
 
@@ -73,8 +95,7 @@ class Encoder(nn.Module):
         k_none = len(k) - len(k_sans_none)
 
         if correction is True:
-            self.embeddings = nn.ModuleList([nn.Embedding(num_embeddings=sz, embedding_dim=r) for sz in k_sans_none])
-            adjusted_input_dim = in_channels + len(k_sans_none) * r + k_none 
+            adjusted_input_dim = in_channels + len(k) 
         else:
             adjusted_input_dim = in_channels
 
@@ -84,8 +105,8 @@ class Encoder(nn.Module):
                                 heads=h,
                                 negative_slope=alpha)
 
-        self.layer1_simple = nn.Linear(in_features = adjusted_input_dim, out_features=r_prime * len(k))
-
+        self.layer1_simple = nn.Linear(in_features = adjusted_input_dim, out_features=r_prime + len(k))
+        self.layer2_simple = nn.Linear(in_features = r_prime + len(k), out_features=r_prime)
 
         self.layer2 = nn.Linear(in_features = r_prime * h, out_features=r_prime)
         self.layer3 = nn.Linear(in_features = r_prime, out_features=r_prime)
@@ -93,8 +114,6 @@ class Encoder(nn.Module):
         self.mu = nn.Linear(in_features=r_prime + len(k), out_features=r)
         self.logvar  = nn.Linear(in_features=r_prime + len(k), out_features=r) 
 
-
-        self.layer2_simple = nn.Linear(in_features = r_prime * len(k), out_features=r_prime)
         self.mu_simple = nn.Linear(in_features=r_prime, out_features=r)
         self.logvar_simple = nn.Linear(in_features=r_prime, out_features=r)
 
@@ -102,6 +121,10 @@ class Encoder(nn.Module):
         self.dropout1 = nn.Dropout(p=dropout)
         self.dropout2 = nn.Dropout(p=dropout)
         self.dropout3 = nn.Dropout(p=dropout)
+
+        self.film1_simple = FiLM(len(k), r_prime + len(k))
+        self.film1 = FiLM(len(k), r_prime * h)
+        self.film2 = FiLM(len(k), r_prime)
 
         self.apply(self.init_weights)
 
@@ -123,7 +146,7 @@ class Encoder(nn.Module):
 
         continuous_indices = [i for i, x in enumerate(k) if x is None]
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
-    
+        
         h = lat_space
         total_cat = None
         
@@ -165,52 +188,46 @@ class Encoder(nn.Module):
                 - `logvar`: Log variance of the encoded input.
         :rtype: Tuple[torch.Tensor, torch.Tensor]
         """
-
-        if correction is True:
-            h, total_cat = self.prepare_latent_space_with_korrection_vars(K, k, X)
+        K_stack = torch.stack(K, dim=1) 
+        k_indices = [i for i, x in enumerate(k)]  
+        
+        # JUST FOR NOW, Film is only set for "simple" so we keep this for single/full
+        if (correction is True):
+             h = torch.cat((X, torch.stack([K[i] for i in k_indices], dim=1)), dim=1)
         else:
             h = X
 
-        categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
         if self.model_type in ('single', 'full'):
             h = self.layer1(h, ejs)
             h = F.elu(h)
+            h = self.film1(h, K_stack)
             h = self.dropout1(h)
 
             h = self.layer2(h)
             h = F.elu(h)
+            h = self.film2(h, K_stack)
             h = self.dropout2(h)
 
-            # for testing: third layer
-            h = self.dropout3(F.elu(self.layer3(h)))
-
-            # K needs a reshape for the concatenation
-            K_stack = torch.stack(K, dim=1)   
+            h = self.dropout3(F.elu(self.layer3(h)))   
 
             mu = self.leaky_relu(self.mu(torch.cat((h, K_stack), dim=1)))
             logvar = self.leaky_relu(self.logvar(torch.cat((h, K_stack), dim=1)))
-            
-            if correction is True and len(categorical_indices) > 0:
-                mu += total_cat
 
             
 
         elif self.model_type=='simple':
             h = self.layer1_simple(h)
             h = F.elu(h)
+            h = self.film1_simple(h, K_stack)
             h = self.dropout1(h)
 
             h = self.layer2_simple(h)
             h = F.elu(h)    
+            h = self.film2(h, K_stack)
             h = self.dropout2(h)
             
             mu = self.leaky_relu(self.mu_simple(h))
-
-            if correction is True and len(categorical_indices) > 0:
-                mu += total_cat
-                unique_rows, counts = torch.unique(total_cat, dim=0, return_counts=True)
-
 
             logvar = self.leaky_relu(self.logvar_simple(h))
         
@@ -274,7 +291,7 @@ class Decoder(nn.Module):
     :vartype dropout: nn.Dropout
     """
 
-    def __init__(self, r, r_prime, k, final, alpha, dropout, model_type, correction):
+    def __init__(self, r, r_prime, r_embed, k, final, alpha, dropout, model_type, correction):
         """
         Initialize Decoder instance
 
@@ -293,7 +310,7 @@ class Decoder(nn.Module):
         k_none = len(k) - len(k_sans_none)
 
         if correction is True:
-            adjusted_input_dim = r + len(k_sans_none) * r + k_none 
+            adjusted_input_dim = r + len(k)
         else:
             adjusted_input_dim = r
 
@@ -313,6 +330,9 @@ class Decoder(nn.Module):
         self.dropout1 = nn.Dropout(p=dropout)
         self.dropout2 = nn.Dropout(p=dropout)
         self.dropout = nn.Dropout(p=dropout)
+
+        self.film1 = FiLM(len(k), r_prime)
+
         self.apply(self.init_weights)
 
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
@@ -372,18 +392,24 @@ class Decoder(nn.Module):
         :rtype: torch.Tensor
         """
 
-        if correction is True:
-            h, _ = self.prepare_latent_space_with_korrection_vars(K, k, Z)
+        K_stack = torch.stack(K, dim=1) 
+        k_indices = [i for i, x in enumerate(k)]  
+
+        if (correction is True):
+                h = torch.cat((Z, torch.stack([K[i] for i in k_indices], dim=1)), dim=1)
         else:  
             h = Z
 
         if self.model_type in ('single', 'full'):
-            h = self.dropout1( self.leaky_relu( self.layer1 ( h ) ) )
+            h = self.leaky_relu( self.layer1 ( h ) )
+            h = self.dropout1(self.film1 ( h, K_stack ) )
+            
             h = self.dropout2( self.leaky_relu( self.layer2 ( h ) ) )
             h = self.sigmoid( self.layer3( h ) )
 
         elif self.model_type=='simple':
-            h = self.dropout(self.leaky_relu(self.simple_layer(h)))
+            h = self.leaky_relu(self.simple_layer(h))
+            h = self.dropout(self.film1(h, K_stack))
 
         return h
 
@@ -422,7 +448,7 @@ class LibEncoder(nn.Module):
     :ivar embeddings: Module list of embedding layers for categorical correction variables.
     :vartype embeddings: nn.ModuleList
     """
-    def __init__(self, k, r_prime, r, alpha, dropout, correction):
+    def __init__(self, k, r_prime, r, r_embed, alpha, dropout, model_type, correction):
         """
         Initialize LibEncoder instance
 
@@ -441,13 +467,13 @@ class LibEncoder(nn.Module):
         :type correction: bool
         """
         super(LibEncoder, self).__init__()
-
+        self.model_type = model_type
         k_sans_none = [elem for elem in k if elem is not None]
         k_none = len(k) - len(k_sans_none)
 
         # add up number of levels over all cat correction variables and use r per each; continous variables are tacked on.
         if correction is True:
-            adjusted_input_dim = 1 + len(k_sans_none) * r + k_none 
+            adjusted_input_dim = 1 + len(k)
         else:
             adjusted_input_dim = 1
 
@@ -457,6 +483,8 @@ class LibEncoder(nn.Module):
 
         self.leaky_relu = nn.LeakyReLU(negative_slope=alpha)
         self.dropout1 = nn.Dropout(p=dropout)
+
+        self.film_lib1 = FiLM(len(k), r_prime)
 
         self.embeddings = nn.ModuleList([nn.Embedding(num_embeddings=sz, embedding_dim=r) for sz in k_sans_none])
 
@@ -516,21 +544,24 @@ class LibEncoder(nn.Module):
                 - `logvar`: Tensor representing the log variance of the latent space representation.
         :rtype: Tuple[torch.Tensor, torch.Tensor]
         """
-
+        K_stack = torch.stack(K, dim=1)
+        k_indices = [i for i, x in enumerate(k)]  
+        
         if correction is True:
-            h, total_cat = self.prepare_latent_space_with_korrection_vars(K, k, log_lib.view(-1,1))
+            # h, _ = self.prepare_latent_space_with_korrection_vars(K, k, Z_L)
+            h = torch.cat((log_lib.view(-1,1), torch.stack([K[i] for i in k_indices], dim=1)), dim=1)
         else:
             h = log_lib.view(-1,1)
 
         categorical_indices = [i for i, x in enumerate(k) if x is not None]
 
-        h = self.dropout1(self.leaky_relu(self.layer_lib1(h)))
+        h = self.leaky_relu(self.layer_lib1(h))
+        K_stack = torch.stack(K, dim=1)  
+
+        h = self.dropout1(self.film_lib1(h, K_stack))
         
         mu = self.layer_lib_mu(h)
         logvar = self.layer_lib_logvar(h)
-
-        if correction is True and len(categorical_indices) > 0:
-            mu += total_cat
 
         return mu, logvar
 
@@ -564,7 +595,7 @@ class LibDecoder(nn.Module):
     :vartype embeddings: nn.ModuleList
 
     """
-    def __init__(self, r, r_prime, k, final, alpha, correction):
+    def __init__(self, r, r_prime, r_embed, k, final, alpha, model_type, correction):
         """
         Initialize LibDecoder instance.
 
@@ -583,13 +614,13 @@ class LibDecoder(nn.Module):
         :type correction: bool
         """
         super(LibDecoder, self).__init__()
-
+        self.model_type = model_type
         k_sans_none = [elem for elem in k if elem is not None]  #categorical variables
         k_none = len(k) - len(k_sans_none)
 
         # add up number of levels over all cat correction variables and use r per each; continous variables are tacked on.
         if correction is True: 
-            adjusted_input_dim = (1 + len(k_sans_none)) * r + k_none
+            adjusted_input_dim = r + len(k)
         else:
             adjusted_input_dim = r
 
@@ -598,7 +629,7 @@ class LibDecoder(nn.Module):
         self.leaky_relu = nn.LeakyReLU(negative_slope=alpha)
 
         self.embeddings = nn.ModuleList([nn.Embedding(num_embeddings=sz, embedding_dim=r) for sz in k_sans_none])
-
+        self.film_delib1 = FiLM(len(k), r_prime)
         self.apply(self.init_weights)
 
     def prepare_latent_space_with_korrection_vars(self, K, k, lat_space):
@@ -653,13 +684,17 @@ class LibDecoder(nn.Module):
         :return: Decoded output tensor representing the reconstructed library size.
         :rtype: torch.Tensor
         """
-
+        K_stack = torch.stack(K, dim=1)
+        k_indices = [i for i, x in enumerate(k)]  
+        
         if correction is True:
-            h, _ = self.prepare_latent_space_with_korrection_vars(K, k, Z_L)
+            # h, _ = self.prepare_latent_space_with_korrection_vars(K, k, Z_L)
+            h = torch.cat((Z_L, torch.stack([K[i] for i in k_indices], dim=1)), dim=1)
         else:
             h = Z_L
 
         h = self.leaky_relu(self.lib_decode_size_factor(h))
+        h = self.film_delib1(h, K_stack)
         h= self.leaky_relu(self.lib_decode_size_factor_2(h))
         return h
 
@@ -713,9 +748,10 @@ class VAE(nn.Module):
         self.epsilon = self.configs['epsilon']
         self.calT = self.configs['calT']
 
-        r_prime, r, h, alpha, dropout, model_type, correction = \
+        r_prime, r, r_embed, h, alpha, dropout, model_type, correction = \
             self.configs['r_prime'],\
             self.configs['r'],\
+            self.configs['r_embed'],\
             self.configs['h'],\
             self.configs['alpha'],\
             self.configs['dropout'],\
@@ -724,16 +760,16 @@ class VAE(nn.Module):
 
         if self.configs['infer_lib_size'] is True:
             self.encoders_L = nn.ModuleList(
-                [LibEncoder(k=ks[_], r_prime=r_prime, r=r, alpha=alpha, dropout=dropout, correction=correction)
+                [LibEncoder(k=ks[_], r_prime=r_prime, r=r, r_embed=r_embed, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)
                  for _ in range(self.calT)])
             self.decoders_L = nn.ModuleList(
-                [LibDecoder(r_prime=r_prime, r=r, k=ks[_], alpha=alpha, final=1, correction=correction)
+                [LibDecoder(r_prime=r_prime, r=r, r_embed=r_embed, k=ks[_], alpha=alpha, final=1, model_type=self.configs['type'], correction=correction)
                  for _ in range(self.calT)])
 
         if model_type=='full':
             self.encoders_A = nn.ModuleList([Encoder(
                 in_channels=N, k=ks[_],
-                r_prime=r_prime, r=r, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)
+                r_prime=r_prime, r=r, r_embed=r_embed, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)
                 for _ in range(self.calT)])
             self.decoders_A = nn.ModuleList([Decoder(
                 r_prime=r_prime, r=r, k=ks[_], alpha=alpha, dropout=dropout, final=M, model_type=self.configs['type'], correction=correction)
@@ -742,10 +778,10 @@ class VAE(nn.Module):
             # separating edge matrix and expression matrix latent spaces
             self.encoders_X = nn.ModuleList([Encoder(
                 in_channels=N, k=ks[_],
-                r_prime=r_prime, r=r, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction) for _ in range(self.calT)]) 
+                 r_prime=r_prime, r=r, r_embed=r_embed, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction) for _ in range(self.calT)]) 
             
             self.decoders_X = nn.ModuleList([Decoder(
-                r_prime=r_prime, r=r, k=ks[_], alpha=alpha, dropout=dropout, final=M, model_type=self.configs['type'], correction=correction)
+                r_prime=r_prime, r=r, r_embed=r_embed, k=ks[_], alpha=alpha, dropout=dropout, final=M, model_type=self.configs['type'], correction=correction)
                 for _ in range(self.calT)])    
 
             self.C1_full = nn.Linear(in_features=r * self.calT, out_features=r)
@@ -754,13 +790,13 @@ class VAE(nn.Module):
         elif model_type=='single':
             self.encoders_A = nn.ModuleList([Encoder(
                 in_channels=N, k=ks[0],
-                r_prime=r_prime, r=r, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
+                r_prime=r_prime, r=r, r_embed=r_embed, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
             self.decoders_A = nn.ModuleList([Decoder(
-                r_prime=r_prime, r=r, k=ks[0], alpha=alpha, dropout=dropout, final=M, model_type=self.configs['type'], correction=correction)])
+                r_prime=r_prime, r=r, r_embed=r_embed, k=ks[0], alpha=alpha, dropout=dropout, final=M, model_type=self.configs['type'], correction=correction)])
             
             self.encoders_X = nn.ModuleList([Encoder(
                 in_channels=N, k=ks[0],
-                r_prime=r_prime, r=r, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
+                r_prime=r_prime, r=r, r_embed=r_embed, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
 
             self.C1_single = nn.Linear(in_features=r + len(ks[0]), out_features=r_prime)
             self.C2_single = nn.Linear(in_features=r_prime, out_features=r_prime)
@@ -769,9 +805,9 @@ class VAE(nn.Module):
             # we can assume that calT=1
             self.encoders_simple = nn.ModuleList([Encoder(
                 in_channels=N, k=ks[0],
-                r_prime=r_prime, r=r, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
+                r_prime=r_prime, r=r, r_embed=r_embed, h=h, alpha=alpha, dropout=dropout, model_type=self.configs['type'], correction=correction)])
             self.decoders_simple = nn.ModuleList([Decoder(
-                 r_prime=r_prime, r=r, k=ks[0], alpha=alpha, dropout=dropout, final=r_prime, model_type=self.configs['type'], correction=correction
+                 r_prime=r_prime, r=r, r_embed=r_embed, k=ks[0], alpha=alpha, dropout=dropout, final=r_prime, model_type=self.configs['type'], correction=correction
             )])
 
         self.pi_layer = nn.Linear(in_features=r_prime, out_features=N)
