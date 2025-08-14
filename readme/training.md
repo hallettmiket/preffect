@@ -64,31 +64,31 @@ Batch correction can be performed on the example dataset provided, as the synthe
 
 ## Running PREFFECT for Training using PREFFECT Factory
 
-We can train a PREFFECT model through the PREFFECT Factory, a series of classes that can be incorporated into external Python scripts. These tasks include training, inference, reinstatement, clustering, and visualization based on specified configurations.
+We can train a PREFFECT model through the PREFFECT Factory, a series of functions that can be incorporated into external Python scripts. These tasks include training, inference, reinstatement, clustering, and visualization based on specified configurations.
 
-To perform training using the PREFFECT Factory, you must first import preffect_factory and configuration settings.
+To perform training using the PREFFECT Factory, you must first import preffect_factory.
 ```python
     from preffect_factory import factory
-    from _config import configs
 ```
 
-You can also set your configuration variables from within the Python script itself.
+The `factory()` function configures a session and controls the workflow for the user. Any parameter of the system can be set during initialization as per the example below. Parameters not modified during initiailization of the Factory() object will be read from the `_config.py` file.
+
+The factory must first be initialized, creating an object (named 'preffect' from this point in the ReadMe).
 ```python
-    configs['calT'] = 1
-    configs['h'] = 8
-    ...
+preffect = factory(                                
+            type='simple',   # set PREFFECT model {simple, single, full}
+            model_likelihood = 'NB',   # NB or ZINB
+            epochs = 2000, 
+            ...
+)
 ```
 
 To perform training, call `factory()` with task set to "train".
 ```python
-    preffect_object = factory
-        (configs=configs.copy(), 
-        task='train', 
-        always_save = True
-    )
+_ = preffect.train()
 ```
 
-This generates both a PREFFECT object (for downstream analysis), and saves a PREFFECT model, logs, and a plot illustrating the progression of loss during training (see 'Output'). The PREFFECT object can then be used by other `factory()` tasks.
+This adds the PREFFECT object within the factory object (`preffect.pr`), and saves a PREFFECT model, logs, and a plot illustrating the progression of loss during training (see 'Output'). The PREFFECT object can be imported into your python session as well.
 
 The "always_save" parameter is set to True by default. If this is turned off, the current state of the process (preffect or inference) will not be saved after execution.
 
@@ -104,16 +104,15 @@ You can also run PREFFECT with parameters set entirely on the command line:
 python ./preffect/preffect_cli.py --NICK_NAME test_1 --INPUT_ANNDATA_PATH /PREFFECT_PATH/exp/preffect/vignettes/simple/ --epochs 200 --mini_batch_size 400 --lr 0.001 --infer_lib_size True --model_likelihood NB  --batch_centroid_loss False --select_samples 100 --select_sample_replacement True --task inference --adjust_vars False --OUTPUT_PATH /PATH_TO_OUTPUT/example_simple_dataset/ --save_model True
 ```
 
-You can import the generated PREFFECT model to a Python script using PREFFECT Factory's 'reinstate' task: 
+You can import the generated PREFFECT model (.pth file) to a Python script using PREFFECT Factory's 'reinstate' task: 
 ```python
-    # Point to the PREFFECT model you wish to import
-    configs['output_path'] = "/location/of/PREFFECT/Model/" 
-
-    preffect_object_reinstated = factory(
-        task='reinstate', 
-        configs=configs, 
-        trigger_setup=True
+    # Create a factory object where 'output_path' is the path to your PREFFECT model
+    preffect = factory(                      
+            type='simple', # match the conditions of the model
+            ...
+            output_path = "/path/to/PREFFECT/Model/" 
     )
+    prior_preffect_run = preffect.reinstate(fname=None)
 ```
 
 

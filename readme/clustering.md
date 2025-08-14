@@ -3,30 +3,42 @@
 # Clustering
 PREFFECT provides clustering functions to evaluate UMAP clustering of the latent space or the estimated counts of a PREFFECT model.
 
-To load a pre-trained model into your Python session:
+You must first import preffect_factory, and configuration settings (if not set from within the script itself).
 ```python
     from preffect_factory import factory
-    from _config import configs
-
-    configs['output_path'] = "/location/of/PREFFECT/Model" # Point to the PREFFECT model you wish to import
-    preffect_object_reinstated = factory(task='reinstate', configs=configs, trigger_setup=True)
 ```
+
+If training was not performed within your session and you wish to import a previously trained model, we must use the 'reinstate' task.
+
+```python
+    # Create a factory object where 'output_path' is the path to your PREFFECT model
+    preffect = factory(                      
+            type='simple', # match the conditions of the model
+            ...
+            output_path = "/path/to/PREFFECT/Model/" 
+    )
+    _ = preffect.reinstate(fname=None)
+```
+
 
 Then, you can generate UMAPs of counts (both observed and estimated), as well as the latent space with the following commands:
 
 ```python
 # Cluster counts estimated by the PREFFECT model
-factory(task='cluster_counts', preffect_obj=preffect_object_reinstated, inference_key='endogenous', trigger_setup=False, configs=configs)
+fac.visualize_embedding(mode='counts', ir_name=INFERENCE_NAME)
 
 # Cluster counts used as input when training the PREFFECT model (observed or "true" counts)
-factory(task='cluster_true_counts', preffect_obj=preffect_object_reinstated, inference_key='endogenous', trigger_setup=False, configs=configs)
+fac.visualize_embedding(mode='true_counts', ir_name=INFERENCE_NAME)
 
 # Cluster the latent space of expression
-factory(task='cluster_latent', preffect_obj=preffect_object_reinstated, inference_key='endogenous', trigger_setup=False, configs=configs)
+fac.visualize_embedding(mode='latent', ir_name=INFERENCE_NAME)
 ```
-Change `inference_key` if you wish to perform this evaluation on a different Inference task (e.g. batch-adjusted estimated counts).
 
-Two side-by-side UMAPs will be created. The left-most will be colour-coded based on Leiden clustering. The right-most UMAP will be colour coded by either batch or subtype (if provided in the input AnnData `obs` structure as _batch_ or _subtype_). 
+Change `ir_name` if you wish to perform this evaluation on a different Inference task (e.g. batch-adjusted estimated counts).
+
+This will generate a single UMAP, which will be colour coded by either batch or subtype (if provided in the input AnnData `obs` structure as _batch_ or _subtype_). 
+
+You can also preform Leiden clustering (identifies groups of nodes more densely connected to each other than to the rest of the network) by setting `perform_leiden` to true. This is off by default. When active, two UMAPs will be generated. The left-most will be colour-coded based on Leiden clustering. The right-most UMAP will be colour coded by either batch or subtype (if provided in the input AnnData `obs` structure as _batch_ or _subtype_). If an optional parameter `cluster_aim` (integer) is used, Leiden will attempt to identify `cluster_aim` number of clusters (though this is not always successful).
 
 By default, the UMAP parameters (e.g. `n_neighbors`) are set to 10. Furthermore, we tune the "resolution" parameter of Leiden clustering to attempt to find a value which yields 5 clusters. While you cannot tune these parameters through `factory()`, you can change these parameters by importing the `Cluster()` class used by `factory()`:
 

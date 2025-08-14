@@ -20,7 +20,7 @@ PREFFECT is designed to accomplish the following tasks:
 **Aryamaan Saha -**
 *Department of Biological Engineering and Data Science, Indian Institute of Technology, Madras, India*
 
-**Sabina Trabinjac -**
+**Sabina Trebinjac -**
 *Department of Radiation Oncology, Sunnybrook Health Sciences Centre
 Department of Laboratory Medicine and Pathobiology, University of Toronto Toronto, Canada*
 
