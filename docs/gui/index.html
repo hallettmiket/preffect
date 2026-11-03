@@ -1,0 +1,1336 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A statistical model for RNA sequencing counts from FFPE tissue">
+      
+      
+      
+      
+        <link rel="prev" href="../command-line/">
+      
+      
+        <link rel="next" href="../guide/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>The graphical interface - PREFFECT 0.2</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-graphical-interface" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PREFFECT 0.2" class="md-header__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PREFFECT 0.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The graphical interface
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PREFFECT 0.2" class="md-nav__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PREFFECT 0.2
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vignette/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A worked example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The graphical interface
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The graphical interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What it does">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prepare-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check the data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-run-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The run page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-page-per-figure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One page per figure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-and-sample-lookup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene and sample lookup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-this-model-impute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can this model impute?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-two-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compare two runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does-not-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does not do
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-something-is-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If something is wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choosing-a-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choosing a distribution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training and inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clustering and figures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What changed from 0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../speed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Speed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What it does">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#choosing-a-run" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a run
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prepare-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prepare data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Check the data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-run-page" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The run page
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-page-per-figure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One page per figure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-and-sample-lookup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene and sample lookup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#can-this-model-impute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Can this model impute?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-two-runs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compare two runs
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-it-does-not-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What it does not do
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-something-is-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If something is wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="the-graphical-interface">The graphical interface<a class="headerlink" href="#the-graphical-interface" title="Permanent link">&para;</a></h1>
+<p>A page in your browser for the part of the work you want to look at: turning
+your two tables into the file PREFFECT reads, whether that folder of counts is
+usable, how the fit that produced a saved model went, and the figures that say
+whether to believe it. It reads like a report. You pick a run, you read a page
+describing it, and then you move through the figures one at a time. Past the
+figures it will look up a single gene or a single sample, ask whether the
+model can fill in a count it was not shown, and put two saved models side by
+side on the same counts.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>preffect<span class="w"> </span>gui
+</code></pre></div>
+<p>That starts a local server and opens the page. It needs the <code>gui</code> extra:
+<code>pip install "preffect[gui]"</code>, or <code>uv tool install "preffect[gui] @ git+https://github.com/hallettmiket/preffect"</code>. <code>preffect gui</code> says so if it is
+missing.</p>
+<p><strong>It answers on this machine only and sends nothing anywhere.</strong> The page is
+served to <code>localhost</code> and to nothing else, so nobody on the network can open
+it, and Streamlit's own usage reporting, which the library it is built on
+turns on by default, is turned off by the command that starts it. Press
+Ctrl+C in the terminal to stop it. <code>--port</code> changes the port if 8501 is taken.</p>
+<p>If PREFFECT runs on a server and you are at a laptop, forward the port over
+SSH and open the same address in your own browser:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ssh<span class="w"> </span>-L<span class="w"> </span><span class="m">8501</span>:localhost:8501<span class="w"> </span>your-server<span class="w">    </span><span class="c1"># then preffect gui on the server</span>
+</code></pre></div>
+<h2 id="what-it-does">What it does<a class="headerlink" href="#what-it-does" title="Permanent link">&para;</a></h2>
+<p>It shows you one run at a time, a page at a time. The sidebar is where you
+name the run and where you move between pages; everything else is the page you
+are on.</p>
+<h3 id="choosing-a-run">Choosing a run<a class="headerlink" href="#choosing-a-run" title="Permanent link">&para;</a></h3>
+<p>A run is a saved model and the counts you want to apply it to, and the sidebar
+is where you name both. Give it the folder of counts, say how many tissue
+files are in it, give it the model <code>preffect train</code> wrote, and press <strong>Open the
+run</strong>. Applying the model takes a moment and then happens once: moving between
+pages after that does not refit or reapply anything.</p>
+<p>Until you do, three pages are available, and the rest are not offered at all.
+A page with nothing behind it is a page that fails when you press it. The
+three are the two steps that come before a run, preparing the file and
+checking it, and the run page itself, which says what to fill in.</p>
+<p>Below that is a second model, which is optional. Name one and press <strong>Open the
+comparison</strong> and it is applied to the same counts, which adds one more page.</p>
+<h3 id="prepare-data">Prepare data<a class="headerlink" href="#prepare-data" title="Permanent link">&para;</a></h3>
+<p><strong>Prepare data</strong> writes the file everything else here reads, from the two
+tables you are likely to have: a counts table with a count for every sample
+and gene, and a sample table saying what is known about each sample. It is
+<a href="../command-line/"><code>preffect prepare</code></a> with the steps laid out, and it is
+where to start if PREFFECT has never seen your cohort.</p>
+<p>Upload the two tables, or type their paths, which is usually right when
+PREFFECT runs on a server you reached over an SSH tunnel and the files are
+already there. Say which way round the counts are written: one row per
+sample is assumed, and one row per gene, which is how many pipelines write
+one, is flipped as it is read. The page then says how many samples and genes
+it found and what columns the sample table has, so a table read the wrong way
+round is obvious before anything is built.</p>
+<p>Two things are optional:</p>
+<ul>
+<li><strong>A sample-sample network</strong>, which only the single and full models use. A
+  slider sets how many samples each one links to, and the summary underneath
+  redraws as it moves: edges, links per sample, and samples left with none.
+  Name a column of your sample table and it also gives the share of links
+  joining two samples with that same label against the share that would join
+  by chance. Two shares close together mean the network carries no biology.</li>
+<li><strong>The table saying which sample is which patient</strong>, which the full model
+  needs and which appears once you ask for two tissues or more. Choose the
+  column naming the patient and the page says how many patients have a sample
+  in each tissue and how many have none.</li>
+</ul>
+<p>Name a folder, press the button, and one file per tissue is written. <strong>Nothing
+already in the folder is written over</strong>: a name that is taken is refused, with
+the path it would have replaced. Every count is checked before anything is
+written and a problem names the entries at fault. The page finishes by running
+the same check the page below it runs, so you end on the sentence that says
+whether what you made can be fitted.</p>
+<h3 id="check-the-data">Check the data<a class="headerlink" href="#check-the-data" title="Permanent link">&para;</a></h3>
+<p><strong>Check the data</strong> is what <code>preffect check</code> reports, and it needs no model.
+It says how many samples and genes each tissue file holds, whether there is a
+sample-sample network and how many links it has, and, if something would stop
+a run, the sentence the run would have refused with. Run it on a new folder
+before you spend hours fitting anything.</p>
+<h3 id="the-run-page">The run page<a class="headerlink" href="#the-run-page" title="Permanent link">&para;</a></h3>
+<p><strong>The run</strong> describes the fit itself, and it is what opens when a run opens.
+It is there so that nobody reads a figure without first knowing whether the
+model behind it had finished moving. It shows, in this order:</p>
+<ul>
+<li>what was fitted: the kind of model, the count distribution it used, how many
+  samples and genes were matched, and how many tissue files it holds</li>
+<li>the settings that change what the numbers mean: whether the library size was
+  read from the counts or inferred by the model, the batch size and the
+  learning rate</li>
+<li>how the fit went: how many epochs it ran out of how many were asked for,
+  whether it stopped early, which epoch's weights were saved, how long the
+  fitting took, and one sentence saying how the run ended</li>
+<li><strong>the loss curve</strong>: the mean loss per batch at every epoch, with the
+  validation curve on the same axes where there was a validation split</li>
+<li>a button to download the cleaned counts as an <code>.h5ad</code> file, the same file
+  <code>preffect apply</code> writes</li>
+</ul>
+<p><strong>A model saved by an older version of PREFFECT says so.</strong> The loss curve, the
+epoch count and the timing come from a record <code>preffect train</code> now writes into
+the model file. A file written before that was kept is still a perfectly good
+model: the page says it was saved before its history was kept, and everything
+that does not need the history is shown as usual. Refit if you want the curve.</p>
+<h3 id="one-page-per-figure">One page per figure<a class="headerlink" href="#one-page-per-figure" title="Permanent link">&para;</a></h3>
+<p>Each figure gets a page of its own, and each page opens by saying what the
+picture shows, what a good one looks like, what a bad one looks like and what
+to do about it. They are written for someone who has not read the code. The
+pages are:</p>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>The question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Library sizes</td>
+<td>Has the model learned how deeply each sample was sequenced?</td>
+</tr>
+<tr>
+<td>Fitted against observed counts</td>
+<td>Does the model reproduce the counts it was given, gene by gene?</td>
+</tr>
+<tr>
+<td>Batch adjustment</td>
+<td>Has a difference between groups of samples that came from the handling been removed?</td>
+</tr>
+<tr>
+<td>Gene means and dispersion</td>
+<td>Is the model fitting how noisy each gene is, or only its average?</td>
+</tr>
+<tr>
+<td>Zeros</td>
+<td>Does the zero-inflated model's probability of a zero match how often genes are actually zero?</td>
+</tr>
+<tr>
+<td>The latent summary</td>
+<td>Do samples that share a label sit together in the model's own description of them?</td>
+</tr>
+</tbody>
+</table>
+<p>Two of these need something the model may not have. <strong>Batch adjustment</strong> needs
+a column of your sample table holding one label per sample, such as the run or
+the site it came from, and you choose which column on the page. <strong>Zeros</strong> needs
+the zero-inflated distribution, which is <code>preffect train --likelihood ZINB</code>.
+Where what is needed is missing, the page still opens with its description and
+says in a sentence what is missing and what to refit with, rather than drawing
+something empty.</p>
+<p>Every figure here is one of <a href="../reference/analysis/"><code>preffect.plots</code></a>' figures,
+drawn by the same call a script would make, so anything seen here can be
+reproduced and put in a paper. The loss curve on the run page is the one
+exception, and it is drawn from what the training run recorded.</p>
+<h3 id="gene-and-sample-lookup">Gene and sample lookup<a class="headerlink" href="#gene-and-sample-lookup" title="Permanent link">&para;</a></h3>
+<p><strong>Gene and sample lookup</strong> answers a question about one gene or one sample,
+where every page before it describes the whole cohort at once. Pick a gene and
+it shows the count the model fitted in each sample against the count observed,
+how closely the two move together across the cohort, how variable the model
+thinks the gene is, and how often it is zero. Pick a sample and it gives one
+number saying how well the model accounts for that sample, and shows where
+that number sits among the rest.</p>
+<p><strong>The measure for a sample is the mean log probability per gene</strong> of that
+sample's observed counts under the distribution the model fitted for it.
+Larger is better and every value is negative, because these are probabilities
+of a particular count. It is taken per gene rather than summed over genes so
+that it does not grow with the size of the panel.</p>
+<p>The part worth your time is the list at the bottom, which is the cohort
+ordered worst fit first. A sample at the top of it is usually a failed
+library, a mislabelled sample, or a sample of a different tissue from the
+rest, and it is worth looking at before it goes into anything downstream.</p>
+<h3 id="can-this-model-impute">Can this model impute?<a class="headerlink" href="#can-this-model-impute" title="Permanent link">&para;</a></h3>
+<p><strong>Can this model impute?</strong> asks whether the model can fill in a count it was
+not shown. It hides a fraction of the entries of the counts you loaded,
+chosen by a slider and a seed, runs the model on what is left, and compares
+what it predicted at the hidden entries against what was really there. This
+is what
+<a href="../command-line/"><code>preffect train --hide</code></a> reports at the end of a run, asked
+of a model that is already fitted.</p>
+<p>The number is the average relative distance from the observed count, so 0.5
+means the typical filled-in entry is out by half of the count that was there,
+and smaller is better. It comes with how many entries it was scored over and
+how many were left out, because a relative error cannot be computed where the
+true value is zero.</p>
+<p><strong>Read it as a statement about this cohort, not about new samples.</strong> The model
+has already seen every sample here. Filling a gap for a patient it has never
+met is a harder question, and it needs a held-out folder.</p>
+<p>Where the file carries <code>layers['true_expected_counts']</code>, which only simulated
+data can have, the page also scores against that and says why it is the honest
+comparison: an observed count is one draw from a distribution, so part of the
+distance from it is noise nothing could have predicted. On the <a href="../vignette/">worked
+example</a> the same model is out by about 65 per cent of the
+observed count and about 12 per cent of the count it was drawn from. Ordinary
+counts carry no such layer, and PREFFECT will not invent one.</p>
+<h3 id="compare-two-runs">Compare two runs<a class="headerlink" href="#compare-two-runs" title="Permanent link">&para;</a></h3>
+<p><strong>Compare two runs</strong> appears once a second model has been opened on the same
+counts, so that the difference you see is the model and not the data. It has
+three parts: what each run recorded about itself, side by side; any figure
+page drawn under both models on one set of axes; and a table of three numbers
+you might decide on, worked out when you ask because clustering costs a minute
+on a real cohort. Those three are the median correlation between fitted and
+observed across genes, the latent clustering scored against a column of your
+sample table, and the imputation error, which reuses the fraction and seed the
+page above it used.</p>
+<p>The last column of the table says which run is better on each measure, and
+reads <strong>neither</strong> where the two differ by less than a threshold set for that
+table: 0.01 for a correlation, 0.05 for the adjusted Rand index, and five per
+cent for the imputation error.</p>
+<p><strong>Those thresholds stop a tiny difference being read as a result. They are not
+a measurement of the noise.</strong> This page compares two particular fits, not two
+methods: fitting either model again from a different seed gives a different
+answer, which is why this project's own experiments use six seeds. Treat a
+small difference here as nothing at all.</p>
+<h2 id="what-it-does-not-do">What it does not do<a class="headerlink" href="#what-it-does-not-do" title="Permanent link">&para;</a></h2>
+<p><strong>It does not fit a model.</strong> Training a real cohort is hours, and belongs on
+the command line where it can be left running and logged. The interface reads
+what <code>preffect train</code> wrote. That is why the count distribution is shown here
+and chosen there, with
+<a href="../command-line/"><code>preffect train --likelihood</code></a>: a zero-inflated model and a
+plain one of the same kind look alike on these pages and predict different
+counts, so the page owes you the answer even though it cannot change it. The
+same holds for everything else on the run page: it reports the settings a run
+used and changes none of them.</p>
+<p><strong>It does not score anything on samples it has not seen.</strong> The imputation page
+hides entries of the counts you loaded and scores the model on putting them
+back, which is a statement about this cohort and not about new patients. The
+comparison page scores the latent clustering against one column you choose.
+Anything past those two, a held-out folder or a decision about what to compare
+against, is <a href="../guide/">Using it</a> from Python.</p>
+<h2 id="if-something-is-wrong">If something is wrong<a class="headerlink" href="#if-something-is-wrong" title="Permanent link">&para;</a></h2>
+<p>A folder that cannot be read, counts that would stop a run, or a device the
+machine lacks shows as a sentence on the page, the same sentence the command
+line prints. A figure that cannot be drawn from this particular model says so
+on its own page, in the sentence <code>preffect.plots</code> refuses with. If the latent
+figure says it needs the <code>viz</code> extra, the <code>gui</code> extra includes it, so that is
+an environment assembled by hand; install it.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,45 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      # A full install, so the declared floors are actually exercised. PyTorch
+      # 2.6 or later is one of them: version 0.1's saved sessions cannot be
+      # read by it, which is why the checkpoint format has to change.
+      - name: Install
+        run: |
+          uv venv --python ${{ matrix.python-version }}
+          uv pip install --python .venv/bin/python -e ".[dev]"
+
+      - name: Report the versions actually resolved
+        run: |
+          .venv/bin/python -c "import sys, torch, numpy, pandas, anndata; \
+            print('python ', sys.version.split()[0]); \
+            print('torch  ', torch.__version__); \
+            print('numpy  ', numpy.__version__); \
+            print('pandas ', pandas.__version__)"
+
+      - name: Lint
+        run: .venv/bin/python -m ruff check src tests
+
+      - name: Test
+        run: .venv/bin/python -m pytest --cov=preffect --cov-report=term-missing

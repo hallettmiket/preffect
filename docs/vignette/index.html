@@ -1,0 +1,1334 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A statistical model for RNA sequencing counts from FFPE tissue">
+      
+      
+      
+      
+        <link rel="prev" href="../getting-started/">
+      
+      
+        <link rel="next" href="../command-line/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>A worked example - PREFFECT 0.2</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#a-worked-example" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PREFFECT 0.2" class="md-header__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PREFFECT 0.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              A worked example
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PREFFECT 0.2" class="md-nav__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PREFFECT 0.2
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A worked example
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A worked example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-check-the-data-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Check the data first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Fit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-apply-it-to-data-it-has-never-seen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Apply it to data it has never seen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-score-what-it-filled-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Score what it filled in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-your-cohort-is-too-small-to-divide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If your cohort is too small to divide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-graph-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The graph model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The graphical interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choosing-a-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choosing a distribution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training and inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clustering and figures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What changed from 0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../speed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Speed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-check-the-data-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Check the data first
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-fit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Fit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-apply-it-to-data-it-has-never-seen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Apply it to data it has never seen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-score-what-it-filled-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Score what it filled in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#if-your-cohort-is-too-small-to-divide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If your cohort is too small to divide
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-graph-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The graph model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="a-worked-example">A worked example<a class="headerlink" href="#a-worked-example" title="Permanent link">&para;</a></h1>
+<p>Fit a model, check it, apply it to data it has never seen, and score what it
+filled in. About three minutes end to end.</p>
+<h2 id="the-data">The data<a class="headerlink" href="#the-data" title="Permanent link">&para;</a></h2>
+<p>This step writes a small simulated cohort to work on, and says what it wrote.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>.venv/bin/preffect<span class="w"> </span>example-data<span class="w"> </span>--out<span class="w"> </span>vignette_data
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wrote vignette_data
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  simple:
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    train       120 samples  md5 4091e1ae
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    validation   40 samples  md5 51f7b50a
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    test         40 samples  md5 073eb2ee
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  single:
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    train       120 samples  md5 8ae37503
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    validation   40 samples  md5 69d0f1e8
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    test         40 samples  md5 2778a063
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  full:
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    train       120 samples  md5 fed1a84d  2 tissues
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    validation   40 samples  md5 d0f02ad3  2 tissues
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    test         40 samples  md5 42a999d2  2 tissues
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>200 genes, 3 groups, negative binomial counts.
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>No sample appears in more than one split, and the three files differ.
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>The genes are drawn once per cohort, so every split is the same genes.
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>Batch B has 40 of the 200 genes raised 1.3 times, for the correction variables to take out.
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>Every file carries the count each entry was drawn from in layers['true_expected_counts'].
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>The full model's two tissues are the same patients under different names.
+</code></pre></div>
+<p>Three splits, <strong>no sample in any two of them</strong>, and three different files. The
+command checks both before it reports success and refuses to write otherwise.</p>
+<p>The checksums above are from the Python 3.12 library stack. The counts, the
+names and the batch labels are the same on Python 3.11, which resolves an
+older anndata and an older pandas, but the bytes those libraries write around
+them are not, so the checksums there differ. Compare them against another run
+of your own install, not against this page.</p>
+<div class="admonition warning">
+<p class="admonition-title">Why that is worth checking</p>
+<p>Version 0.1's vignettes ship a <code>test/</code> folder byte-identical to
+<code>validation/</code>, in all three of simple, single and full. Published Figure S4
+shows a user pointing inference at that folder while the caption calls it a
+held-out test set. It is the validation set. Issue #11.</p>
+</div>
+<p>The counts are simulated from a negative binomial, which is what PREFFECT
+models, with three groups of samples that each raise a different block of
+genes. So there is something real to find, and you can tell whether the model
+found it.</p>
+<p><strong>The three splits are the same genes.</strong> Each gene has one level and one
+amount of noise, drawn once for the whole cohort, and every split is drawn
+from those. Without that a model fitted on the training split has nothing to
+say about the test split, however well it fits: until finding 65 this
+generator drew the genes separately for each split, so the per-gene means of
+the training and test splits were uncorrelated and most of this page's
+numbers were measuring that rather than measuring PREFFECT.</p>
+<p><strong>Batch B's own genes are raised</strong>, by a factor of 1.3, in a fifth of the
+genes picked at random and listed in the file under
+<code>uns['batch_shifted_genes']</code>. It is deliberately smaller than the four-fold
+lift the groups give their blocks, so the groups still dominate and the batch
+is the second thing you see. What it is there for is the <strong>correction
+variables</strong>, which take a known nuisance label out of what the encoder is
+given and are asked for from Python rather than from the command line
+(<a href="../guide/">using it</a> shows where), and the batch figure in
+<a href="../gui/">the interface</a>. It is not a
+demonstration of the objective's batch-centroid term, which no run here
+reaches: training passes no batch labels to the loss, so that term never
+fires.</p>
+<p><strong>Every file also carries the count each entry was drawn from</strong>, in
+<code>layers['true_expected_counts']</code>. That is the negative binomial mean, before
+the draw added its noise. No real cohort can have it; it is here so that step
+4 can score a filled-in entry against what the entry should have been rather
+than against one noisy draw of it.</p>
+<h2 id="1-check-the-data-first">1. Check the data first<a class="headerlink" href="#1-check-the-data-first" title="Permanent link">&para;</a></h2>
+<p>This step reads the files and says what is in them, before anything is fitted.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>.venv/bin/preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>training: 1 tissue(s) from vignette_data/simple/train
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  tissue 1: 120 samples, 200 genes, no network
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  tissue 1: carries the count each entry was drawn from in layers['true_expected_counts'], so these counts are simulated
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  the counts look usable
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>validation: 40 samples from vignette_data/simple/validation
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  tissue 1: 0 of 120 training samples reappear in validation
+</code></pre></div>
+<p>The last line is the one to read. On your own data it tells you whether your
+splits are what you think they are, and it is how the vignette problem above
+would have been caught. The line above it will not appear on your own data:
+only something simulated can carry the count each entry was drawn from, so
+finding it is how <code>check</code> tells you the file was generated rather than
+measured.</p>
+<h2 id="2-fit">2. Fit<a class="headerlink" href="#2-fit" title="Permanent link">&para;</a></h2>
+<p>This step fits the model and stops it where it stops improving.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">                         </span>--out<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">                         </span>--epochs<span class="w"> </span><span class="m">80</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">                         </span>--patience<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fitting a simple model: 200 genes, 36,090 parameters, 80 epochs
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>finished after 67 epoch(s)
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  training loss   1218.02 -&gt; 828.70
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  validation loss 804.63
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  stopped early, best epoch was 62
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>wrote model.pt
+</code></pre></div>
+<p>Validation close to training means it is not simply memorising, and here the
+two end within three per cent of each other. <code>--patience 5</code> stops the run once
+the validation loss has not fallen for five epochs in a row, and the model
+written is the best epoch's, not the last. Here it fires at epoch 67 of a
+budget of 80 and keeps epoch 62, which is where more fitting stopped buying
+anything. A real cohort takes hundreds of epochs to settle, and the loss
+settling is not the whole story: see <code>--patience</code> on
+<a href="../command-line/">the command line page</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Where 80 epochs comes from</p>
+<p>Fitted at four lengths on this data, on four threads of a CPU. The column
+headed <em>test fit</em> is the median across genes of the correlation between
+the model's expected counts and the actual counts of the 40 test samples,
+which is what this example exists to produce. With <code>--patience 5</code> the runs
+budgeted 200 and 500 epochs both stop at 67 and give the 80-epoch row.</p>
+<table>
+<thead>
+<tr>
+<th>Budget</th>
+<th>Epochs run</th>
+<th>Training loss</th>
+<th>Validation loss</th>
+<th>Test fit</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20</td>
+<td>20</td>
+<td>890.14</td>
+<td>868.74</td>
+<td>0.473</td>
+<td>too short: the test counts are not reproduced</td>
+</tr>
+<tr>
+<td>80</td>
+<td>67, stopped early</td>
+<td>828.70</td>
+<td>804.63</td>
+<td>0.784</td>
+<td>the shortest that reproduces them</td>
+</tr>
+<tr>
+<td>200</td>
+<td>200</td>
+<td>815.59</td>
+<td>801.20</td>
+<td>0.787</td>
+<td>no better on the test split, three times the work</td>
+</tr>
+<tr>
+<td>500</td>
+<td>500</td>
+<td>800.43</td>
+<td>803.60</td>
+<td>0.784</td>
+<td>worse: the training loss keeps falling, the validation loss does not</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Always pass <code>--seed</code></strong> if you want the same model twice, and <strong>set
+<code>--threads</code></strong>. The right number depends on the size of your data, and the
+default of 4 suits a small example rather than a real cohort. See
+<a href="../getting-started/">getting started</a>.</p>
+<h2 id="3-apply-it-to-data-it-has-never-seen">3. Apply it to data it has never seen<a class="headerlink" href="#3-apply-it-to-data-it-has-never-seen" title="Permanent link">&para;</a></h2>
+<p>This step runs the fitted model over the test split and checks what came out.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>.venv/bin/preffect<span class="w"> </span>apply<span class="w"> </span>--model<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">                         </span>--data<span class="w"> </span>vignette_data/simple/test<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">                         </span>--out<span class="w"> </span>cleaned.h5ad<span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>loaded a simple model written by PREFFECT 0.2.0, applying on cpu
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>matched 200 genes to the ones the model was fitted on
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>wrote cleaned.h5ad: 40 samples, 200 genes
+</code></pre></div>
+<p><code>cleaned.h5ad</code> carries the adjusted counts in <code>X</code>, the predicted proportions in
+<code>layers['composition']</code>, and the latent summary in <code>obsm['latent']</code>.</p>
+<p><strong>This is the step the published figure got wrong.</strong> The test split was never
+seen during fitting and never used to decide when to stop, so what comes out is
+a genuine held-out result.</p>
+<p>Two things are worth measuring on it. The first is whether the expected counts
+track the real ones: across the 40 test samples the median gene's correlation
+between the two is 0.78, and 162 of the 200 genes are above 0.5. The second is
+whether the latent summary has found the three groups, which the package will
+score for you. Clustering needs extra packages: <code>pip install
+'preffect[cluster]'</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ad</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.clustering</span><span class="w"> </span><span class="kn">import</span> <span class="n">clustering_recovery</span><span class="p">,</span> <span class="n">resolution_for_target</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">cleaned</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">"cleaned.h5ad"</span><span class="p">)</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">test</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">"vignette_data/simple/test/counts.tau_1.h5ad"</span><span class="p">)</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">found</span> <span class="o">=</span> <span class="n">resolution_for_target</span><span class="p">(</span><span class="n">cleaned</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">"latent"</span><span class="p">],</span> <span class="n">target_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">clustering_recovery</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s2">"subtype"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># adjusted Rand 1.000, adjusted mutual information 1.000</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># (3 clusters against 3 known groups, 40 samples)</span>
+</code></pre></div>
+<p>Both scores are corrected for chance, so 1.000 means the clustering of the
+latent space is the known grouping exactly, on samples the model never saw.</p>
+<h2 id="4-score-what-it-filled-in">4. Score what it filled in<a class="headerlink" href="#4-score-what-it-filled-in" title="Permanent link">&para;</a></h2>
+<p>This step hides a fifth of the training entries, fits again on what is left,
+and scores the hidden entries against the counts they were drawn from.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">                         </span>--out<span class="w"> </span>imputing.pt<span class="w"> </span>--hide<span class="w"> </span><span class="m">0</span>.2<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">                         </span>--epochs<span class="w"> </span><span class="m">80</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">                         </span>--patience<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>hiding 20% of the training entries; the model is scored against the full counts
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>fitting a simple model: 200 genes, 36,090 parameters, 80 epochs
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>finished after 80 epoch(s)
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>  training loss   1160.82 -&gt; 826.56
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>  validation loss 805.03
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  imputation error on hidden entries 0.646, over 4,747 entries (53 hidden entries with a true value of zero left out)
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>wrote imputing.pt
+</code></pre></div>
+<p>That 0.646 is the average relative distance from the <strong>count that was
+observed</strong>, and most of it is noise rather than error: a count is one draw
+from a negative binomial, and nothing can predict the draw. Scoring against
+the mean it was drawn from instead separates the two, and on simulated data
+that mean is in the file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.checkpoint</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_checkpoint</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">imputation_error</span><span class="p">,</span> <span class="n">infer</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_model</span><span class="p">,</span> <span class="n">hide_entries</span><span class="p">,</span> <span class="n">read_split</span><span class="p">,</span> <span class="n">to_model_data</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="s2">"imputing.pt"</span><span class="p">)</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="n">model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">(</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">n_genes</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="p">,</span> <span class="mi">1</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="p">)</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">model_state</span><span class="p">)</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="c1"># The same entries the run hid: the fraction and the seed are what choose them.</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="n">tissues</span> <span class="o">=</span> <span class="n">read_split</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"vignette_data/simple/train"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="n">data</span> <span class="o">=</span> <span class="n">hide_entries</span><span class="p">(</span><span class="n">to_model_data</span><span class="p">(</span><span class="n">tissues</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="n">truth</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tissues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">"true_expected_counts"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="p">)</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">imputation_error</span><span class="p">(</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>    <span class="n">infer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">expected_counts</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="n">hidden</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">hidden</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"mean_relative"</span><span class="p">,</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="p">)</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="s2">"hidden"</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="s2">"visible"</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="c1"># 0.1232 0.1279</span>
+</code></pre></div>
+<p>So the model lands within about 12 per cent of what each hidden entry should
+have been, against 65 per cent of the single count that was actually drawn.
+The two numbers are the same measure on different comparisons, and the gap
+between them is the negative binomial noise. Nothing is skipped here: a true
+expected count is never zero, while 53 of the observed counts at hidden
+entries were, and a relative error cannot be computed against zero.</p>
+<p><strong>Your own data has no such layer, and PREFFECT will not invent one.</strong> Version
+0.1 looked for a layer called <code>truth</code>, and where it was absent the loader
+supplied the per-gene mean, so on real data it reported the distance from the
+gene average and called it imputation accuracy. On a real cohort the honest
+comparison is the observed count, which is the 0.646 above. <a href="../guide/">Using
+it</a> says more about what that number does and does not measure.</p>
+<h2 id="if-your-cohort-is-too-small-to-divide">If your cohort is too small to divide<a class="headerlink" href="#if-your-cohort-is-too-small-to-divide" title="Permanent link">&para;</a></h2>
+<p>This section is for a cohort that cannot give up samples to a validation set.</p>
+<p>Leave <code>--validation</code> out. PREFFECT says so rather than inventing one:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>validation: none given, so no validation loss will be reported
+</code></pre></div>
+<p>That is honest. Splitting 40 samples three ways gives you nothing you can
+trust, and copying one split into another, which is what version 0.1 did,
+gives you a number that looks like a held-out result and is not.</p>
+<h2 id="the-graph-model">The graph model<a class="headerlink" href="#the-graph-model" title="Permanent link">&para;</a></h2>
+<p>This section fits the model that reads a sample-sample network as well as the
+counts.</p>
+<p><code>vignette_data/single/</code> carries the same thing plus a sample-sample network
+with real edges in it.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>.venv/bin/preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1">#   tissue 1: 120 samples, 200 genes, a network with 240 edge(s), 4.0 per sample</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train<span class="w"> </span>--kind<span class="w"> </span>single<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">                         </span>--out<span class="w"> </span>single.pt<span class="w"> </span>--epochs<span class="w"> </span><span class="m">40</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">                         </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>fitting a single model: 200 genes, 397,530 parameters, 40 epochs
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>finished after 40 epoch(s)
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>  training loss   526.47 -&gt; 428.39
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>wrote single.pt
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Check your network has edges before fitting a graph model</p>
+<p><code>check</code> reports the edge count because every real dataset this was built
+against carried an identity matrix there, which is a network with no edges
+at all. A graph model on one of those costs about ten times the
+parameters of the simple model and has nothing to attend to. It now refuses
+rather than training on nothing. Findings 35 and 54.</p>
+</div>
+<h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The same steps as a notebook: <code>vignettes/preffect_vignette.ipynb</code> in the
+  repository.</li>
+<li><a href="../guide/">Using it</a> for imputation, clustering and figures from Python.</li>
+<li><a href="../reference/config/">Reference</a> for the settings.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
