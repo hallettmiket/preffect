@@ -48,9 +48,6 @@ trust.
 - **Eliseos J. Mucaki**, Department of Biochemistry, Western University, London, Canada
 - **Wenhan Zhang**, Department of Biochemistry, Western University, London, Canada
 - **Aryamaan Saha**, Department of Computer Science, Columbia University, New York, USA
-- **Sabina Trebinjac**, Department of Radiation Oncology and Department of Laboratory Medicine and Pathobiology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
-- **Sharon Nofech-Mozes**, Department of Laboratory Medicine and Pathobiology and Department of Anatomic Pathology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
-- **Eileen Rakovitch**, Department of Radiation Oncology and Department of Laboratory Medicine and Pathobiology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
 - **Vanessa Dumeaux**, Department of Anatomy and Cell Biology and Department of Oncology, Western University, London, Canada
 - **Michael T. Hallett**, Department of Biochemistry and Department of Oncology, Western University, London, Canada. Contact: <michael.hallett@uwo.ca>
 
@@ -59,7 +56,6 @@ The method is described in Mucaki *et al.*, *Journal of Translational Medicine*
 
 <p align="center">
   <img src="assets/logos/western_logo.png" alt="Western University" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/sunnybrook_logo_2024.png" alt="Sunnybrook Health Sciences Centre" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/logos/nserc_2024.png" alt="NSERC" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="assets/logos/cihr_color_logo_2024.png" alt="CIHR" height="60"/>
 </p>
