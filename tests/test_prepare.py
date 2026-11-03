@@ -352,6 +352,9 @@ def test_a_written_file_passes_the_check_and_trains_a_model(tmp_path, capsys):
     assert "20 samples, 12 genes" in printed
     assert "the counts look usable" in printed
 
+    # A single model needs the graph extra; without it the command refuses in a
+    # sentence, which is right, and this test has nothing more to check.
+    pytest.importorskip("torch_geometric", reason="needs the graph extra")
     out = tmp_path / "model.pt"
     assert main([
         "train", "--train", str(folder), "--out", str(out), "--kind", "single",
