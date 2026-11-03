@@ -159,8 +159,7 @@ Three lines there are worth reading closely.
 **Where the recipe comes from.** Each sample is linked to the ten others whose
 square-rooted counts correlate with it most. Ten neighbours is the setting
 measured on this project's cohort: the one network under which the graph model
-beat the simple model, by 8 per cent lower imputation error at hidden entries
-in six seeds of six.
+beat the simple model, by 8 per cent lower imputation error at hidden entries.
 
 ## `preffect check`
 
@@ -228,8 +227,7 @@ training: 2 tissue(s) from my_study/train
 Those 24 patients are kept, and the full model is given a made-up profile for
 the tissue they lack: the rounded per-gene mean of that tissue's real samples,
 linked to nothing in that tissue's network. The guide's full-model section says
-what such a row does and does not contribute to, and the decision of 2026-11-02
-on unmatched samples says why it works that way. The number is worth reading,
+what such a row does and does not contribute to. The number is worth reading,
 because it is the share of the cohort the model will be working on that was
 made up rather than measured.
 
@@ -322,8 +320,7 @@ zeros on its own when a gene is lowly expressed, so a high proportion of them
 is not by itself a reason to change. The zero-inflated form adds a separate
 probability that a count is zero for a reason unrelated to expression level,
 such as the transcript never being captured, and it costs one more parameter
-per gene and sample along with the layer that produces it: on the small
-example in the tests, 8,126 parameters against 7,514.
+per gene and sample along with the layer that produces it.
 
 The PREFFECT paper found little evidence that fRNA-seq
 needs it, which is why `NB` is the default. To ask the question of your own
@@ -351,8 +348,8 @@ names, and `apply` matches on them.
 watches the validation loss, or the training loss when there is no
 `--validation`, and stops once that has not fallen by at least `--min-delta`
 for `--patience` epochs in a row; the model written is the best epoch's, not
-the last. Measured on a cohort of 220 samples at the default learning rate,
-six seeds, a fifth of the samples held out: the validation loss
+the last. On a cohort of 220 samples at the default learning rate, with a fifth of
+the samples held out, the validation loss
 is lowest at about epoch 450 and within five per cent of that until 4,000, so
 any patience stops at 240 to 830 epochs. That is the right place to stop if
 the model is for samples it has not seen. It is ten times too soon if the
@@ -365,14 +362,14 @@ this learning rate, 3,000 to 5,000 epochs serves the loss and the latent within
 a few per cent and in-cohort imputation within about a tenth, and 16,000 is
 harmful for anything applied to new samples.** A rule that watches imputation
 of the hidden entries instead, which lands near that range on its own, is
-below; the curves are in the decision of 2026-10-28 on training length.
+below.
 
 **`--stop-on imputation` stops where imputation of the fitted cohort settles.**
 With `--hide 0.2` a fifth of the training entries are hidden from the model at
 random, and after every epoch the model's error on those entries is measured,
-the same number `exp/10` and `exp/11` score; `--patience` then counts epochs
+`--patience` then counts epochs
 without that error falling, and the model written is the best epoch's by that
-measure. On the real cohort, replayed in `exp/11`, a patience of 500 to 2,000
+measure. On a real cohort, a patience of 500 to 2,000
 epochs stops at 2,000 to 4,000 and keeps a model within four to six per cent of
 the best imputation, where the loss rule keeps one from epoch 300 with 1.7
 times the error. Two things to know. The objective scores the model
@@ -381,15 +378,14 @@ fit of the cohort has gone, not how the model generalises to samples it has
 not seen; for that, stop on the loss with `--validation`. And measuring it
 costs one extra pass over the training data per epoch, about 70 per cent more
 time an epoch on a GPU; the random stream is restored afterwards, so the run is
-the same run as without the rule, stopped sooner or later. Run live on the real
-cohort (`exp/12`), the rule stopped at 2,100 to 6,400 epochs on its own and
-kept a model ten per cent better at imputation than a fixed 4,000-epoch run
-in every seed, with the latent space level or better, at 1.7 times the time; the
-decision of 2026-10-28 on stopping has the table. `--min-delta` applies to
+the same run as without the rule, stopped sooner or later. Run live on that
+cohort, the rule stopped at 2,100 to 6,400 epochs on its own and kept a model
+ten per cent better at imputation than a fixed 4,000-epoch run, with the
+latent space level or better, at 1.7 times the time. `--min-delta` applies to
 whichever quantity is watched, in its own units. With the default of zero the
 imputation rule waits until the error stops falling at all; on data where it
-keeps creeping down (the synthetic data in `exp/12` fell two per cent over
-4,000 epochs and the rule ran to its cap in four of six seeds) set
+keeps creeping down (synthetic data can fall two per cent over 4,000 epochs,
+so the rule runs to its cap) set
 `--min-delta` to the smallest
 improvement worth waiting for, about one per cent of the error: 0.005 on an
 error near 0.5, 0.01 on one near 1.
@@ -406,40 +402,25 @@ entries were hidden and never which values. It applies only to `--hide`, which
 hides entries at random; nothing else about a run changes, and a run without
 `--hide` is unaffected.
 
-**`--edge-balance` is what lets the graph models learn their network on one
-dataset, and has not been shown to on any other.** A sample-sample network
-links each sample to a few others out of hundreds, so 92 to 99.8 per cent of
-the pairs are not edges, and scoring every pair equally, which
-`none` does, leaves the network half of the
-model with nothing to learn: measured in `exp/17` on synthetic data with a
-known network, it settles on predicting no edge anywhere in every seed, and
-the loss cannot show it because that is exactly the prediction the loss
-rewards. `balanced`, the default, gives the linked pairs the same total weight
-as the absent ones; on that synthetic network the predicted network then ranks
-the true edges as well as a predictor that knows the sample groups, and
-clustering, imputation and the expression terms are unchanged. A third way,
-scoring the linked pairs against
-as many absent pairs drawn at random each step, did about as well more slowly
-and lost; it lives in `exp/17`, not in the package.
+**`--edge-balance` decides how the graph models score the pairs of samples
+that are not linked.** A sample-sample network links each sample to a few
+others out of hundreds, so 92 to 99.8 per cent of the pairs are not edges, and
+scoring every pair equally, which `none` does, leaves the network half of the
+model with nothing to learn: it settles on predicting no edge anywhere, and the
+loss cannot show it because that is exactly the prediction the loss rewards.
+`balanced`, the default, gives the linked pairs the same total weight as the
+absent ones. On synthetic data with a known network the predicted network then
+ranks the true edges as well as a predictor that knows the sample groups, with
+clustering, imputation and the expression terms unchanged; on the real cohorts
+tried so far it has not recovered a usable network, though nothing measured is
+worse under it. So do not expect a usable network out of a graph model without
+checking the ranking with `network_recovery` on your own data.
 
-**That recovery has not reproduced on either dataset run since.** On the DCIS
-cohort at 773 genes, `exp/17`'s run of 2026-11-02 found every arm, `balanced`
-included, ending with the decoder predicting exactly one half for every pair,
-so the term made no difference there in either direction. On
-`dataset_full_1`, `exp/18` found every decoder predicting no edge anywhere
-under `balanced`, which is the outcome it exists to prevent. Nothing measured
-is worse under `balanced`, which is why it is still the default, but do not
-expect a usable network out of a graph model without checking the ranking with
-`network_recovery` on your own data.
-
-Two further things to know. Under
-`balanced` a probability above one half is
+Two further things to know. Under `balanced` a probability above one half is
 not an edge call: equal weight moves the point where the model is undecided,
 so most pairs come out above a half and the useful output is the ranking,
 which is how the guide's `network_recovery` scores it. And `none` is there for
-repeating a result produced before 2026-10-30, which every graph-model result
-in this repository was. The decision of 2026-10-30 on weighting the network
-term has the tables.
+repeating a result produced with the unweighted term.
 
 **`--batch-size` matters more for the graph models.** A graph model can only
 attend to network edges between samples that are in the same batch, so a

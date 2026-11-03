@@ -96,7 +96,7 @@ print(unmatched_counts(tissues))        # {'tau_1': 0, 'tau_2': 24}
 alignment = align_tissues(tissues, unmatched="refuse")   # raises if any are missing
 ```
 
-## Imputation, measured honestly
+## Imputation
 
 To find out how well it fills gaps, hide some entries, fit on what is left, and
 score only the hidden ones.
@@ -184,10 +184,10 @@ print(scores)
 # flat prediction
 ```
 
-That output is a single model after 200 epochs on `exp/17`'s synthetic cohort
-with the term balanced: the ranking is three times better than chance, and
-the threshold of one half calls far too many pairs, which is the kind of thing
-the loss alone would never have shown.
+That output is a single model after 200 epochs on a synthetic cohort with a
+known network: the ranking is three times better than chance, and the
+threshold of one half calls far too many pairs, which is the kind of thing the
+loss alone would never have shown.
 
 Both inputs are square over the same samples and are read as symmetric: each
 pair is counted once and the diagonal is ignored. An edge is predicted where
@@ -282,5 +282,4 @@ from preffect.errors import ConfigError, DataError, PreffectError
 ```
 
 If a message tells you only that something is wrong and not what to do about
-it, that is a defect in the message. Version 0.2 has had three of those and
-they are all in the findings list.
+it, that is a defect in the message; please report it.

@@ -23,8 +23,8 @@ of parameters, and the smaller value wins.
 The PREFFECT paper asked exactly this question of
 fRNA-seq counts and found that the plain distribution is usually enough, which
 is why [`Likelihood`](reference/config.md) defaults to it. The code here is the
-estimator that produced that answer, ported so the evidence can be reproduced
-and asked again of a new cohort.
+estimator that produced that answer, so the evidence can be reproduced and the
+question asked again of a new cohort.
 
 ## One gene
 

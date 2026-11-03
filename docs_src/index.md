@@ -31,17 +31,10 @@ PREFFECT is designed to accomplish the following tasks:
 
 ## A note on this version
 
-Version 0.2 is a rewrite, not a patch. The [list of fixes relative to version
-0.1](https://github.com/hallettmiket/preffect/blob/main/CHANGELOG.md)
-is kept in the repository because most of the design follows from it. Several
-of those defects were silent: a model kind quietly swapped for another, a term
-computed and then left out of the sum, an experiment that compared a model with
-itself.
-
-The rule the rewrite is built around is that **nothing is silently rewritten**.
-If a setting cannot be honoured, it raises and says which setting, what was
-asked for, and what to do instead. That is less convenient and much easier to
-trust.
+Version 0.2 is a rewrite, not a patch.
+[`CHANGELOG.md`](https://github.com/hallettmiket/preffect/blob/main/CHANGELOG.md)
+lists every fix and change relative to version 0.1, and opens with how to tell
+which of them explains a difference in your results.
 
 ## Contributors
 

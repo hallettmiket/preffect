@@ -91,8 +91,7 @@ validation: 40 samples from vignette_data/simple/validation
 ```
 
 The last line is the one to read. On your own data it tells you whether your
-splits are what you think they are, and it is how the vignette problem above
-would have been caught. The line above it will not appear on your own data:
+splits are what you think they are. The line above it will not appear on your own data:
 only something simulated can carry the count each entry was drawn from, so
 finding it is how `check` tells you the file was generated rather than
 measured.
@@ -307,11 +306,10 @@ wrote single.pt
 ```
 
 !!! note "Check your network has edges before fitting a graph model"
-    `check` reports the edge count because every real dataset this was built
-    against carried an identity matrix there, which is a network with no edges
-    at all. A graph model on one of those costs about ten times the
-    parameters of the simple model and has nothing to attend to. It now refuses
-    rather than training on nothing. Findings 35 and 54.
+    `check` reports the edge count because a file can carry a network that
+    links every sample only to itself, which is a network with no edges at all.
+    A graph model on one of those costs about ten times the parameters of the
+    simple model and has nothing to attend to, so `train` refuses it.
 
 ## Next
 

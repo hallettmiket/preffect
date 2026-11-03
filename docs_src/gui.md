@@ -192,7 +192,7 @@ has already seen every sample here. Filling a gap for a patient it has never
 met is a harder question, and it needs a held-out folder.
 
 Where the file carries `layers['true_expected_counts']`, which only simulated
-data can have, the page also scores against that and says why it is the honest
+data can have, the page also scores against that, which is the better
 comparison: an observed count is one draw from a distribution, so part of the
 distance from it is noise nothing could have predicted. On the [worked
 example](vignette.md) the same model is out by about 65 per cent of the
@@ -219,8 +219,7 @@ cent for the imputation error.
 **Those thresholds stop a tiny difference being read as a result. They are not
 a measurement of the noise.** This page compares two particular fits, not two
 methods: fitting either model again from a different seed gives a different
-answer, which is why this project's own experiments use six seeds. Treat a
-small difference here as nothing at all.
+answer. Treat a small difference here as nothing at all.
 
 ## What it does not do
 

@@ -1223,7 +1223,7 @@ true value is zero.</p>
 has already seen every sample here. Filling a gap for a patient it has never
 met is a harder question, and it needs a held-out folder.</p>
 <p>Where the file carries <code>layers['true_expected_counts']</code>, which only simulated
-data can have, the page also scores against that and says why it is the honest
+data can have, the page also scores against that, which is the better
 comparison: an observed count is one draw from a distribution, so part of the
 distance from it is noise nothing could have predicted. On the <a href="../vignette/">worked
 example</a> the same model is out by about 65 per cent of the
@@ -1246,8 +1246,7 @@ cent for the imputation error.</p>
 <p><strong>Those thresholds stop a tiny difference being read as a result. They are not
 a measurement of the noise.</strong> This page compares two particular fits, not two
 methods: fitting either model again from a different seed gives a different
-answer, which is why this project's own experiments use six seeds. Treat a
-small difference here as nothing at all.</p>
+answer. Treat a small difference here as nothing at all.</p>
 <h2 id="what-it-does-not-do">What it does not do<a class="headerlink" href="#what-it-does-not-do" title="Permanent link">&para;</a></h2>
 <p><strong>It does not fit a model.</strong> Training a real cohort is hours, and belongs on
 the command line where it can be left running and logged. The interface reads

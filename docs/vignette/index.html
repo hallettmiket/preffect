@@ -1034,8 +1034,7 @@ than against one noisy draw of it.</p>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  tissue 1: 0 of 120 training samples reappear in validation
 </code></pre></div>
 <p>The last line is the one to read. On your own data it tells you whether your
-splits are what you think they are, and it is how the vignette problem above
-would have been caught. The line above it will not appear on your own data:
+splits are what you think they are. The line above it will not appear on your own data:
 only something simulated can carry the count each entry was drawn from, so
 finding it is how <code>check</code> tells you the file was generated rather than
 measured.</p>
@@ -1244,11 +1243,10 @@ with real edges in it.</p>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Check your network has edges before fitting a graph model</p>
-<p><code>check</code> reports the edge count because every real dataset this was built
-against carried an identity matrix there, which is a network with no edges
-at all. A graph model on one of those costs about ten times the
-parameters of the simple model and has nothing to attend to. It now refuses
-rather than training on nothing. Findings 35 and 54.</p>
+<p><code>check</code> reports the edge count because a file can carry a network that
+links every sample only to itself, which is a network with no edges at all.
+A graph model on one of those costs about ten times the parameters of the
+simple model and has nothing to attend to, so <code>train</code> refuses it.</p>
 </div>
 <h2 id="next">Next<a class="headerlink" href="#next" title="Permanent link">&para;</a></h2>
 <ul>

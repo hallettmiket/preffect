@@ -3,8 +3,7 @@
 ## The objective
 
 Built as one list of named terms, so the total and the divisor cannot disagree
-about which terms are in play. That disagreement is the defect that started
-this rewrite.
+about which terms are in play.
 
 ::: preffect.loss
 
