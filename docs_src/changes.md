@@ -114,6 +114,42 @@ These make a class of mistake impossible rather than changing a result.
   model on them was ten times the parameters for nothing.
 - The settings are **frozen**. Version 0.1 had four parts of the code modifying
   a shared dictionary while it ran.
+- A saved model **carries the record of the run that made it**: the loss at
+  every epoch for each split, the epoch it stopped at and why, and how long the
+  fitting took. Version 0.1 kept none of it, so a model reopened a week later
+  could be applied, and its figures drawn, with no way to tell whether the fit
+  had finished moving. The graphical interface now describes the run, loss
+  curve included, before it shows a single figure. A model saved before the
+  record was kept says so in a sentence rather than showing nothing.
+- Comparing two fitted models **names a winner only above a stated
+  threshold**, and says the threshold was chosen rather than measured. One fit
+  of each model cannot say how much of a difference is the seed, which is why
+  this project's own experiments use six of them, and a table that reported
+  the sign of that difference would be reporting noise.
+- A counts or sample table that **cannot be opened is refused in a sentence**.
+  Both readers handed the file straight to pandas, so a path that was not
+  there arrived as twenty lines of stack ending inside pandas, on the command
+  line and on the page that asks for the path. Finding 66.
+- The example cohort's three splits are **drawn from the same genes**, and a
+  test fails if the per-gene means of any two of them disagree. Version 0.1's
+  vignettes shipped a test folder that was a copy of the validation folder;
+  version 0.2's first generator avoided that and made the opposite mistake,
+  drawing each split's genes separately, so the splits could not be compared
+  at all and a model fitted on one could say nothing about another. Finding 65.
+
+## What the package now does that version 0.1 left to you
+
+**Preparing the input file.** Version 0.1 described the layout and left
+assembling it to each user, and getting it wrong is what most people's first
+run failed on. `preffect prepare` builds the file from a counts table and a
+sample table, including the correspondence table the full model needs, and
+`preffect network` adds a sample-sample network to files that have none.
+Both refuse rather than repair: counts that are not whole numbers name the
+entries at fault, and a number of neighbours that leaves the network empty or
+complete is refused. `preffect.prepare` holds the same functions for use from
+Python. The network recipe is version 0.1's own as it was meant to work, with
+the number of neighbours this project measured; no dataset version 0.1
+shipped carries a real network at all (findings 35 and 54).
 
 ## What is ported from the paper's own tools
 

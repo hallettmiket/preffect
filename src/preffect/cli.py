@@ -1,12 +1,18 @@
-"""The command line: check data, fit a model, apply it.
+"""The command line: prepare data, check it, fit a model, apply it.
 
-Three commands, and the first one is the one to run first::
+Three commands do the work, and the first one is the one to run first::
 
     preffect check   --train <folder>            # does my data look usable?
     preffect train   --train <folder> --out <file>
     preffect apply   --model <file> --data <folder> --out <file>
     preffect gui                                  # the same, in a browser
     preffect example-data --out example_data      # a small simulated cohort to try them on
+
+Two more come before them, for anyone whose counts are not in PREFFECT's
+format yet::
+
+    preffect prepare --counts counts.csv --samples samples.csv --out my_study/train
+    preffect network --data my_study/train --out my_study/train_linked
 
 **Version 0.1's command line did nothing.** It read its arguments, built a
 session object and exited without calling any task, so a run appeared to
@@ -273,6 +279,147 @@ def build_parser() -> argparse.ArgumentParser:
         "data, so there is something to pad; at least 0 and below 1 (default 0, "
         "which writes the same files as before the option existed)",
     )
+
+    # The default number of neighbours comes from the preparation module so
+    # that the measured number lives in one place rather than two.
+    from preffect.prepare import DEFAULT_NEIGHBOURS, ORIENTATIONS
+
+    prepare = subcommands.add_parser(
+        "prepare",
+        help="build tissue files from a counts table and a sample table",
+        description=(
+            "Turns a table of counts and a table describing the samples into "
+            "the files the other commands read. Give --counts and --samples "
+            "once per tissue, in tissue order."
+        ),
+    )
+    prepare.add_argument(
+        "--counts", required=True, action="append", type=Path, metavar="FILE",
+        help=(
+            "a comma- or tab-separated table of counts, whole numbers, with the "
+            "sample names in the first column and the gene names in the first "
+            "row. Give it once per tissue, in tissue order."
+        ),
+    )
+    prepare.add_argument(
+        "--samples", required=True, action="append", type=Path, metavar="FILE",
+        help=(
+            "a comma- or tab-separated table describing those samples, one row "
+            "each, with the sample names in the first column. Once per tissue, "
+            "in the same order as --counts."
+        ),
+    )
+    prepare.add_argument(
+        "--out", required=True, type=Path, help="folder to write the tissue files in"
+    )
+    prepare.add_argument(
+        "--counts-are",
+        default=ORIENTATIONS[0],
+        choices=list(ORIENTATIONS),
+        help=(
+            "which way round the counts table is written (default "
+            f"{ORIENTATIONS[0]}, meaning one row per sample). Use "
+            f"{ORIENTATIONS[1]} for a table with one row per gene, which is how "
+            "many pipelines write one; it is turned the right way round here."
+        ),
+    )
+    prepare.add_argument(
+        "--sample-column",
+        help="which column of the sample table holds the sample names (default: the first)",
+    )
+    prepare.add_argument(
+        "--name", default="counts",
+        help="what to call the files before the tissue number (default counts, "
+             "giving counts.tau_1.h5ad)",
+    )
+    prepare.add_argument(
+        "--patient-column",
+        help=(
+            "which column of the sample tables says which patient a sample came "
+            "from. Required with more than one tissue, because that column is "
+            "what says a sample in one tissue and a sample in another are the "
+            "same patient; the full model cannot run without it"
+        ),
+    )
+    prepare.add_argument(
+        "--neighbours", type=int, metavar="N",
+        help=(
+            "also build a sample-sample network, linking each sample to the N "
+            "others whose counts look most like its own. Needed by the single "
+            f"and full models; {DEFAULT_NEIGHBOURS} is the number this project "
+            "measured. Left out, no network is written and only the simple "
+            "model applies"
+        ),
+    )
+    prepare.add_argument(
+        "--mutual", action="store_true",
+        help="with --neighbours, keep a link only where each of the two samples "
+             "is among the other's N most similar, which gives a sparser network",
+    )
+    prepare.add_argument(
+        "--label", metavar="COLUMN",
+        help="a column of the sample table, such as a subtype, to measure the "
+             "network against: the summary then says what share of the links "
+             "join two samples with the same value of it, and what share would "
+             "by chance",
+    )
+    prepare.add_argument(
+        "--overwrite", action="store_true",
+        help="write over files that are already in --out (default: refuse)",
+    )
+
+    network = subcommands.add_parser(
+        "network",
+        help="add a sample-sample network to counts that have none",
+        description=(
+            "Builds a sample-sample network from the counts themselves and "
+            "writes a copy of every tissue file carrying it. The files read are "
+            "left exactly as they are. The single and full models need this; "
+            "the simple model does not."
+        ),
+    )
+    network.add_argument("--data", required=True, type=Path, help="folder of counts to read")
+    network.add_argument(
+        "--out", required=True, type=Path,
+        help="folder to write the copies in, under the same file names",
+    )
+    network.add_argument(
+        "--tissues", type=int, default=1,
+        help="how many tissue files the folder holds (default 1)",
+    )
+    network.add_argument(
+        "--neighbours", type=int, default=DEFAULT_NEIGHBOURS, metavar="N",
+        help=(
+            f"link each sample to the N others whose counts look most like its "
+            f"own (default {DEFAULT_NEIGHBOURS}, the number measured on this "
+            f"project's own cohort). A link is kept wherever either of the two "
+            f"names the other"
+        ),
+    )
+    network.add_argument(
+        "--mutual", action="store_true",
+        help="keep a link only where each of the two samples is among the "
+             "other's N most similar, which gives a sparser network",
+    )
+    network.add_argument(
+        "--label", metavar="COLUMN",
+        help="a sample annotation, such as a subtype, to measure the network "
+             "against: the summary then says what share of the links join two "
+             "samples with the same value of it, and what share would by chance",
+    )
+    network.add_argument(
+        "--replace", action="store_true",
+        help=(
+            "build a new network for a file that already carries one with links "
+            "in it (default: refuse, and say so). A network entry holding no "
+            "links at all, which is what every dataset version 0.1 shipped "
+            "carries, is replaced either way"
+        ),
+    )
+    network.add_argument(
+        "--overwrite", action="store_true",
+        help="write over files that are already in --out (default: refuse)",
+    )
     return parser
 
 
@@ -319,6 +466,7 @@ def command_check(args) -> int:
     from preffect.data.checks import warn_if_validation_repeats_training
     from preffect.data.loading import load_tissues
     from preffect.data.tissues import unmatched_counts
+    from preffect.example_data import TRUTH_LAYER
     from preffect.workflow import describe_network
 
     train_tissues = load_tissues(args.train, args.tissues)
@@ -328,6 +476,14 @@ def command_check(args) -> int:
             f"  tissue {index}: {tissue.n_obs} samples, {tissue.n_vars} genes, "
             f"{describe_network(tissue)}"
         )
+        # Only simulated data can carry the count an entry was drawn from, so
+        # finding it is worth saying out loud: it tells a reader the file is
+        # not measured, and it is what an imputation example scores against.
+        if TRUTH_LAYER in tissue.layers:
+            print(
+                f"  tissue {index}: carries the count each entry was drawn from in "
+                f"layers['{TRUTH_LAYER}'], so these counts are simulated"
+            )
     # How many patients lack a sample in each tissue. The full model pads a row
     # of per-gene means in for each of them, so this is the line that says how
     # much of the cohort it will be working on is made up rather than measured.
@@ -367,7 +523,13 @@ def command_check(args) -> int:
 
 
 def command_train(args) -> int:
-    from preffect.checkpoint import save_checkpoint
+    import time
+
+    from preffect.checkpoint import (
+        TRAINING_HISTORY_KEY,
+        save_checkpoint,
+        training_history_record,
+    )
     from preffect.config import (
         DataConfig,
         Likelihood,
@@ -493,7 +655,12 @@ def command_train(args) -> int:
         f"{args.epochs} epochs"
     )
 
+    # Timed here rather than inside ``train``, so the figure is the fitting
+    # alone: reading the data and matching the genes happened above, and a
+    # reader comparing two runs wants the part that scales with the epochs.
+    started = time.perf_counter()
     history = fit(model, train_data, config, validation_data)
+    fit_seconds = time.perf_counter() - started
     last = history.epochs[-1]
     print(f"finished after {len(history)} epoch(s)")
     print(f"  training loss   {history.train_losses[0]:.2f} -> {last.train.mean_loss:.2f}")
@@ -513,6 +680,16 @@ def command_train(args) -> int:
               f"{scores['n_hidden'] - left_out:,} entries "
               f"({left_out:,} hidden entries with a true value of zero left out)")
 
+    # The run's own account of how it went travels with the model, so that a
+    # file opened weeks later says how many epochs it took, whether it was
+    # stopped early and how long it ran. Without it the loss curve exists only
+    # in the terminal that printed it.
+    record = training_history_record(
+        history,
+        epochs_asked_for=args.epochs,
+        wall_seconds=fit_seconds,
+        patience=args.patience,
+    )
     save_checkpoint(
         args.out,
         model,
@@ -521,6 +698,7 @@ def command_train(args) -> int:
         gene_names=gene_names,
         full_config=config,
         n_tissues=args.tissues,
+        **{TRAINING_HISTORY_KEY: record},
     )
     print(f"wrote {args.out}")
     return 0
@@ -597,6 +775,162 @@ def command_example_data(args) -> int:
     return 0
 
 
+def _refuse_existing(targets: list[Path], overwrite: bool) -> None:
+    """Stop before any file is written if one of them is there already.
+
+    Checked for the whole folder up front rather than file by file, so a
+    two-tissue run cannot write its first file and then refuse its second,
+    leaving a folder that is half old and half new.
+    """
+    from preffect.errors import PreffectError
+
+    if overwrite:
+        return
+    existing = [t for t in targets if t.exists()]
+    if existing:
+        raise PreffectError(
+            f"{len(existing)} file(s) are already in that folder: "
+            f"{', '.join(p.name for p in existing[:3])}"
+            + (f" and {len(existing) - 3} more" if len(existing) > 3 else "")
+            + ". Writing over them would lose whatever they hold. Give another "
+            "--out, or pass --overwrite if replacing them is what you meant."
+        )
+
+
+def command_network(args) -> int:
+    from preffect.data.loading import find_tissue_files
+    from preffect.prepare import add_network_to_file
+
+    sources = find_tissue_files(args.data, args.tissues)
+    targets = [args.out / source.name for source in sources]
+    _refuse_existing(targets, args.overwrite)
+
+    for index, (source, target) in enumerate(zip(sources, targets, strict=True), start=1):
+        print(f"tissue {index}: {source}")
+        written = add_network_to_file(
+            source,
+            target,
+            neighbours=args.neighbours,
+            mutual=args.mutual,
+            label_column=args.label,
+            replace=args.replace,
+            overwrite=args.overwrite,
+        )
+        for line in written.describe().splitlines():
+            print(f"  {line}")
+    print(
+        f"the counts are unchanged; fit a graph model on them with "
+        f"preffect train --train {args.out} --kind single"
+    )
+    return 0
+
+
+def command_prepare(args) -> int:
+    from preffect.errors import ConfigError
+    from preffect.prepare import (
+        correspondence_table,
+        describe_sample_network,
+        nearest_neighbour_network,
+        read_counts_table,
+        read_sample_table,
+        tissue_file_name,
+        write_tissue,
+    )
+
+    if len(args.counts) != len(args.samples):
+        raise ConfigError(
+            f"{len(args.counts)} counts table(s) and {len(args.samples)} sample "
+            f"table(s) were given; there has to be one of each per tissue, in the "
+            f"same order"
+        )
+    # Refused by name rather than ignored, as --min-delta is for --patience:
+    # an option that silently does nothing is how version 0.1 ran a model
+    # nobody asked for.
+    if args.neighbours is None and (args.label or args.mutual):
+        named = "--label" if args.label else "--mutual"
+        raise ConfigError(
+            f"{named} describes the sample-sample network, and --neighbours was "
+            f"not given, so no network is built and the setting would be ignored. "
+            f"Add --neighbours, or leave {named} out."
+        )
+    n_tissues = len(args.counts)
+    if n_tissues > 1 and args.patient_column is None:
+        raise ConfigError(
+            f"{n_tissues} tissues were given and --patient-column was not. The "
+            f"files share no sample names, so that column is the only thing that "
+            f"says a sample in one tissue and a sample in another came from the "
+            f"same patient, and the full model cannot be fitted without it."
+        )
+
+    targets = [args.out / tissue_file_name(i, args.name) for i in range(1, n_tissues + 1)]
+    _refuse_existing(targets, args.overwrite)
+
+    counts_per_tissue = []
+    samples_per_tissue = []
+    for index, (counts_path, samples_path) in enumerate(
+        zip(args.counts, args.samples, strict=True), start=1
+    ):
+        counts = read_counts_table(counts_path, args.counts_are)
+        samples = read_sample_table(samples_path, args.sample_column)
+        if args.label and args.label not in samples.columns:
+            raise ConfigError(
+                f"tissue {index}'s sample table has no column called "
+                f"{args.label!r} to measure the network against. It has: "
+                f"{list(samples.columns) or '(nothing but the sample names)'}"
+            )
+        print(
+            f"tissue {index}: {counts.shape[0]} samples and {counts.shape[1]} "
+            f"genes from {counts_path}, read as {args.counts_are}"
+        )
+        print(f"  {samples.shape[1]} annotation(s) per sample from {samples_path}")
+        counts_per_tissue.append(counts)
+        samples_per_tissue.append(samples)
+
+    association = None
+    if n_tissues > 1:
+        association = correspondence_table(samples_per_tissue, args.patient_column)
+        print(f"{len(association)} patient(s) across {n_tissues} tissues")
+        for index in range(1, n_tissues + 1):
+            unmatched = int((association[f"tau_{index}"] == "NA").sum())
+            if unmatched:
+                print(
+                    f"  tissue {index}: {unmatched} patient(s) have no sample "
+                    f"here, and the full model pads a row of per-gene means in "
+                    f"for each of them"
+                )
+            else:
+                print(f"  tissue {index}: every patient has a sample here")
+
+    for index, (counts, samples) in enumerate(
+        zip(counts_per_tissue, samples_per_tissue, strict=True), start=1
+    ):
+        network = None
+        if args.neighbours is not None:
+            network = nearest_neighbour_network(
+                counts.to_numpy(), args.neighbours, mutual=args.mutual
+            )
+            labels = samples[args.label].to_numpy() if args.label else None
+            summary = describe_sample_network(network, labels, args.label or "label")
+            for line in summary.describe().splitlines():
+                print(f"  tissue {index}: {line}")
+        path = write_tissue(
+            args.out,
+            counts,
+            samples,
+            tissue=index,
+            stem=args.name,
+            network=network,
+            association=association,
+            overwrite=args.overwrite,
+        )
+        print(f"wrote {path}")
+
+    print(f"check it with: preffect check --train {args.out}" + (
+        f" --tissues {n_tissues}" if n_tissues > 1 else ""
+    ))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """Run the ``preffect`` command and return the exit status.
 
@@ -631,6 +965,8 @@ def main(argv: list[str] | None = None) -> int:
         "apply": command_apply,
         "gui": command_gui,
         "example-data": command_example_data,
+        "prepare": command_prepare,
+        "network": command_network,
     }
     try:
         return handlers[args.command](args)

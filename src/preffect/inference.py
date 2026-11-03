@@ -52,6 +52,8 @@ __all__ = [
     "NetworkRecovery",
     "infer",
     "imputation_error",
+    "correlation_per_gene",
+    "log_likelihood_per_sample",
     "network_recovery",
 ]
 
@@ -232,6 +234,92 @@ def infer(
         deterministic=not sample_latent,
         n_padded_rows_dropped=0 if real_rows is None else int((~real_rows).sum()),
     )
+
+
+def log_likelihood_per_sample(result: InferenceResult, observed) -> np.ndarray:
+    """How well the fitted distribution explains each sample, one number per sample.
+
+    The mean log probability **per gene** of that sample's observed counts
+    under the distribution the model fitted for it. Per gene rather than
+    summed over genes, so the number does not grow with the size of the panel
+    and two cohorts can be compared.
+
+    Larger is better, and every value is negative, because these are
+    probabilities of a particular count. The number on its own means little;
+    what it is for is ranking the cohort. A sample far below the rest is one
+    the model cannot account for, and the three usual reasons are a failed
+    library, a mislabelled sample, and a sample of a different tissue.
+
+    The distribution is rebuilt from what :func:`infer` returned, so it is the
+    same negative binomial, or zero-inflated negative binomial, that the
+    objective was computed with.
+
+    :param observed: the counts the model was given, samples by genes.
+    :raises PreffectError: if the counts are not the shape the result is.
+    """
+    from preffect.distributions import (
+        NegativeBinomial,
+        ZeroInflatedNegativeBinomial,
+    )
+
+    counts = _as_tensor(observed)
+    mu = result.expected_counts.detach().cpu().float()
+    if counts.shape != mu.shape:
+        raise PreffectError(
+            f"the counts are shaped {tuple(counts.shape)} and the fitted means "
+            f"{tuple(mu.shape)}; they have to match"
+        )
+    theta = result.dispersion.detach().cpu().float()
+    if result.zero_logits is None:
+        fitted = NegativeBinomial(mu=mu, theta=theta)
+    else:
+        fitted = ZeroInflatedNegativeBinomial(
+            mu=mu, theta=theta, zero_logits=result.zero_logits.detach().cpu().float()
+        )
+    return fitted.log_prob(counts).mean(dim=1).detach().cpu().numpy()
+
+
+def correlation_per_gene(result: InferenceResult, observed) -> np.ndarray:
+    """How closely fitted follows observed across the samples, one number per gene.
+
+    Pearson correlation down each column: for one gene, the observed count in
+    every sample against the count the model fitted for that same sample. One
+    means the model tracks that gene's variation across the cohort perfectly,
+    and zero means it predicts the same thing for every sample.
+
+    A gene that is constant in the counts, or constant in the fit, has no
+    correlation to report and comes back as ``nan`` rather than as a zero that
+    would read as a failure. Take the median over the genes that are not
+    ``nan`` for a single number describing a fit.
+
+    :param observed: the counts the model was given, samples by genes.
+    :raises PreffectError: if the counts are not the shape the result is.
+    """
+    counts = _as_tensor(observed).numpy()
+    fitted = result.expected_counts.detach().cpu().float().numpy()
+    if counts.shape != fitted.shape:
+        raise PreffectError(
+            f"the counts are shaped {counts.shape} and the fitted counts "
+            f"{fitted.shape}; they have to match"
+        )
+    centred_observed = counts - counts.mean(axis=0)
+    centred_fitted = fitted - fitted.mean(axis=0)
+    # Spread of zero means the correlation is undefined, not zero. Dividing
+    # anyway would turn "this gene never moves" into "the model got it wrong".
+    spread = np.sqrt((centred_observed**2).sum(axis=0) * (centred_fitted**2).sum(axis=0))
+    with np.errstate(invalid="ignore", divide="ignore"):
+        correlation = (centred_observed * centred_fitted).sum(axis=0) / spread
+    correlation[spread == 0] = np.nan
+    return correlation
+
+
+def _as_tensor(values) -> torch.Tensor:
+    """Counts as a float tensor, whatever the caller is holding them as."""
+    if hasattr(values, "detach"):
+        return values.detach().cpu().float()
+    if hasattr(values, "toarray"):
+        values = values.toarray()
+    return torch.as_tensor(np.asarray(values), dtype=torch.float32)
 
 
 def imputation_error(

@@ -582,3 +582,67 @@ def test_the_heatmap_labels_match_the_columns_it_drew():
             np.sort(drawn[:, column]), np.sort(expected), rtol=1e-4, atol=1e-4,
             err_msg=f"column {column} is labelled {label} but holds another gene",
         )
+
+
+# --------------------------------------------------------------------------
+# One gene, and one sample.
+#
+# The figures above describe a whole cohort. These two answer a question about
+# a single gene or a single sample, which is what the interface's lookup page
+# is for, and the thing worth holding about them is that they refuse by name
+# rather than drawing a panel of nothing.
+# --------------------------------------------------------------------------
+
+
+def test_one_gene_draws_its_dispersion_and_nothing_else_for_a_plain_model(fitted, counts):
+    """A negative binomial has no probability of a structural zero to draw,
+    so the second panel is absent rather than empty."""
+    from preffect import plots
+
+    figure = plots.gene_dispersion_and_zeros(
+        fitted, counts, gene_names=GENE_NAMES, gene="GENE3"
+    )
+    assert len(figure.axes) == 1
+    assert "GENE3" in figure.axes[0].get_title()
+
+
+def test_one_gene_draws_its_chance_of_a_zero_for_a_zero_inflated_model(
+    fitted_zinb, counts
+):
+    from preffect import plots
+
+    figure = plots.gene_dispersion_and_zeros(
+        fitted_zinb, counts, gene_names=GENE_NAMES, gene="GENE3"
+    )
+    assert len(figure.axes) == 2
+    # A probability, so the axis runs from zero to one whatever was fitted.
+    assert figure.axes[1].get_xlim() == (0.0, 1.0)
+
+
+def test_a_gene_that_is_not_there_is_refused_by_name(fitted, counts):
+    from preffect import plots
+
+    with pytest.raises(PreffectError, match="NOT_A_GENE is not one of the genes"):
+        plots.gene_dispersion_and_zeros(
+            fitted, counts, gene_names=GENE_NAMES, gene="NOT_A_GENE"
+        )
+
+
+def test_the_spread_of_sample_scores_marks_the_sample_asked_about():
+    """The figure takes the scores rather than working them out, so a table of
+    the same numbers beside it cannot disagree about what they are."""
+    from preffect import plots
+
+    scores = np.linspace(-9.0, -4.0, N_SAMPLES)
+    plain = plots.sample_fit_spread(scores)
+    marked = plots.sample_fit_spread(scores, highlight=0)
+    assert len(plain.axes[0].lines) == 0
+    assert len(marked.axes[0].lines) == 1
+    assert marked.axes[0].lines[0].get_xdata()[0] == pytest.approx(-9.0)
+
+
+def test_a_cohort_with_no_samples_is_refused_rather_than_drawn_empty():
+    from preffect import plots
+
+    with pytest.raises(PreffectError, match="no sample scores"):
+        plots.sample_fit_spread(np.array([]))

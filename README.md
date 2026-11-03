@@ -120,10 +120,16 @@ and version 0.1's saved models cannot be loaded by it at all.
 
 ```bash
 preffect example-data --out example_data                 # a small simulated cohort to try these on
+preffect prepare --counts counts.csv --samples samples.csv --out path/to/train
 preffect check --train path/to/train                     # look before you run
 preffect train --train path/to/train --out model.pt --epochs 500 --seed 0
 preffect apply --model model.pt --data path/to/new --out cleaned.h5ad
 ```
+
+`prepare` builds PREFFECT's input file from the two tables a study already
+has, which is the step version 0.1 described and left you to do by hand.
+`preffect network` adds a sample-sample network to files that already exist
+and have none, which the graph models need.
 
 `check` reads the counts without fitting anything and says whether they can be
 used, including whether a validation set you supplied is really the training

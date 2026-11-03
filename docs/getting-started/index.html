@@ -430,6 +430,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#building-that-file-from-the-tables-you-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building that file from the tables you have
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#always-run-the-check-first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -979,6 +990,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#building-that-file-from-the-tables-you-have" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building that file from the tables you have
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#always-run-the-check-first" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1123,8 +1145,67 @@ of the source instead, write <code>.venv/bin/preffect</code> everywhere it appea
 <li><strong><code>obsm['sample_sample_adj']</code></strong> is the sample-sample network, if you have
   one. Only the <code>single</code> and <code>full</code> models use it.</li>
 </ul>
+<h2 id="building-that-file-from-the-tables-you-have">Building that file from the tables you have<a class="headerlink" href="#building-that-file-from-the-tables-you-have" title="Permanent link">&para;</a></h2>
+<p>Almost nobody's counts arrive in that shape. <code>preffect prepare</code> builds it from
+the two tables a study does have: the counts, and a row per sample saying what
+is known about it.</p>
+<p>Say your counts are in <code>counts.csv</code>, one row per sample, with the sample names
+in the first column and the gene names in the first row:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>,GENE_0000,GENE_0001,GENE_0002
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>BX_000,74,66,58
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>BX_001,90,53,52
+</code></pre></div>
+<p>The first cell may be empty, as it is here, or hold a heading of its own.</p>
+<p>and <code>samples.csv</code> has a row per sample, again with the names in the first
+column:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sample,subtype,batch,patient
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>BX_000,basal,A,PT_000
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>BX_001,basal,B,PT_001
+</code></pre></div>
+<p>Then one command writes the file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>preffect<span class="w"> </span>prepare<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span>--counts<span class="w"> </span>counts.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span>--samples<span class="w"> </span>samples.csv<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span>--out<span class="w"> </span>my_study/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>--neighbours<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span>--label<span class="w"> </span>subtype
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>tissue 1: 60 samples and 400 genes from counts.csv, read as samples-by-genes
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  3 annotation(s) per sample from samples.csv
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  tissue 1: 60 samples, 371 edge(s), 12.4 per sample (fewest 10, middle 11, most 19); no isolated samples
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  tissue 1: 100.0% of edges join two samples with the same subtype, against 32.2% if the edges ignored it
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>wrote my_study/train/counts.tau_1.h5ad
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>check it with: preffect check --train my_study/train
+</code></pre></div>
+<p>Four things in that command are worth knowing about.</p>
+<p><strong><code>--counts-are genes-by-samples</code></strong> reads a counts table written the other way
+round, one row per gene, which is how many pipelines write one. Without it the
+table is read as one row per sample, and a table the wrong way round is
+refused rather than transposed on a guess.</p>
+<p><strong><code>--neighbours 10</code> builds the sample-sample network</strong> the <code>single</code> and <code>full</code>
+models need, by linking each sample to the ten others whose counts look most
+like its own. Leave it out and no network is written, which is right for the
+<code>simple</code> model. Ten is the number this project measured; the
+<a href="../command-line/">command line page</a> says where it comes from. If your files
+already exist and only the network is missing, <code>preffect network</code> adds one to
+them without this command.</p>
+<p><strong><code>--label subtype</code> says whether the network found anything.</strong> It compares the
+share of links joining two samples with the same subtype against the share
+that would do so if the links ignored subtype entirely. The second line above
+is a network that found real structure. Two numbers close together mean it
+found none, and a graph model over that network will cost ten times the
+parameters of the simple model for nothing.</p>
+<p><strong>It refuses rather than repairs.</strong> Counts that are not whole numbers, a
+negative count, a repeated gene name, a sample table describing different
+samples from the counts: each stops the command with a sentence naming the
+entries at fault. A count matrix quietly coerced into shape is how version
+0.1's problems reached results.</p>
+<p>For the <code>full</code> model, give <code>--counts</code> and <code>--samples</code> once per tissue and name
+the column that says which patient each sample came from. That builds the
+correspondence table the full model needs, and a patient with no sample in
+some tissue is kept with a gap recorded rather than dropped.</p>
 <h2 id="always-run-the-check-first">Always run the check first<a class="headerlink" href="#always-run-the-check-first" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>my_study/train<span class="w"> </span>--validation<span class="w"> </span>my_study/validation
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>my_study/train<span class="w"> </span>--validation<span class="w"> </span>my_study/validation
 </code></pre></div>
 <p>This reads the data, reports what it found, and refuses if something would stop
 a run. It takes seconds and it is the single most useful command here, because
@@ -1134,20 +1215,20 @@ rather than as an error.</p>
 one name, a validation set that was a byte-for-byte copy of the training set,
 and a sample-sample network with no edges in it.</p>
 <p>Output on a healthy dataset:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>training: 1 tissue(s) from my_study/train
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  tissue 1: 528 samples, 18790 genes, a network with 105 edge(s), 1.0 per sample
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  the counts look usable
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>validation: 61 samples from my_study/validation
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  tissue 1: 0 of 528 training samples reappear in validation
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>training: 1 tissue(s) from my_study/train
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  tissue 1: 528 samples, 18790 genes, a network with 105 edge(s), 1.0 per sample
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  the counts look usable
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>validation: 61 samples from my_study/validation
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  tissue 1: 0 of 528 training samples reappear in validation
 </code></pre></div>
 <h2 id="fitting-a-model">Fitting a model<a class="headerlink" href="#fitting-a-model" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>preffect<span class="w"> </span>train<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span>--train<span class="w"> </span>my_study/train<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span>--validation<span class="w"> </span>my_study/validation<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span>--out<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>--epochs<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span>--threads<span class="w"> </span><span class="m">16</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>preffect<span class="w"> </span>train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span>--train<span class="w"> </span>my_study/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span>--validation<span class="w"> </span>my_study/validation<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span>--out<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span>--epochs<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">    </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span>--threads<span class="w"> </span><span class="m">16</span>
 </code></pre></div>
 <p>Two of those are worth knowing about.</p>
 <p><strong><code>--seed</code></strong> makes the run repeatable. Without it the same command gives a
@@ -1182,10 +1263,10 @@ seconds per epoch:</p>
 <p>On small data the ordering reverses and one thread wins. The default of 4 suits
 a small test rather than a real cohort.</p>
 <h2 id="applying-it">Applying it<a class="headerlink" href="#applying-it" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>preffect<span class="w"> </span>apply<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span>--model<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>--data<span class="w"> </span>my_study/train<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>--out<span class="w"> </span>cleaned.h5ad
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>preffect<span class="w"> </span>apply<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span>--model<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">    </span>--data<span class="w"> </span>my_study/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span>--out<span class="w"> </span>cleaned.h5ad
 </code></pre></div>
 <p>The result carries the cleaned counts in <code>X</code>, the predicted proportions in
 <code>layers['composition']</code>, and the latent summary in <code>obsm['latent']</code>.</p>

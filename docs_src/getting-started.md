@@ -119,6 +119,85 @@ Inside that file:
 - **`obsm['sample_sample_adj']`** is the sample-sample network, if you have
   one. Only the `single` and `full` models use it.
 
+## Building that file from the tables you have
+
+Almost nobody's counts arrive in that shape. `preffect prepare` builds it from
+the two tables a study does have: the counts, and a row per sample saying what
+is known about it.
+
+Say your counts are in `counts.csv`, one row per sample, with the sample names
+in the first column and the gene names in the first row:
+
+```
+,GENE_0000,GENE_0001,GENE_0002
+BX_000,74,66,58
+BX_001,90,53,52
+```
+
+The first cell may be empty, as it is here, or hold a heading of its own.
+
+and `samples.csv` has a row per sample, again with the names in the first
+column:
+
+```
+sample,subtype,batch,patient
+BX_000,basal,A,PT_000
+BX_001,basal,B,PT_001
+```
+
+Then one command writes the file:
+
+```bash
+preffect prepare \
+    --counts counts.csv \
+    --samples samples.csv \
+    --out my_study/train \
+    --neighbours 10 \
+    --label subtype
+```
+
+```
+tissue 1: 60 samples and 400 genes from counts.csv, read as samples-by-genes
+  3 annotation(s) per sample from samples.csv
+  tissue 1: 60 samples, 371 edge(s), 12.4 per sample (fewest 10, middle 11, most 19); no isolated samples
+  tissue 1: 100.0% of edges join two samples with the same subtype, against 32.2% if the edges ignored it
+wrote my_study/train/counts.tau_1.h5ad
+check it with: preffect check --train my_study/train
+```
+
+Four things in that command are worth knowing about.
+
+**`--counts-are genes-by-samples`** reads a counts table written the other way
+round, one row per gene, which is how many pipelines write one. Without it the
+table is read as one row per sample, and a table the wrong way round is
+refused rather than transposed on a guess.
+
+**`--neighbours 10` builds the sample-sample network** the `single` and `full`
+models need, by linking each sample to the ten others whose counts look most
+like its own. Leave it out and no network is written, which is right for the
+`simple` model. Ten is the number this project measured; the
+[command line page](command-line.md) says where it comes from. If your files
+already exist and only the network is missing, `preffect network` adds one to
+them without this command.
+
+**`--label subtype` says whether the network found anything.** It compares the
+share of links joining two samples with the same subtype against the share
+that would do so if the links ignored subtype entirely. The second line above
+is a network that found real structure. Two numbers close together mean it
+found none, and a graph model over that network will cost ten times the
+parameters of the simple model for nothing.
+
+**It refuses rather than repairs.** Counts that are not whole numbers, a
+negative count, a repeated gene name, a sample table describing different
+samples from the counts: each stops the command with a sentence naming the
+entries at fault. A count matrix quietly coerced into shape is how version
+0.1's problems reached results.
+
+For the `full` model, give `--counts` and `--samples` once per tissue and name
+the column that says which patient each sample came from. That builds the
+correspondence table the full model needs, and a patient with no sample in
+some tissue is kept with a gap recorded rather than dropped.
+
 ## Always run the check first
 
 ```bash

@@ -1,14 +1,17 @@
 # The command line
 
-Three commands, and the first time through you run them in this order; a
-fourth opens the same work [in a browser](gui.md):
+Six commands, in the order you meet them. The first two turn what your study
+already has into the files PREFFECT reads, and are needed once; the next three
+are the work itself. A seventh opens the same work [in a browser](gui.md):
 
 | Command | What it does |
 |---|---|
+| `preffect prepare` | builds the tissue files from a counts table and a sample table |
+| `preffect network` | adds a sample-sample network to tissue files that have none |
 | `preffect check` | reads the counts and says whether they can be used, without fitting anything |
 | `preffect train` | fits a model and saves it to one file |
 | `preffect apply` | runs a saved model over counts and writes the cleaned result |
-| `preffect example-data` | writes a small simulated cohort to try the three on |
+| `preffect example-data` | writes a small simulated cohort to try the others on |
 
 `preffect --help` lists the commands, `preffect <command> --help` lists a
 command's options with their defaults, and `preffect --version` prints the
@@ -46,6 +49,122 @@ exit status is 0 when the command did what was asked, 2 when it refused, and 1
 when no command was given. A refusal prints no traceback, because a traceback
 tells someone who did not write the code nothing they can act on.
 
+## `preffect prepare`
+
+Turns a table of counts and a table describing the samples into the files the
+other commands read. Run it once, when your study's counts are still in
+whatever a sequencing pipeline wrote.
+
+```bash
+preffect prepare --counts counts.csv --samples samples.csv --out my_study/train
+```
+
+| Option | What it does | Default |
+|---|---|---|
+| `--counts` | a comma- or tab-separated table of counts; give it once per tissue | required |
+| `--samples` | a table describing those samples, once per tissue, in the same order | required |
+| `--out` | the folder to write the tissue files in | required |
+| `--counts-are` | which way round the counts table is written | `samples-by-genes` |
+| `--sample-column` | which column of the sample table holds the sample names | the first |
+| `--name` | what the files are called before the tissue number | `counts` |
+| `--patient-column` | which column says which patient a sample came from | none |
+| `--neighbours` | also build a sample-sample network, with this many links per sample | none |
+| `--mutual` | keep a link only where each sample is among the other's nearest | off |
+| `--label` | a column of the sample table to measure the network against | none |
+| `--overwrite` | write over files already in `--out` | off |
+
+**The counts are read with one row per sample**, the sample names in the first
+column and the gene names in the first row. A table written the other way
+round, one row per gene, is common; `--counts-are genes-by-samples` turns it
+the right way round. The counts have to be whole numbers that are not
+negative, and a table that is not says which entries are at fault.
+
+Output on a 60-sample study:
+
+```
+tissue 1: 60 samples and 400 genes from counts.csv, read as samples-by-genes
+  3 annotation(s) per sample from samples.csv
+  tissue 1: 60 samples, 371 edge(s), 12.4 per sample (fewest 10, middle 11, most 19); no isolated samples
+  tissue 1: 100.0% of edges join two samples with the same subtype, against 32.2% if the edges ignored it
+wrote my_study/train/counts.tau_1.h5ad
+check it with: preffect check --train my_study/train
+```
+
+**Several tissues at once, for the full model.** Give `--counts` and
+`--samples` once per tissue and name the column that says which patient each
+sample came from. That column is the only thing linking a sample in one tissue
+to a sample in another, since the files do not share sample names, and the
+full model cannot be fitted without it. A patient with no sample in some
+tissue is kept, with a gap recorded for that tissue, which is the case the
+full model pads:
+
+```
+tissue 1: 60 samples and 400 genes from counts.csv, read as samples-by-genes
+tissue 2: 48 samples and 400 genes from counts_normal.csv, read as samples-by-genes
+60 patient(s) across 2 tissues
+  tissue 1: every patient has a sample here
+  tissue 2: 12 patient(s) have no sample here, and the full model pads a row of per-gene means in for each of them
+wrote my_study/full/counts.tau_1.h5ad
+wrote my_study/full/counts.tau_2.h5ad
+```
+
+## `preffect network`
+
+Builds a sample-sample network from the counts themselves and writes a copy of
+each tissue file carrying it. Only the `single` and `full` models use a
+network; the `simple` model does not, and does not need this command.
+
+```bash
+preffect network --data my_study/train --out my_study/train_linked
+```
+
+| Option | What it does | Default |
+|---|---|---|
+| `--data` | the folder of counts to read | required |
+| `--out` | the folder to write the copies in, under the same file names | required |
+| `--tissues` | how many tissue files the folder holds | 1 |
+| `--neighbours` | link each sample to this many others | 10 |
+| `--mutual` | keep a link only where each sample is among the other's nearest | off |
+| `--label` | a sample annotation to measure the network against | none |
+| `--replace` | build a new network for a file that already carries one with links in it | off |
+| `--overwrite` | write over files already in `--out` | off |
+
+**The files it reads are left exactly as they are.** It writes copies, which
+is both this project's rule for source data and the only safe thing to do to
+somebody's only copy.
+
+```
+tissue 1: my_study/train/counts.tau_1.h5ad
+  wrote my_study/train_linked/counts.tau_1.h5ad
+  60 samples, 371 edge(s), 12.4 per sample (fewest 10, middle 11, most 19); no isolated samples
+  100.0% of edges join two samples with the same subtype, against 32.2% if the edges ignored it
+the counts are unchanged; fit a graph model on them with preffect train --train my_study/train_linked --kind single
+```
+
+Three lines there are worth reading closely.
+
+- **The links per sample is larger than the number asked for**, here 12.4
+  against 10, because a link is kept wherever either of the two samples names
+  the other. A sample that nothing else names keeps exactly ten.
+- **`--label` is how you find out whether the network carries anything.** The
+  second line compares the share of links joining two samples with the same
+  value of that annotation against the share that would do so if the links
+  ignored it. Far above chance means the network found real structure. The
+  two being equal, as in `31.2% ... against 31.9%`, means it found none, and a
+  graph model over it will cost ten times the parameters of the simple model
+  for nothing.
+- **A sample with no link at all** is reported where there is one. It happens
+  with `--mutual`, and a graph model learns nothing for such a sample.
+
+**Where the recipe comes from.** Each sample is linked to the ten others whose
+square-rooted counts correlate with it most. That is version 0.1's own recipe
+as it was meant to work, and ten neighbours is the setting measured on this
+project's cohort: the one network under which the graph model beat the simple
+model, by 8 per cent lower imputation error at hidden entries in six seeds of
+six. No dataset version 0.1 shipped carries a real network at all, which is
+why this command exists; the decision of 2026-10-30 on the cohort's sample
+network has the measurement.
+
 ## `preffect check`
 
 Reads the data, reports what it found, and refuses if something would stop a
@@ -68,12 +187,13 @@ Output on the vignette data:
 ```
 training: 1 tissue(s) from vignette_data/simple/train
   tissue 1: 120 samples, 200 genes, no network
+  tissue 1: carries the count each entry was drawn from in layers['true_expected_counts'], so these counts are simulated
   the counts look usable
 validation: 40 samples from vignette_data/simple/validation
   tissue 1: 0 of 120 training samples reappear in validation
 ```
 
-Three lines are worth reading closely.
+Four lines are worth reading closely.
 
 - **The network.** `no network` means the file carries no sample-sample
   network, so only the `simple` model applies. `a network with 240 edge(s),
@@ -90,6 +210,12 @@ Three lines are worth reading closely.
 - **Without a validation set** it says `validation: none given, so no
   validation loss will be reported`, and that is all it does. It does not
   invent one.
+- **Simulated data says so.** The line about
+  `layers['true_expected_counts']` appears only where a file carries the count
+  each entry was drawn from, which only something generated can. It will not
+  appear on your own data. The [worked example](vignette.md) uses that layer
+  to score filled-in entries against the signal rather than against one noisy
+  draw of it.
 
 With `--tissues 2` or more it adds one line per tissue saying how many
 patients have no sample there:
@@ -414,6 +540,19 @@ otherwise: version 0.1's vignettes shipped a `test/` folder that was a copy
 of `validation/`. At `--unmatched 0` it draws no random numbers for the
 gaps, so the files are the same whether the option exists or not.
 
+Three further things are true of what it writes, and each exists so an
+example can show something a real cohort shows. **The genes are drawn once
+per cohort**, so a cohort's three splits are the same genes and a model
+fitted on one can be applied to another; drawing them per split, which is
+what happened until finding 65, made three unrelated cohorts that shared
+only a set of names. **Batch B's own genes are raised** by a factor of 1.3,
+a fifth of them picked at random and listed in the file under
+`uns['batch_shifted_genes']`, which is a nuisance for the correction
+variables to take out and is deliberately weaker than the groups.
+**Every file carries the count each entry was drawn from**, in
+`layers['true_expected_counts']`, so a filled-in entry can be scored against
+the signal rather than against one noisy draw of it.
+
 ## When it refuses
 
 The message names what was asked for and what to do instead. A few you may
@@ -428,6 +567,10 @@ meet:
 | `a network with NO edges between samples` | the file carries a sample-sample network with nothing in it; use `--kind simple` |
 | `cannot write --out` | the output path was checked before any work and cannot be written |
 | `--freeze only makes sense with --from-model` | there is nothing to hold still in a model that has not been fitted |
+| `count(s) are not whole numbers, at ...` | from `prepare`: the counts table holds normalised or log-transformed values; it names the entries |
+| `links every sample to every other` | `--neighbours` is one short of the sample count or more, which says nothing about which samples resemble which |
+| `already in that folder` | `prepare` and `network` refuse to write over a file; give another `--out` or pass `--overwrite` |
+| `already carries a sample-sample network` | `network` will not rebuild a real one unless `--replace` says so |
 
 If a message tells you only that something is wrong and not what to do about
 it, that is a defect in the message, and worth reporting.

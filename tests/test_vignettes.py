@@ -5,8 +5,13 @@ Finding 11: version 0.1's vignettes ship a ``test/`` folder byte-identical to
 figure shows a user pointing inference at that folder while the caption calls
 it a held-out test set.
 
-These tests exist so that cannot happen again quietly. The generator checks it
-too, but a check inside the thing being checked is worth less than one outside.
+Finding 65: the genes were drawn once per split rather than once per cohort,
+so the three splits shared their names and nothing else, and the batch column
+labelled samples that had been drawn identically.
+
+These tests exist so that neither can happen again quietly. The generator
+checks the first itself, but a check inside the thing being checked is worth
+less than one outside.
 """
 
 from __future__ import annotations
@@ -40,6 +45,11 @@ def read(folder: Path) -> ad.AnnData:
     return ad.read_h5ad(next(folder.glob("*.h5ad")))
 
 
+def read_tissue(vignette: Path, kind: str, split: str, tissue: int) -> ad.AnnData:
+    """One named tissue, since the full model writes two files per split."""
+    return ad.read_h5ad(vignette / kind / split / f"counts.tau_{tissue}.h5ad")
+
+
 @pytest.mark.parametrize("kind", ["simple", "single"])
 def test_no_sample_is_in_two_splits(vignette, kind):
     """The property version 0.1's vignettes lacked."""
@@ -47,6 +57,90 @@ def test_no_sample_is_in_two_splits(vignette, kind):
     assert names["train"] & names["validation"] == set()
     assert names["train"] & names["test"] == set()
     assert names["validation"] & names["test"] == set()
+
+
+@pytest.mark.parametrize("kind", ["simple", "single", "full"])
+def test_every_split_is_drawn_from_the_same_genes(vignette, kind):
+    """Finding 65, beside the test that no sample is in two splits.
+
+    The splits must not share a sample and must share their genes. Until
+    finding 65 the generator drew the genes inside the per-split call, so the
+    three splits were three unrelated cohorts under one set of gene names and
+    the per-gene means of any two of them were uncorrelated. A model fitted on
+    one of those splits cannot track another, which is the whole point of
+    having a held-out split.
+    """
+    import numpy as np
+
+    means = {}
+    for split in SPLITS:
+        counts = read_tissue(vignette, kind, split, 1).X
+        dense = np.asarray(counts.todense()) if hasattr(counts, "todense") else np.asarray(counts)
+        means[split] = dense.mean(axis=0)
+    for first, second in (("train", "validation"), ("train", "test"),
+                          ("validation", "test")):
+        agreement = np.corrcoef(means[first], means[second])[0, 1]
+        assert agreement > 0.9, (
+            f"{kind}: {first} and {second} disagree about which genes are "
+            f"expressed ({agreement:.3f}); they are not the same cohort"
+        )
+
+
+@pytest.mark.parametrize("kind", ["simple", "single", "full"])
+def test_the_batch_column_labels_a_real_difference(vignette, kind):
+    """Finding 65: a batch column that labelled samples drawn identically.
+
+    Nothing could correct for it, so the correction variables had nothing to
+    demonstrate on. Batch B's own genes now carry a modest multiplicative
+    lift, recorded in the file. Measured as the lift on those genes divided by
+    the lift on the rest, which takes out the groups being mixed slightly
+    differently between the two batches.
+    """
+    import numpy as np
+
+    from preffect.example_data import BATCH_LIFT
+
+    adata = read_tissue(vignette, kind, "train", 1)
+    shifted = np.isin(
+        np.array(list(map(str, adata.var_names))),
+        [str(name) for name in adata.uns["batch_shifted_genes"]],
+    )
+    assert shifted.sum() > 0, "no genes are recorded as shifted"
+    counts = np.asarray(adata.X, dtype=float)
+    in_b = np.asarray(adata.obs["batch"]).astype(str) == "B"
+    ratio = counts[in_b].mean(axis=0) / counts[~in_b].mean(axis=0)
+    found = ratio[shifted].mean() / ratio[~shifted].mean()
+    assert abs(found - BATCH_LIFT) < 0.1, (
+        f"{kind}: batch B's genes read as {found:.3f} times batch A's, and the "
+        f"data says {BATCH_LIFT}"
+    )
+
+
+@pytest.mark.parametrize("kind", ["simple", "single", "full"])
+def test_every_file_carries_the_count_each_entry_was_drawn_from(vignette, kind):
+    """So an imputation example can be scored against the signal, not one draw.
+
+    Scoring a filled-in entry against the single noisy count that was observed
+    charges the model for noise nobody could predict. The layer holds the
+    negative binomial mean the count came from, which only simulated data can
+    have.
+    """
+    import numpy as np
+
+    from preffect.example_data import TRUTH_LAYER
+
+    for split in SPLITS:
+        adata = read_tissue(vignette, kind, split, 1)
+        assert TRUTH_LAYER in adata.layers, f"{kind}/{split} has no truth layer"
+        truth = np.asarray(adata.layers[TRUTH_LAYER], dtype=float)
+        counts = np.asarray(adata.X, dtype=float)
+        assert truth.shape == counts.shape
+        assert truth.min() > 0, "an expected count of zero would make a relative error undefined"
+        agreement = np.corrcoef(truth.ravel(), counts.ravel())[0, 1]
+        assert agreement > 0.8, (
+            f"{kind}/{split}: the counts do not look like a draw from the stored "
+            f"means ({agreement:.3f})"
+        )
 
 
 @pytest.mark.parametrize("kind", ["simple", "single"])

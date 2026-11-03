@@ -418,6 +418,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4-score-what-it-filled-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Score what it filled in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#if-your-cohort-is-too-small-to-divide" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -890,6 +901,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#4-score-what-it-filled-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Score what it filled in
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#if-your-cohort-is-too-small-to-divide" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -940,18 +962,40 @@
 
 
 <h1 id="a-worked-example">A worked example<a class="headerlink" href="#a-worked-example" title="Permanent link">&para;</a></h1>
-<p>Fit a model, check it, and apply it to data it has never seen. About two
-minutes end to end.</p>
+<p>Fit a model, check it, apply it to data it has never seen, and score what it
+filled in. About three minutes end to end.</p>
 <h2 id="the-data">The data<a class="headerlink" href="#the-data" title="Permanent link">&para;</a></h2>
+<p>This step writes a small simulated cohort to work on, and says what it wrote.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>.venv/bin/preffect<span class="w"> </span>example-data<span class="w"> </span>--out<span class="w"> </span>vignette_data
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  simple:
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    train       120 samples  md5 5130e40e
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    validation   40 samples  md5 9df2e527
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    test         40 samples  md5 0e8dbb61
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wrote vignette_data
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  simple:
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    train       120 samples  md5 4091e1ae
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    validation   40 samples  md5 51f7b50a
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    test         40 samples  md5 073eb2ee
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  single:
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    train       120 samples  md5 8ae37503
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    validation   40 samples  md5 69d0f1e8
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    test         40 samples  md5 2778a063
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  full:
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    train       120 samples  md5 fed1a84d  2 tissues
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    validation   40 samples  md5 d0f02ad3  2 tissues
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    test         40 samples  md5 42a999d2  2 tissues
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>200 genes, 3 groups, negative binomial counts.
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>No sample appears in more than one split, and the three files differ.
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>The genes are drawn once per cohort, so every split is the same genes.
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>Batch B has 40 of the 200 genes raised 1.3 times, for the correction variables to take out.
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>Every file carries the count each entry was drawn from in layers['true_expected_counts'].
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>The full model's two tissues are the same patients under different names.
 </code></pre></div>
 <p>Three splits, <strong>no sample in any two of them</strong>, and three different files. The
 command checks both before it reports success and refuses to write otherwise.</p>
+<p>The checksums above are from the Python 3.12 library stack. The counts, the
+names and the batch labels are the same on Python 3.11, which resolves an
+older anndata and an older pandas, but the bytes those libraries write around
+them are not, so the checksums there differ. Compare them against another run
+of your own install, not against this page.</p>
 <div class="admonition warning">
 <p class="admonition-title">Why that is worth checking</p>
 <p>Version 0.1's vignettes ship a <code>test/</code> folder byte-identical to
@@ -963,20 +1007,50 @@ held-out test set. It is the validation set. Issue #11.</p>
 models, with three groups of samples that each raise a different block of
 genes. So there is something real to find, and you can tell whether the model
 found it.</p>
+<p><strong>The three splits are the same genes.</strong> Each gene has one level and one
+amount of noise, drawn once for the whole cohort, and every split is drawn
+from those. Without that a model fitted on the training split has nothing to
+say about the test split, however well it fits: until finding 65 this
+generator drew the genes separately for each split, so the per-gene means of
+the training and test splits were uncorrelated and most of this page's
+numbers were measuring that rather than measuring PREFFECT.</p>
+<p><strong>Batch B's own genes are raised</strong>, by a factor of 1.3, in a fifth of the
+genes picked at random and listed in the file under
+<code>uns['batch_shifted_genes']</code>. It is deliberately smaller than the four-fold
+lift the groups give their blocks, so the groups still dominate and the batch
+is the second thing you see. What it is there for is the <strong>correction
+variables</strong>, which take a known nuisance label out of what the encoder is
+given and are asked for from Python rather than from the command line
+(<a href="../guide/">using it</a> shows where), and the batch figure in
+<a href="../gui/">the interface</a>. It is not a
+demonstration of the objective's batch-centroid term, which no run here
+reaches: training passes no batch labels to the loss, so that term never
+fires.</p>
+<p><strong>Every file also carries the count each entry was drawn from</strong>, in
+<code>layers['true_expected_counts']</code>. That is the negative binomial mean, before
+the draw added its noise. No real cohort can have it; it is here so that step
+4 can score a filled-in entry against what the entry should have been rather
+than against one noisy draw of it.</p>
 <h2 id="1-check-the-data-first">1. Check the data first<a class="headerlink" href="#1-check-the-data-first" title="Permanent link">&para;</a></h2>
+<p>This step reads the files and says what is in them, before anything is fitted.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>.venv/bin/preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>training: 1 tissue(s) from vignette_data/simple/train
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  tissue 1: 120 samples, 200 genes, no network
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  the counts look usable
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>validation: 40 samples from vignette_data/simple/validation
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  tissue 1: 0 of 120 training samples reappear in validation
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  tissue 1: carries the count each entry was drawn from in layers['true_expected_counts'], so these counts are simulated
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  the counts look usable
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>validation: 40 samples from vignette_data/simple/validation
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  tissue 1: 0 of 120 training samples reappear in validation
 </code></pre></div>
-<p>That last line is the one to read. On your own data it tells you whether your
+<p>The last line is the one to read. On your own data it tells you whether your
 splits are what you think they are, and it is how the vignette problem above
-would have been caught.</p>
+would have been caught. The line above it will not appear on your own data:
+only something simulated can carry the count each entry was drawn from, so
+finding it is how <code>check</code> tells you the file was generated rather than
+measured.</p>
 <h2 id="2-fit">2. Fit<a class="headerlink" href="#2-fit" title="Permanent link">&para;</a></h2>
+<p>This step fits the model and stops it where it stops improving.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">                         </span>--out<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
@@ -984,26 +1058,80 @@ would have been caught.</p>
 <a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">                         </span>--patience<span class="w"> </span><span class="m">5</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fitting a simple model: 200 genes, 36,090 parameters, 80 epochs
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>finished after 8 epoch(s)
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  training loss   1456.05 -&gt; 947.48
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  validation loss 1119.80
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  stopped early, best epoch was 3
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>finished after 67 epoch(s)
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  training loss   1218.02 -&gt; 828.70
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  validation loss 804.63
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  stopped early, best epoch was 62
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>wrote model.pt
 </code></pre></div>
-<p>Validation close to training means it is not simply memorising. A validation
-loss far above the training loss means it is, and a toy this small gets there
-within a few epochs: 120 samples are memorised long before 80 epochs are up,
-and without <code>--patience</code> the validation loss climbs from epoch 3 to the end of
-the run while the training loss keeps falling. <code>--patience 5</code> stops the run
-once the validation loss has not fallen for five epochs in a row, and the
-model written is the best epoch's, not the last. A real cohort takes hundreds
-of epochs to settle, and the loss settling is not the whole story: see
-<code>--patience</code> on <a href="../command-line/">the command line page</a>.</p>
+<p>Validation close to training means it is not simply memorising, and here the
+two end within three per cent of each other. <code>--patience 5</code> stops the run once
+the validation loss has not fallen for five epochs in a row, and the model
+written is the best epoch's, not the last. Here it fires at epoch 67 of a
+budget of 80 and keeps epoch 62, which is where more fitting stopped buying
+anything. A real cohort takes hundreds of epochs to settle, and the loss
+settling is not the whole story: see <code>--patience</code> on
+<a href="../command-line/">the command line page</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Where 80 epochs comes from</p>
+<p>Fitted at four lengths on this data, on four threads of a CPU. The column
+headed <em>test fit</em> is the median across genes of the correlation between
+the model's expected counts and the actual counts of the 40 test samples,
+which is what this example exists to produce. With <code>--patience 5</code> the runs
+budgeted 200 and 500 epochs both stop at 67 and give the 80-epoch row.</p>
+<table>
+<thead>
+<tr>
+<th>Budget</th>
+<th>Epochs run</th>
+<th>Training loss</th>
+<th>Validation loss</th>
+<th>Test fit</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20</td>
+<td>20</td>
+<td>890.14</td>
+<td>868.74</td>
+<td>0.473</td>
+<td>too short: the test counts are not reproduced</td>
+</tr>
+<tr>
+<td>80</td>
+<td>67, stopped early</td>
+<td>828.70</td>
+<td>804.63</td>
+<td>0.784</td>
+<td>the shortest that reproduces them</td>
+</tr>
+<tr>
+<td>200</td>
+<td>200</td>
+<td>815.59</td>
+<td>801.20</td>
+<td>0.787</td>
+<td>no better on the test split, three times the work</td>
+</tr>
+<tr>
+<td>500</td>
+<td>500</td>
+<td>800.43</td>
+<td>803.60</td>
+<td>0.784</td>
+<td>worse: the training loss keeps falling, the validation loss does not</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p><strong>Always pass <code>--seed</code></strong> if you want the same model twice, and <strong>set
-<code>--threads</code></strong> — the right number depends on the size of your data, and the
+<code>--threads</code></strong>. The right number depends on the size of your data, and the
 default of 4 suits a small example rather than a real cohort. See
 <a href="../getting-started/">getting started</a>.</p>
 <h2 id="3-apply-it-to-data-it-has-never-seen">3. Apply it to data it has never seen<a class="headerlink" href="#3-apply-it-to-data-it-has-never-seen" title="Permanent link">&para;</a></h2>
+<p>This step runs the fitted model over the test split and checks what came out.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>.venv/bin/preffect<span class="w"> </span>apply<span class="w"> </span>--model<span class="w"> </span>model.pt<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">                         </span>--data<span class="w"> </span>vignette_data/simple/test<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">                         </span>--out<span class="w"> </span>cleaned.h5ad<span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span>
@@ -1017,22 +1145,114 @@ default of 4 suits a small example rather than a real cohort. See
 <p><strong>This is the step the published figure got wrong.</strong> The test split was never
 seen during fitting and never used to decide when to stop, so what comes out is
 a genuine held-out result.</p>
+<p>Two things are worth measuring on it. The first is whether the expected counts
+track the real ones: across the 40 test samples the median gene's correlation
+between the two is 0.78, and 162 of the 200 genes are above 0.5. The second is
+whether the latent summary has found the three groups, which the package will
+score for you. Clustering needs extra packages: <code>pip install
+'preffect[cluster]'</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">anndata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ad</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.clustering</span><span class="w"> </span><span class="kn">import</span> <span class="n">clustering_recovery</span><span class="p">,</span> <span class="n">resolution_for_target</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">cleaned</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">"cleaned.h5ad"</span><span class="p">)</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">test</span> <span class="o">=</span> <span class="n">ad</span><span class="o">.</span><span class="n">read_h5ad</span><span class="p">(</span><span class="s2">"vignette_data/simple/test/counts.tau_1.h5ad"</span><span class="p">)</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">found</span> <span class="o">=</span> <span class="n">resolution_for_target</span><span class="p">(</span><span class="n">cleaned</span><span class="o">.</span><span class="n">obsm</span><span class="p">[</span><span class="s2">"latent"</span><span class="p">],</span> <span class="n">target_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">clustering_recovery</span><span class="p">(</span><span class="n">found</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">obs</span><span class="p">[</span><span class="s2">"subtype"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)))</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="c1"># adjusted Rand 1.000, adjusted mutual information 1.000</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="c1"># (3 clusters against 3 known groups, 40 samples)</span>
+</code></pre></div>
+<p>Both scores are corrected for chance, so 1.000 means the clustering of the
+latent space is the known grouping exactly, on samples the model never saw.</p>
+<h2 id="4-score-what-it-filled-in">4. Score what it filled in<a class="headerlink" href="#4-score-what-it-filled-in" title="Permanent link">&para;</a></h2>
+<p>This step hides a fifth of the training entries, fits again on what is left,
+and scores the hidden entries against the counts they were drawn from.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/simple/train<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">                         </span>--validation<span class="w"> </span>vignette_data/simple/validation<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">                         </span>--out<span class="w"> </span>imputing.pt<span class="w"> </span>--hide<span class="w"> </span><span class="m">0</span>.2<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">                         </span>--epochs<span class="w"> </span><span class="m">80</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">                         </span>--patience<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>hiding 20% of the training entries; the model is scored against the full counts
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>fitting a simple model: 200 genes, 36,090 parameters, 80 epochs
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>finished after 80 epoch(s)
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>  training loss   1160.82 -&gt; 826.56
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>  validation loss 805.03
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>  imputation error on hidden entries 0.646, over 4,747 entries (53 hidden entries with a true value of zero left out)
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>wrote imputing.pt
+</code></pre></div>
+<p>That 0.646 is the average relative distance from the <strong>count that was
+observed</strong>, and most of it is noise rather than error: a count is one draw
+from a negative binomial, and nothing can predict the draw. Scoring against
+the mean it was drawn from instead separates the two, and on simulated data
+that mean is in the file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.checkpoint</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_checkpoint</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">imputation_error</span><span class="p">,</span> <span class="n">infer</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_model</span><span class="p">,</span> <span class="n">hide_entries</span><span class="p">,</span> <span class="n">read_split</span><span class="p">,</span> <span class="n">to_model_data</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="s2">"imputing.pt"</span><span class="p">)</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="n">model</span> <span class="o">=</span> <span class="n">build_model</span><span class="p">(</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>    <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="o">.</span><span class="n">kind</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">n_genes</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="p">,</span> <span class="mi">1</span>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="p">)</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a><span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">model_state</span><span class="p">)</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="c1"># The same entries the run hid: the fraction and the seed are what choose them.</span>
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="n">tissues</span> <span class="o">=</span> <span class="n">read_split</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"vignette_data/simple/train"</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="n">data</span> <span class="o">=</span> <span class="n">hide_entries</span><span class="p">(</span><span class="n">to_model_data</span><span class="p">(</span><span class="n">tissues</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">model_config</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="n">truth</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span>
+<a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tissues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s2">"true_expected_counts"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="p">)</span>
+<a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>
+<a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">imputation_error</span><span class="p">(</span>
+<a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>    <span class="n">infer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">expected_counts</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span>
+<a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="n">hidden</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">hidden</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"mean_relative"</span><span class="p">,</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="p">)</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="s2">"hidden"</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="s2">"visible"</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="c1"># 0.1232 0.1279</span>
+</code></pre></div>
+<p>So the model lands within about 12 per cent of what each hidden entry should
+have been, against 65 per cent of the single count that was actually drawn.
+The two numbers are the same measure on different comparisons, and the gap
+between them is the negative binomial noise. Nothing is skipped here: a true
+expected count is never zero, while 53 of the observed counts at hidden
+entries were, and a relative error cannot be computed against zero.</p>
+<p><strong>Your own data has no such layer, and PREFFECT will not invent one.</strong> Version
+0.1 looked for a layer called <code>truth</code>, and where it was absent the loader
+supplied the per-gene mean, so on real data it reported the distance from the
+gene average and called it imputation accuracy. On a real cohort the honest
+comparison is the observed count, which is the 0.646 above. <a href="../guide/">Using
+it</a> says more about what that number does and does not measure.</p>
 <h2 id="if-your-cohort-is-too-small-to-divide">If your cohort is too small to divide<a class="headerlink" href="#if-your-cohort-is-too-small-to-divide" title="Permanent link">&para;</a></h2>
+<p>This section is for a cohort that cannot give up samples to a validation set.</p>
 <p>Leave <code>--validation</code> out. PREFFECT says so rather than inventing one:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>validation: none given, so no validation loss will be reported
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>validation: none given, so no validation loss will be reported
 </code></pre></div>
 <p>That is honest. Splitting 40 samples three ways gives you nothing you can
 trust, and copying one split into another, which is what version 0.1 did,
 gives you a number that looks like a held-out result and is not.</p>
 <h2 id="the-graph-model">The graph model<a class="headerlink" href="#the-graph-model" title="Permanent link">&para;</a></h2>
+<p>This section fits the model that reads a sample-sample network as well as the
+counts.</p>
 <p><code>vignette_data/single/</code> carries the same thing plus a sample-sample network
 with real edges in it.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>.venv/bin/preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1">#   tissue 1: 120 samples, 200 genes, a network with 240 edge(s), 4.0 per sample</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>.venv/bin/preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="c1">#   tissue 1: 120 samples, 200 genes, a network with 240 edge(s), 4.0 per sample</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train<span class="w"> </span>--kind<span class="w"> </span>single<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">                         </span>--out<span class="w"> </span>single.pt<span class="w"> </span>--epochs<span class="w"> </span><span class="m">40</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">                         </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>.venv/bin/preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>vignette_data/single/train<span class="w"> </span>--kind<span class="w"> </span>single<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">                         </span>--out<span class="w"> </span>single.pt<span class="w"> </span>--epochs<span class="w"> </span><span class="m">40</span><span class="w"> </span>--batch-size<span class="w"> </span><span class="m">40</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">                         </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>fitting a single model: 200 genes, 397,530 parameters, 40 epochs
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>finished after 40 epoch(s)
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>  training loss   526.47 -&gt; 428.39
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>wrote single.pt
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Check your network has edges before fitting a graph model</p>

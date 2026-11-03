@@ -8,6 +8,16 @@ different names, with the correspondence written down). About two seconds,
 genes, so there is something real to find and you can tell whether the model
 found it. The counts are negative binomial, which is what PREFFECT models.
 
+**The genes are drawn once per cohort and shared by its three splits.** Each
+gene has one base level and one dispersion, and every split of that cohort is
+drawn from them, so the gene that is highly expressed in the training data is
+the same gene that is highly expressed in the test data. Until finding 65 the
+draw happened inside :func:`simulate`, which is called once per split, so the
+three splits were three unrelated gene populations sharing a set of names: a
+model fitted on the training split could not track the test split, and the
+validation loss sat far above the training loss for that reason rather than
+for any reason about PREFFECT.
+
 **Version 0.1's vignettes ship a ``test/`` folder byte-identical to
 ``validation/``**, in all three of simple, single and full, and a published
 figure shows a user pointing inference at that folder while the caption calls
@@ -17,6 +27,28 @@ promise what a committed file cannot. The three splits are drawn from disjoint
 samples by construction, and :func:`write_example_data` checks that and raises
 rather than write them if they are not. Issue #11.
 
+**Every file carries the true expected count of every entry**, in
+``layers['true_expected_counts']``: the negative binomial mean each count was
+drawn from, before the draw added its noise. Nothing in PREFFECT reads it, and
+no real cohort can have it. It is there so that an example which fills in
+hidden entries can be scored against what the entry should have been rather
+than against one noisy draw of it, and so that a reader can tell at a glance
+that the file is simulated. ``preffect check`` says so when it finds it.
+
+**Batch B's genes are really raised.** The files have always carried a batch
+column, and until finding 65 it labelled samples that were drawn identically,
+so no correction could change anything. Now a fixed share of the genes, drawn
+once with the rest of the population and so the same genes in every split, are
+multiplied by :data:`BATCH_LIFT` in every batch-B sample. It is deliberately
+smaller than the groups' four-fold lift, so the groups still dominate and the
+batch is the second thing you see. What it demonstrates is the correction
+variables, which take a known nuisance label out of the encoder's input, and
+the interface's batch figure. It does not exercise the objective's
+batch-centroid term, which training never reaches because no batch labels are
+passed to it. Which genes moved, and by how much, is written into each file
+under ``uns['batch_shifted_genes']`` and ``uns['batch_lift']``, so a reader
+checking whether a correction took the batch out knows where to look.
+
 The full model's two files per split deliberately **do not share sample
 names**, as the project's own data does not, so the correspondence goes in a
 table under ``obsm['sample_association']`` with one column per tissue, which
@@ -24,8 +56,7 @@ is where :func:`preffect.data.tissues.align_tissues` looks. ``unmatched`` takes
 the second tissue away from a share of patients, which is the shape of a real
 cohort where some patients have no matched normal, and is what the full
 model's padding exists for. It is zero by default and draws no random numbers
-when it is zero, so the files written without it are byte for byte the files
-written before the option existed.
+when it is zero.
 """
 
 from __future__ import annotations
@@ -39,10 +70,17 @@ import numpy as np
 from preffect.errors import ConfigError, DataError
 
 __all__ = [
+    "BATCH_LIFT",
+    "BATCH_SHARE",
+    "N_BATCH_GENES",
     "N_GENES",
     "N_SAMPLES",
     "N_SUBTYPES",
+    "SHIFTED_BATCH",
+    "TRUTH_LAYER",
     "ExampleData",
+    "GenePopulation",
+    "draw_population",
     "ring_network",
     "simulate",
     "write_example_data",
@@ -57,6 +95,195 @@ N_GENES = 200
 N_SUBTYPES = 3
 #: The three model kinds the data is written for, in the order it is written.
 KINDS = ("simple", "single", "full")
+#: The batch whose genes are raised. The other batch is left alone, so the
+#: shift is a difference between the two rather than a shift of everything.
+SHIFTED_BATCH = "B"
+#: How much batch B raises its share of the genes. Modest against the groups'
+#: four-fold lift, so a reader sees the groups first and the batch second.
+BATCH_LIFT = 1.3
+#: What share of a cohort's genes batch B raises.
+BATCH_SHARE = 0.2
+#: How many genes that is in the example data's :data:`N_GENES`.
+N_BATCH_GENES = round(BATCH_SHARE * N_GENES)
+#: Where every file carries the true expected count of every entry.
+TRUTH_LAYER = "true_expected_counts"
+
+
+@dataclass(frozen=True)
+class GenePopulation:
+    """The genes a cohort is drawn from, drawn once and shared by its splits.
+
+    One of these describes a set of genes: what each is expressed at, how
+    noisy each is, and which of them batch B raises. Every split of a cohort
+    is drawn from the same one, which is what makes a model fitted on the
+    training split able to track the test split. Finding 65.
+    """
+
+    #: Each gene's mean count before groups, sequencing depth and batch.
+    base: np.ndarray
+    #: Each gene's negative binomial dispersion. Smaller is noisier.
+    dispersion: np.ndarray
+    #: Which genes batch B raises, as column numbers.
+    batch_genes: np.ndarray
+    #: How much batch B raises them.
+    batch_lift: float
+
+    @property
+    def n_genes(self) -> int:
+        """How many genes this population describes."""
+        return int(self.base.shape[0])
+
+
+def draw_population(
+    n_genes: int,
+    rng: np.random.Generator,
+    *,
+    batch_lift: float = BATCH_LIFT,
+    batch_share: float = BATCH_SHARE,
+) -> GenePopulation:
+    """Draw a set of genes for one cohort: levels, dispersions and the batch's genes.
+
+    :param n_genes: how many genes to describe.
+    :param rng: the generator; every draw comes from it, so a seed fixes the
+        population and so the files.
+    :param batch_lift: how much batch B raises its genes.
+    :param batch_share: what share of the genes batch B raises, chosen at
+        random from all of them, so some fall inside a group's block and some
+        outside. A share rather than a count, so it means the same thing at
+        any number of genes.
+    :raises ConfigError: if the share is not above 0 and at most 1, if it
+        rounds down to no genes at all, or if the lift is not positive.
+    :returns: the population, to hand to :func:`simulate` once per split.
+    """
+    if not 0 < batch_share <= 1:
+        raise ConfigError(
+            f"the share of genes the batch raises has to be above 0 and at most "
+            f"1, got {batch_share}"
+        )
+    n_batch_genes = round(batch_share * n_genes)
+    if n_batch_genes == 0:
+        raise ConfigError(
+            f"a share of {batch_share} over {n_genes} genes rounds down to no "
+            f"genes at all, so the batch would change nothing. Use a share of at "
+            f"least {0.5 / n_genes:.3g}."
+        )
+    if batch_lift <= 0:
+        raise ConfigError(
+            f"the batch lift multiplies counts, so it has to be above 0, got {batch_lift}"
+        )
+    base = rng.lognormal(mean=3.0, sigma=1.0, size=n_genes)
+    dispersion = rng.uniform(2.0, 8.0, size=n_genes)
+    batch_genes = np.sort(rng.choice(n_genes, size=n_batch_genes, replace=False))
+    return GenePopulation(
+        base=base, dispersion=dispersion, batch_genes=batch_genes, batch_lift=float(batch_lift)
+    )
+
+
+def batch_labels(n_samples: int) -> list[str]:
+    """Which batch each sample is in, alternating, so the two are the same size.
+
+    The same rule the files have always used. It is a function so that the
+    labels written into ``obs['batch']`` and the labels the counts were drawn
+    under cannot drift apart.
+
+    :param n_samples: rows to label.
+    """
+    return ["A" if i % 2 else SHIFTED_BATCH for i in range(n_samples)]
+
+
+def _record_the_batch(adata, population: GenePopulation, gene_names: list[str]) -> None:
+    """Write down which genes the batch raised, and by how much, in the file itself.
+
+    By name rather than by column number, so it survives choosing a subset of
+    the genes. A reader checking whether a correction took the batch out needs
+    to know what to look at, and a test of the effect needs it without
+    re-deriving the draw.
+    """
+    adata.uns["batch_lift"] = population.batch_lift
+    adata.uns["batch_shifted_genes"] = [gene_names[j] for j in population.batch_genes]
+
+
+@dataclass(frozen=True)
+class _Draw:
+    """One split's counts and everything that went into them."""
+
+    counts: np.ndarray
+    groups: np.ndarray
+    names: list[str]
+    #: The negative binomial mean every count was drawn from, before the draw.
+    expected: np.ndarray
+
+
+def _draw_split(
+    n_samples: int,
+    n_genes: int,
+    rng: np.random.Generator,
+    offset: int,
+    groups: np.ndarray | None = None,
+    lift: float = 4.0,
+    population: GenePopulation | None = None,
+    batches: list[str] | np.ndarray | None = None,
+) -> _Draw:
+    """Everything :func:`simulate` computes, including the means it drew from.
+
+    Kept separate so that :func:`simulate` can return what it has always
+    returned while the generator still gets the true expected counts out, and
+    so that the draws stay in the order they were in: a call with no population
+    and no batches consumes exactly the random numbers it consumed before
+    finding 65, which is what the experiments' recorded results depend on.
+    """
+    if population is not None and population.n_genes != n_genes:
+        raise DataError(
+            f"the population describes {population.n_genes} genes and {n_genes} "
+            f"were asked for; every split of a cohort has to be drawn from the "
+            f"same genes as the rest of it"
+        )
+    if batches is not None:
+        if population is None:
+            raise ConfigError(
+                "a batch effect needs a population, which is what says which genes "
+                "the batch raises; pass the one the rest of this cohort was drawn from"
+            )
+        if len(batches) != n_samples:
+            raise DataError(
+                f"got {len(batches)} batch labels for {n_samples} samples; there has "
+                f"to be one per sample"
+            )
+
+    if groups is None:
+        groups = rng.integers(0, N_SUBTYPES, size=n_samples)
+    if population is None:
+        base = rng.lognormal(mean=3.0, sigma=1.0, size=n_genes)
+    else:
+        base = population.base
+
+    means = np.tile(base, (n_samples, 1))
+    block = n_genes // (N_SUBTYPES + 1)
+    for group in range(N_SUBTYPES):
+        rows = groups == group
+        means[np.ix_(rows, np.arange(group * block, (group + 1) * block))] *= lift
+
+    # The batch effect, drawn with the population so the same genes move in
+    # every split. No random numbers of its own, so a call without it is the
+    # call that was made before.
+    if batches is not None:
+        in_batch = np.asarray(batches) == SHIFTED_BATCH
+        if in_batch.any():
+            means[np.ix_(in_batch, population.batch_genes)] *= population.batch_lift
+
+    depth = rng.lognormal(mean=0.0, sigma=0.25, size=(n_samples, 1))
+    means = means * depth
+
+    dispersion = (
+        rng.uniform(2.0, 8.0, size=n_genes) if population is None else population.dispersion
+    )
+    probability = dispersion / (dispersion + means)
+    counts = rng.negative_binomial(dispersion, probability).astype(np.float32)
+
+    names = [f"SAMPLE_{offset + i:04d}" for i in range(n_samples)]
+    return _Draw(
+        counts=counts, groups=groups, names=names, expected=means.astype(np.float32)
+    )
 
 
 def simulate(
@@ -66,12 +293,21 @@ def simulate(
     offset: int,
     groups: np.ndarray | None = None,
     lift: float = 4.0,
+    population: GenePopulation | None = None,
+    batches: list[str] | np.ndarray | None = None,
 ):
     """Counts with a subtype signal in them, so an example has something to find.
 
     Each sample belongs to one of three groups, and each group raises a
     different block of genes. Negative binomial, which is what PREFFECT models,
     so the example is not quietly fitting Gaussian data.
+
+    **Called without a population this draws exactly what it always drew.**
+    ``exp/08``, ``exp/11``, ``exp/17`` and ``exp/19`` each call it once for
+    their synthetic cohorts and their recorded results depend on the draws, so
+    the genes are still drawn inside, in the same order, when none are given.
+    ``tests/test_example_data.py`` holds a digest of the result and fails if
+    any of that moves.
 
     :param n_samples: rows to draw.
     :param n_genes: columns to draw.
@@ -83,27 +319,23 @@ def simulate(
     :param lift: how much a group raises its own block of genes. Lower for a
         second tissue, which stands for the quieter normal tissue beside a
         tumour and should not simply repeat the first.
+    :param population: the genes to draw from, from :func:`draw_population`.
+        Left unset the genes are drawn here, which gives this split its own
+        unrelated set of them: fine for a cohort that is one split, wrong for
+        a cohort that is several, which is finding 65.
+    :param batches: which batch each sample is in. Left unset there is no
+        batch effect in the counts. Needs a population, which is what says
+        which genes the batch raises.
+    :raises DataError: if the population describes a different number of genes,
+        or there is not one batch label per sample.
+    :raises ConfigError: if batches are given without a population.
     :returns: the counts, the group of each sample, and the sample names.
     """
-    if groups is None:
-        groups = rng.integers(0, N_SUBTYPES, size=n_samples)
-    base = rng.lognormal(mean=3.0, sigma=1.0, size=n_genes)
-
-    means = np.tile(base, (n_samples, 1))
-    block = n_genes // (N_SUBTYPES + 1)
-    for group in range(N_SUBTYPES):
-        rows = groups == group
-        means[np.ix_(rows, np.arange(group * block, (group + 1) * block))] *= lift
-
-    depth = rng.lognormal(mean=0.0, sigma=0.25, size=(n_samples, 1))
-    means = means * depth
-
-    dispersion = rng.uniform(2.0, 8.0, size=n_genes)
-    probability = dispersion / (dispersion + means)
-    counts = rng.negative_binomial(dispersion, probability).astype(np.float32)
-
-    names = [f"SAMPLE_{offset + i:04d}" for i in range(n_samples)]
-    return counts, groups, names
+    drawn = _draw_split(
+        n_samples, n_genes, rng, offset, groups=groups, lift=lift,
+        population=population, batches=batches,
+    )
+    return drawn.counts, drawn.groups, drawn.names
 
 
 def ring_network(n: int) -> np.ndarray:
@@ -165,6 +397,17 @@ class ExampleData:
         lines.append("")
         lines.append(f"{N_GENES} genes, {N_SUBTYPES} groups, negative binomial counts.")
         lines.append("No sample appears in more than one split, and the three files differ.")
+        lines.append(
+            "The genes are drawn once per cohort, so every split is the same genes."
+        )
+        lines.append(
+            f"Batch {SHIFTED_BATCH} has {N_BATCH_GENES} of the {N_GENES} genes raised "
+            f"{BATCH_LIFT} times, for the correction variables to take out."
+        )
+        lines.append(
+            f"Every file carries the count each entry was drawn from in "
+            f"layers['{TRUTH_LAYER}']."
+        )
         if any(self.unmatched.values()):
             missing = ", ".join(f"{s} {c}" for s, c in self.unmatched.items())
             lines.append(
@@ -186,6 +429,10 @@ def write_example_data(out: Path, *, seed: int = 0, unmatched: float = 0.0) -> E
     and, for the full model, two tissues per split,
     ``<out>/full/{train,validation,test}/counts.tau_{1,2}.h5ad``. The same seed
     writes the same files.
+
+    The genes are drawn once per model kind, and the full model's second tissue
+    gets its own draw, so within a kind the three splits are the same genes and
+    a model fitted on one can be applied to another. Finding 65.
 
     :param out: the folder to write under; created if missing.
     :param seed: seed for every draw.
@@ -210,19 +457,28 @@ def write_example_data(out: Path, *, seed: int = 0, unmatched: float = 0.0) -> E
     sample_names: dict[str, list[str]] = {}
 
     for kind in ("simple", "single"):
+        # One draw of the genes for this kind's three splits. Drawing it per
+        # split, which is what happened until finding 65, made train,
+        # validation and test three unrelated cohorts sharing a set of names.
+        population = draw_population(N_GENES, rng)
         written[kind] = {}
         for split, n in N_SAMPLES.items():
-            counts, groups, names = simulate(n, N_GENES, rng, offset)
+            batches = batch_labels(n)
+            drawn = _draw_split(
+                n, N_GENES, rng, offset, population=population, batches=batches
+            )
             offset = _advance(offset, n)  # so no sample name is ever reused across splits
 
-            adata = ad.AnnData(counts)
+            adata = ad.AnnData(drawn.counts)
             # Object dtype, as the package writes names: under pandas 3 a list
             # becomes a string array that anndata 0.11 refuses to write, and a
             # fresh install can resolve exactly that pairing. Finding 48.
-            adata.obs_names = pd.Index(names, dtype=object)
+            adata.obs_names = pd.Index(drawn.names, dtype=object)
             adata.var_names = pd.Index([f"GENE_{j:04d}" for j in range(N_GENES)], dtype=object)
-            adata.obs["subtype"] = pd.Categorical([f"group_{g}" for g in groups])
-            adata.obs["batch"] = pd.Categorical(["A" if i % 2 else "B" for i in range(n)])
+            adata.obs["subtype"] = pd.Categorical([f"group_{g}" for g in drawn.groups])
+            adata.obs["batch"] = pd.Categorical(batches)
+            adata.layers[TRUTH_LAYER] = drawn.expected
+            _record_the_batch(adata, population, list(adata.var_names))
             if kind == "single":
                 adata.obsm["sample_sample_adj"] = ring_network(n)
 
@@ -233,20 +489,33 @@ def write_example_data(out: Path, *, seed: int = 0, unmatched: float = 0.0) -> E
             path = folder / "counts.tau_1.h5ad"
             adata.write_h5ad(path)
             written[kind][split] = path
-            sample_names[f"{kind}/{split}"] = names
+            sample_names[f"{kind}/{split}"] = drawn.names
 
     # The full model: two tissues per split, the same patients in each, and a
     # table saying which row of one is which row of the other. Written after
     # the others so the sample names carry on rather than repeating theirs.
+    # One draw of the genes per tissue: the two tissues are different tissues,
+    # so they are different genes, but every split of a tissue is the same
+    # genes as the other splits of that tissue.
     written["full"] = {}
+    tissue_populations = [draw_population(N_GENES, rng), draw_population(N_GENES, rng)]
     full_tissue_files: dict[str, list[Path]] = {}
     unmatched_written: dict[str, int] = {}
     for split, n in N_SAMPLES.items():
-        first_counts, groups, first_names = simulate(n, N_GENES, rng, offset)
+        # One batch per patient, used for both of that patient's tissues: a
+        # batch is a property of when the patient was processed, so it cannot
+        # differ between their two samples.
+        batches = np.array(batch_labels(n))
+        first = _draw_split(
+            n, N_GENES, rng, offset, population=tissue_populations[0], batches=batches
+        )
         offset = _advance(offset, n)
         # The same patients, so the same groups; a weaker block lift, so the
         # second tissue informs the first rather than repeating it.
-        second_counts, _, second_names = simulate(n, N_GENES, rng, offset, groups=groups, lift=1.8)
+        second = _draw_split(
+            n, N_GENES, rng, offset, groups=first.groups, lift=1.8,
+            population=tissue_populations[1], batches=batches,
+        )
         offset = _advance(offset, n)
 
         # Which patients keep their second tissue. Every one of them unless
@@ -263,7 +532,7 @@ def write_example_data(out: Path, *, seed: int = 0, unmatched: float = 0.0) -> E
         # project's own data does not, so this table is the only link. A
         # patient whose second tissue was taken away has an empty cell there,
         # which is how a real cohort records a missing matched normal.
-        association = pd.DataFrame({"tau_1": first_names, "tau_2": second_names})
+        association = pd.DataFrame({"tau_1": first.names, "tau_2": second.names})
         # The empty cell is written as the string "NA", which version 0.1 used
         # and which the reader turns into a missing value, rather than as NaN:
         # under pandas 2 a column of names with a float NaN in it is an object
@@ -276,18 +545,25 @@ def write_example_data(out: Path, *, seed: int = 0, unmatched: float = 0.0) -> E
         folder.mkdir(parents=True, exist_ok=True)
         paths = []
         written_names = []
-        for tissue, (tissue_counts, tissue_names, rows) in enumerate(
-            ((first_counts, first_names, kept[0]), (second_counts, second_names, kept[1])),
+        for tissue, (drawn, rows, population) in enumerate(
+            (
+                (first, kept[0], tissue_populations[0]),
+                (second, kept[1], tissue_populations[1]),
+            ),
             start=1,
         ):
-            own_names = [name for name, keep in zip(tissue_names, rows, strict=True) if keep]
-            own_groups = groups[rows]
+            own_names = [name for name, keep in zip(drawn.names, rows, strict=True) if keep]
+            own_groups = drawn.groups[rows]
             m = len(own_names)
-            adata = ad.AnnData(tissue_counts if rows.all() else tissue_counts[rows])
+            adata = ad.AnnData(drawn.counts if rows.all() else drawn.counts[rows])
             adata.obs_names = pd.Index(own_names, dtype=object)
             adata.var_names = pd.Index([f"GENE_{j:04d}" for j in range(N_GENES)], dtype=object)
             adata.obs["subtype"] = pd.Categorical([f"group_{g}" for g in own_groups])
-            adata.obs["batch"] = pd.Categorical(["A" if i % 2 else "B" for i in range(m)])
+            adata.obs["batch"] = pd.Categorical(list(batches[rows]))
+            adata.layers[TRUTH_LAYER] = (
+                drawn.expected if rows.all() else drawn.expected[rows]
+            )
+            _record_the_batch(adata, population, list(adata.var_names))
             adata.obsm["sample_sample_adj"] = ring_network(m)
             # An obsm frame is aligned by index, so each tissue carries the
             # table under its own names, holding the rows for the patients it

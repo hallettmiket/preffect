@@ -439,13 +439,19 @@ def _long_options(subparser) -> list[str]:
     ]
 
 
-def test_the_parser_still_has_the_three_commands():
+#: Every command the parser offers. The two tests below are parametrised over
+#: this, so a command added without a page section or without help text fails
+#: the suite rather than reaching a reader.
+COMMANDS = ["check", "train", "apply", "gui", "example-data", "prepare", "network"]
+
+
+def test_the_parser_still_has_every_command():
     """Guards the two tests below: a walk that found nothing would pass them."""
-    assert set(_subcommands()) == {"check", "train", "apply", "gui", "example-data"}
+    assert set(_subcommands()) == set(COMMANDS)
     assert len(_long_options(_subcommands()["train"])) >= 10
 
 
-@pytest.mark.parametrize("command", ["check", "train", "apply", "gui", "example-data"])
+@pytest.mark.parametrize("command", COMMANDS)
 def test_every_option_has_help_text(command):
     bare = [
         flag
@@ -471,7 +477,7 @@ def _page_section(command: str) -> str:
     return rest if end == -1 else rest[:end]
 
 
-@pytest.mark.parametrize("command", ["check", "train", "apply", "gui", "example-data"])
+@pytest.mark.parametrize("command", COMMANDS)
 def test_the_command_line_page_names_every_option(command):
     """docs/command-line.md is written by hand. This is what keeps it honest."""
     section = _page_section(command)
@@ -658,9 +664,11 @@ def test_train_can_hide_entries_and_stop_on_their_imputation(counts_folder, tmp_
 def _saved_settings(path: Path) -> dict:
     """The run's settings as the checkpoint recorded them, read raw.
 
-    ``save_checkpoint`` writes the whole configuration under ``full_config``
-    for provenance and ``load_checkpoint`` does not read it back, so the file
-    itself is what says how the model was fitted.
+    ``save_checkpoint`` writes the whole configuration under ``full_config``.
+    ``load_checkpoint`` now hands it back on the checkpoint, so the interface
+    can say what batch size and learning rate a model was fitted at; these
+    tests go to the file itself so that what is asserted is what was written
+    rather than what the reader made of it.
     """
     return torch.load(path, map_location="cpu", weights_only=True)["full_config"]
 
@@ -973,3 +981,70 @@ def test_example_data_can_be_checked_and_fitted(tmp_path, capsys):
 def test_example_data_refuses_an_unmatched_share_out_of_range(tmp_path, capsys):
     assert main(["example-data", "--out", str(tmp_path / "x"), "--unmatched", "1.0"]) == 2
     assert "unmatched must be at least 0 and below 1" in capsys.readouterr().err
+
+
+# --------------------------------------------------------------------------
+# A model fitted on the command line carries its own account of the run.
+#
+# Until this, how a fit went lived only in what ``train`` printed. Reopening a
+# model weeks later said what it was and not whether it had finished moving or
+# been stopped early, which are the two things anyone asks before reading a
+# figure drawn from it.
+# --------------------------------------------------------------------------
+
+
+def test_a_model_trained_here_reloads_with_its_history(counts_folder, tmp_path):
+    from preffect.checkpoint import load_checkpoint
+
+    out = tmp_path / "m.pt"
+    assert main([
+        "train", "--train", str(counts_folder("train")), "--out", str(out),
+        "--epochs", "3", "--batch-size", "8", "--seed", "0", "--threads", "2",
+    ]) == 0
+
+    record = load_checkpoint(out).training
+    assert record is not None, "the run's history did not travel with the model"
+    assert record.n_epochs == 3
+    assert record.epochs == (1, 2, 3)
+    assert len(record.train_loss) == 3
+    assert record.validation_loss is None  # no --validation was given
+    assert record.epochs_asked_for == 3
+    assert record.stopped_early is False
+    assert record.wall_seconds > 0
+    assert "ran all 3 epoch(s) asked for" in record.stop_reason
+
+
+def test_a_validation_split_gives_the_history_a_second_curve(counts_folder, tmp_path):
+    """The gap between the two curves is what a loss curve is read for, so
+    both travel when both were measured."""
+    from preffect.checkpoint import load_checkpoint
+
+    out = tmp_path / "m.pt"
+    assert main([
+        "train", "--train", str(counts_folder("train")),
+        "--validation", str(counts_folder("validation", seed=1)),
+        "--out", str(out), "--epochs", "2", "--batch-size", "8",
+        "--seed", "0", "--threads", "2",
+    ]) == 0
+
+    record = load_checkpoint(out).training
+    assert record.validation_loss is not None
+    assert len(record.validation_loss) == len(record.train_loss) == 2
+
+
+def test_the_settings_a_run_used_reload_with_it(counts_folder, tmp_path):
+    """What the interface shows on its run page: the few settings that change
+    what the numbers mean, taken from the file rather than from a default."""
+    from preffect.checkpoint import load_checkpoint
+
+    out = tmp_path / "m.pt"
+    assert main([
+        "train", "--train", str(counts_folder("train")), "--out", str(out),
+        "--epochs", "2", "--batch-size", "8", "--learning-rate", "0.002",
+        "--threads", "2",
+    ]) == 0
+
+    settings = load_checkpoint(out).full_config
+    assert settings["train"]["batch_size"] == 8
+    assert settings["train"]["learning_rate"] == pytest.approx(0.002)
+    assert settings["train"]["epochs"] == 2

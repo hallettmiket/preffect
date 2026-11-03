@@ -44,6 +44,8 @@ __all__ = [
     "save_figure",
     "library_size_histogram",
     "gene_scatter",
+    "gene_dispersion_and_zeros",
+    "sample_fit_spread",
     "batch_adjustment",
     "zero_fraction_against_pi",
     "library_size_and_dispersion",
@@ -306,6 +308,94 @@ def library_size_and_dispersion(result, observed) -> Figure:
     axes[1][1].set_xlabel("mean count (log scale)")
     axes[1][1].set_ylabel("dispersion (log scale)")
     return figure
+
+
+def gene_dispersion_and_zeros(result, observed, *, gene_names, gene) -> Figure:
+    """One gene's fitted dispersion across the samples, and its chance of a zero.
+
+    Both quantities are fitted for every sample separately, so for a single
+    gene each is a spread rather than a number, and the spread is the thing
+    worth seeing: a dispersion that is the same in every sample says the model
+    found the gene equally erratic throughout.
+
+    The left panel is the fitted dispersion, which is how much more variable
+    the counts are than pure counting noise would make them. The right panel,
+    drawn only for the zero-inflated model, is the fitted probability that
+    this gene's count is a structural zero, with a dashed line at the share of
+    samples in which it was actually observed to be zero. The two should agree.
+
+    :param gene_names: names for the columns, in order.
+    :param gene: which gene to draw, by name.
+    """
+    observed_values = _as_array(observed)
+    column = _gene_index(gene_names, gene)
+    dispersion = _as_array(result.dispersion)[:, column]
+    has_zeros = result.zero_logits is not None
+
+    figure, axes = _figure(1, 2 if has_zeros else 1, size=(4.5, 3.6))
+    axes[0][0].hist(dispersion, bins=20, color="tab:green", edgecolor="white")
+    axes[0][0].set_title(f"{gene}: fitted dispersion", fontsize=10)
+    axes[0][0].set_xlabel("dispersion")
+    axes[0][0].set_ylabel("samples")
+
+    if has_zeros:
+        probability = 1.0 / (1.0 + np.exp(-_as_array(result.zero_logits)[:, column]))
+        axes[0][1].hist(probability, bins=20, color="tab:purple", edgecolor="white")
+        axes[0][1].axvline(
+            float((observed_values[:, column] == 0).mean()),
+            linestyle="--",
+            linewidth=1,
+            color="grey",
+        )
+        axes[0][1].set_title(f"{gene}: fitted chance of a zero", fontsize=10)
+        axes[0][1].set_xlabel("probability of a structural zero")
+        axes[0][1].set_ylabel("samples")
+        axes[0][1].set_xlim(0, 1)
+    return figure
+
+
+def sample_fit_spread(
+    scores,
+    *,
+    highlight: int | None = None,
+    measure: str = "mean log probability per gene",
+) -> Figure:
+    """How one number per sample is spread over the cohort, with one sample marked.
+
+    Takes the scores rather than computing them, so that a table of the same
+    numbers and this figure cannot disagree about what they are. The dashed
+    line is the sample asked about, and what it is for is placing that sample
+    against the rest: a tail far to the left is the handful of samples the
+    model cannot account for.
+
+    :param scores: one value per sample.
+    :param highlight: the position of one sample to mark, or ``None``.
+    :param measure: what the scores are, for the axis label.
+    """
+    values = _as_array(scores).ravel()
+    if values.size == 0:
+        raise PreffectError("there are no sample scores to draw")
+
+    figure, axes = _figure(1, 1, size=(6.0, 3.6))
+    axes[0][0].hist(values, bins=min(30, max(5, values.size // 2)),
+                    color="tab:blue", edgecolor="white")
+    if highlight is not None:
+        axes[0][0].axvline(
+            float(values[highlight]), linestyle="--", linewidth=1.5, color="tab:red"
+        )
+    axes[0][0].set_xlabel(measure)
+    axes[0][0].set_ylabel("samples")
+    return figure
+
+
+def _gene_index(gene_names, gene) -> int:
+    """Where a named gene sits among the columns, refused by name if absent."""
+    if gene_names is None:
+        raise PreffectError("selecting a gene by name needs `gene_names` for the columns")
+    lookup = {str(name): i for i, name in enumerate(gene_names)}
+    if str(gene) not in lookup:
+        raise PreffectError(f"{gene} is not one of the genes in the data")
+    return lookup[str(gene)]
 
 
 def latent_umap(

@@ -496,3 +496,93 @@ def test_with_nothing_hidden_the_result_is_what_it_always_was():
     assert plain.library_scale is None
     result = infer(model(), plain)
     torch.testing.assert_close(result.library_size, plain.inputs.sum(dim=1, keepdim=True))
+
+
+# --------------------------------------------------------------------------
+# One number per sample, and one per gene.
+#
+# The whole-cohort figures say whether a fit is usable; neither of these says
+# which gene or which sample is the problem. The interface's lookup page ranks
+# the cohort on the first and summarises a fit with the median of the second,
+# so both have to mean what they say on a model nobody has trained.
+# --------------------------------------------------------------------------
+
+
+def test_the_log_likelihood_is_one_number_per_sample():
+    from preffect.inference import log_likelihood_per_sample
+
+    x = counts()
+    scores = log_likelihood_per_sample(infer(model(), data()), x)
+    assert scores.shape == (N_SAMPLES,)
+    assert np.isfinite(scores).all()
+    # These are log probabilities of a particular count, so every one is below
+    # zero. A positive value would mean the arithmetic is not what it says.
+    assert (scores < 0).all()
+
+
+def test_the_log_likelihood_prefers_the_counts_the_model_was_given():
+    """The measure has to fall when a sample is replaced by one the model
+    cannot account for, or ranking the cohort by it says nothing."""
+    from preffect.inference import log_likelihood_per_sample
+
+    x = counts()
+    result = infer(model(), data())
+    honest = log_likelihood_per_sample(result, x)
+
+    spoiled = x.clone()
+    spoiled[0] = spoiled[0] * 100 + 500  # one sample nothing fitted explains
+    after = log_likelihood_per_sample(result, spoiled)
+    assert after[0] < honest[0]
+    np.testing.assert_allclose(after[1:], honest[1:])
+
+
+def test_the_log_likelihood_reads_the_zero_inflated_distribution_too():
+    """A zero-inflated model and a plain one of the same shape score
+    differently, because the distribution the counts are read under differs."""
+    from preffect.inference import log_likelihood_per_sample
+
+    x = counts()
+    plain = log_likelihood_per_sample(infer(model(), data()), x)
+    inflated = log_likelihood_per_sample(
+        infer(model(likelihood=Likelihood.ZINB), data()), x
+    )
+    assert not np.allclose(plain, inflated)
+
+
+def test_the_log_likelihood_refuses_counts_of_the_wrong_shape():
+    from preffect.inference import log_likelihood_per_sample
+
+    with pytest.raises(PreffectError, match="have to match"):
+        log_likelihood_per_sample(infer(model(), data()), counts()[:, :3])
+
+
+def test_the_correlation_is_one_number_per_gene():
+    from preffect.inference import correlation_per_gene
+
+    found = correlation_per_gene(infer(model(), data()), counts())
+    assert found.shape == (N_GENES,)
+    assert np.nanmin(found) >= -1.0 and np.nanmax(found) <= 1.0
+
+
+def test_a_gene_the_model_reproduces_exactly_correlates_at_one():
+    """The measure has to reach one where fitted and observed agree, or the
+    median of it cannot be read as how well a model tracks the cohort."""
+    from preffect.inference import correlation_per_gene
+
+    result = infer(model(), data())
+    fitted = result.expected_counts.detach()
+    found = correlation_per_gene(result, fitted)
+    np.testing.assert_allclose(found, np.ones(N_GENES), atol=1e-5)
+
+
+def test_a_gene_that_never_moves_has_no_correlation_rather_than_zero():
+    """Spread of zero makes a correlation undefined. Dividing anyway turns
+    "this gene is constant" into "the model got it wrong", which is the sort
+    of quiet substitution finding 10 was about."""
+    from preffect.inference import correlation_per_gene
+
+    x = counts()
+    x[:, 0] = 7.0  # one gene the same in every sample
+    found = correlation_per_gene(infer(model(), data()), x)
+    assert np.isnan(found[0])
+    assert np.isfinite(found[1:]).all()
