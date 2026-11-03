@@ -191,7 +191,7 @@ record, not part of a release.
 Data does not live in this repository. Keep inputs and outputs in a folder of
 their own, outside the working tree.
 
-## Authors
+## Contributors
 
 - **Eliseos J. Mucaki**, Department of Biochemistry, Western University, London, Canada
 - **Wenhan Zhang**, Department of Biochemistry, Western University, London, Canada
@@ -207,8 +207,7 @@ their own, outside the working tree.
 
 ## Citation
 
-Mucaki EJ, Zhang W, Saha A, Trebinjac S, Nofech-Mozes S, Rakovitch E, Dumeaux V,
-Hallett MT. Generative and integrative modeling for transcriptomics with
+Mucaki EJ *et al.* Generative and integrative modeling for transcriptomics with
 formalin fixed paraffin embedded material. *Journal of Translational Medicine*
 23, 1023 (2025). <https://doi.org/10.1186/s12967-025-07031-y>
 

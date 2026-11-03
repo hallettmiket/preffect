@@ -43,7 +43,7 @@ If a setting cannot be honoured, it raises and says which setting, what was
 asked for, and what to do instead. That is less convenient and much easier to
 trust.
 
-## Authors
+## Contributors
 
 - **Eliseos J. Mucaki**, Department of Biochemistry, Western University, London, Canada
 - **Wenhan Zhang**, Department of Biochemistry, Western University, London, Canada
