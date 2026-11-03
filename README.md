@@ -1,16 +1,19 @@
 # PREFFECT 0.2
 
-PREFFECT fits a statistical model to RNA sequencing counts from formalin-fixed
-paraffin-embedded tissue, so that the cleaned values can be used with ordinary
-analysis tools.
+PREFFECT (PaRaffin Embedded Formalin-FixEd Cleaning Tool) is a probabilistic
+framework for the analysis of RNA sequencing data from formalin-fixed paraffin
+embedded (FFPE) samples. PREFFECT uses generative models to fit distributions
+to observed expression measurements while adjusting for technical and
+biological variables. PREFFECT offers a series of models that exploit multiple
+expression profiles generated from matched tissues for a single sample,
+sample-sample adjacency networks and clinicopathological/technical sample
+variables.
 
-Formalin-fixed paraffin-embedded tissue, usually shortened to FFPE, is how
-pathology departments have preserved samples for a century. The RNA in those
-blocks degrades, so sequencing them gives counts with many zeros that are not
-real zeros, and occasional extreme values. PREFFECT learns a distribution for
-each transcript while accounting for technical and biological differences
-between samples, and can borrow information across matched tissues from the same
-patient and across similar samples.
+PREFFECT is designed to accomplish the following tasks:
+
+- Accurately denoise RNAseq data from FFPE materials (fRNAseq)
+- Impute missing values from the count matrix
+- Improve performance of standard analyses
 
 Version 0.2 is the current release, a rewrite of version 0.1. The method is
 described in Mucaki *et al.*, *Journal of Translational Medicine* 23:1023
@@ -18,49 +21,27 @@ described in Mucaki *et al.*, *Journal of Translational Medicine* 23:1023
 that paper describes, remains available under the `v0.1` tag of this
 repository.
 
-## Why a rewrite
+## Version 0.2 updates
 
-Version 0.1 has no tests, is not installable as a package, keeps its settings in
-a dictionary that several parts of the code modify as it runs, and cannot be
-installed against current versions of its dependencies. A review of it before
-the rewrite found twenty-one defects, several of which change results silently.
-[`CHANGELOG.md`](CHANGELOG.md) lists every fix in point form, and opens with how
-to tell which of them explains a difference between your version 0.1 and
+Version 0.2 is a rewrite of the software, and most of what it adds is what a
+user meets first. A command line, `preffect check`, `train` and `apply`, runs
+the whole workflow and says what it is doing. A graphical interface checks a
+folder of counts, applies a saved model and shows the figures. Settings are
+typed and checked, so a request that cannot be honoured stops the run with a
+message naming the setting instead of being silently changed into something
+else. And the defects found in a review of version 0.1 are fixed, several of
+which changed results silently: the last partial batch of every epoch was
+discarded, a request for one model kind quietly built another, and a term of
+the objective was computed and then left out of the sum.
+[`CHANGELOG.md`](CHANGELOG.md) lists every fix in point form, and opens with
+how to tell which of them explains a difference between your version 0.1 and
 version 0.2 results.
 
 The published results were checked against those defects and none of them was
-affected. This rewrite is about the software, not the science.
-
-## What is built so far
-
-All three models train, save, reload and can be applied to new data, from
-Python, from the command line, or from a page in the browser. The full model
-joined them on 2026-11-02: it could be built, run forward and scored before
-that, but its training loop stopped at the first batch (finding 55). The
-suite now trains a two-tissue model from Python and runs `--kind full`
-through the command line and then `apply`, on the vignette's own matched
-tissues; see `tests/test_full_model.py` and `tests/test_vignettes.py`.
-
-| Built | Status |
-|---|---|
-| Typed, validated settings | done |
-| Finding and reading count files | done |
-| Checks on the counts, and on the splits | done |
-| Selecting genes and samples, masking, batching | done |
-| The count distributions | done |
-| Choosing between them on your own counts | done; ported 2026-11-02 (findings 57, 58 and 60) |
-| The simple model | done |
-| The objective | done |
-| Training, checkpoints | done |
-| The single model (one network) | done |
-| The full model (matched tissues) | done; trains since 2026-11-02 (finding 55) |
-| Patients missing one tissue | done; padded since 2026-11-02 (issue #14, finding 62) |
-| Inference and imputation | done |
-| Command-line interface | done |
-| Clustering, figures, PAM50 heatmap | done |
-| Documentation site | done |
-| Graphical interface: check, apply, figures | done |
-| Honest vignettes, transfer learning | done |
+affected. A correction to how the random seed is applied means that a seeded
+run of version 0.2 will not reproduce a seeded run of version 0.1 bit for bit,
+so expect slight differences between the two versions on the same data and
+seed; the change list says which fixes can move a result by more than that.
 
 ## Installing
 
