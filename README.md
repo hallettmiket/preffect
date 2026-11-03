@@ -23,25 +23,19 @@ repository.
 
 ## Version 0.2 updates
 
-Version 0.2 is a rewrite of the software, and most of what it adds is what a
-user meets first. A command line, `preffect check`, `train` and `apply`, runs
-the whole workflow and says what it is doing. A graphical interface checks a
-folder of counts, applies a saved model and shows the figures. Settings are
-typed and checked, so a request that cannot be honoured stops the run with a
-message naming the setting instead of being silently changed into something
-else. And the defects found in a review of version 0.1 are fixed, several of
-which changed results silently: the last partial batch of every epoch was
-discarded, a request for one model kind quietly built another, and a term of
-the objective was computed and then left out of the sum.
-[`CHANGELOG.md`](CHANGELOG.md) lists every fix in point form, and opens with
-how to tell which of them explains a difference between your version 0.1 and
-version 0.2 results.
+Version 0.2 refactors the original PREFFECT code in order to improve the user
+experience while simultaneously fixing small but relevant bugs. Version 0.2
+introduces easy installation, an improved command line interface, a new
+graphical interface (to review your PREFFECT input and output), better issue
+reporting, better outlier handling, and eliminates the absolute requirement of
+a third “validation” cohort (though having one is still recommended). Version
+0.2 also uses the latest pytorch package, which could not be used by 0.1 (due
+to recently introduced library incompatibilities).
 
-The published results were checked against those defects and none of them was
-affected. A correction to how the random seed is applied means that a seeded
-run of version 0.2 will not reproduce a seeded run of version 0.1 bit for bit,
-so expect slight differences between the two versions on the same data and
-seed; the change list says which fixes can move a result by more than that.
+[`CHANGELOG.md`](CHANGELOG.md) lists all changes, including bug fixes. Tests
+have shown that these updates have not affected any published results,
+however small numerical differences may be observed between identical runs
+(caused by a bug fix with how seeding was implemented).
 
 ## Installing
 
