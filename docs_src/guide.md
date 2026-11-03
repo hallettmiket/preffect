@@ -64,10 +64,7 @@ them, called a padded row here:
 **What a padded row contributes to, and what it does not.** It is left out of
 the expression reconstruction term and both library-size terms, which are the
 three terms that read the counts. It is kept in the latent and network terms,
-so it is encoded and it takes part in the attention. That split is inherited
-from version 0.1 rather than designed here; the decision of 2026-11-02 on
-unmatched samples measures it against the alternative of dropping those
-patients.
+so it is encoded and it takes part in the attention.
 
 Two consequences worth knowing before you fit:
 
@@ -132,12 +129,10 @@ above: `TrainConfig(early_stopping_patience=1000, stop_on="imputation")`. The
 [command line page](command-line.md) says what the two rules measure and
 when each is the right one.
 
-!!! warning "Truth is an argument, with no default"
-    `imputation_error` will not invent something to compare against. Version
-    0.1 looked for a layer called `truth`, and when it was absent the data
-    loader supplied the per-gene mean, so on real data it reported the distance
-    from the gene average and called it imputation accuracy. There is nowhere
-    for a fabricated truth to come from here.
+!!! note "Truth is an argument, with no default"
+    `imputation_error` will not invent something to compare against. Pass the
+    true values, or the observed counts at the hidden entries, and it scores
+    against those.
 
 **The library size is corrected for what the hiding took away.** A sample's
 library size is its total count, and the model multiplies everything it
@@ -171,7 +166,7 @@ many it left out. Dividing by zero makes an average meaningless, and counts are
 The single and full models reconstruct the sample-sample network from a
 latent space of their own, and the loss cannot say whether they are getting
 it right: on a network one per cent dense, a model that predicts no edge
-anywhere scores well on an unweighted cross-entropy (issue #13). Score the
+anywhere scores well on an unweighted cross-entropy. Score the
 edges instead.
 
 ```python
@@ -253,9 +248,9 @@ Available: `library_size_histogram`, `gene_scatter`, `batch_adjustment`,
 
 Two things to know:
 
-- **The UMAP is seeded.** Version 0.1's was not, so the same model and data drew
-  a different picture every run. Seeding costs parallelism, which UMAP will warn
-  about; a figure you cannot reproduce is not worth the time it saved.
+- **The UMAP is seeded**, so the same model and data draw the same picture
+  every run. Seeding costs parallelism, which UMAP will warn about; a figure
+  you cannot reproduce is not worth the time it saved.
 - **`subtype_heatmap` finds the PAM50 genes whichever way your data names
   them**, symbols or Ensembl identifiers, and raises if it finds too few rather
   than drawing an empty figure.
@@ -272,13 +267,6 @@ tissues = apply_gene_selection(tissues, selection, "training")
 
 Genes are ranked by interquartile range, most variable first. `force_genes`
 keeps a panel regardless of its variability.
-
-!!! warning "A panel that matches nothing raises"
-    If none of the panel is in the data, the naming is wrong, and forcing it
-    would silently do nothing. Version 0.1 matched an Ensembl list against
-    symbol-named data in three of its own PAM50 notebooks and forced zero genes
-    without a word. Passing a `GeneSet` rather than a list of names avoids the
-    problem entirely, because both namings are tried.
 
 **Choose genes once, from the training data, and apply the same selection to
 every split by name.** Re-choosing per split gives different genes for the same

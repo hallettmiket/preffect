@@ -21,6 +21,8 @@ described in Mucaki *et al.*, *Journal of Translational Medicine* 23:1023
 that paper describes, remains available under the `v0.1` tag of this
 repository.
 
+**Documentation: <https://mikehallett.science/preffect/>**
+
 ## Version 0.2 updates
 
 Version 0.2 refactors the original PREFFECT code in order to improve the user
@@ -98,14 +100,18 @@ installed elsewhere:
 
 ## Documentation
 
+The user guide, the worked example, the command-line and interface pages and
+the API reference are at **<https://mikehallett.science/preffect/>**.
+
+To preview or rebuild the site from a copy of the source:
+
 ```bash
 .venv/bin/mkdocs serve      # preview on localhost:8000
-.venv/bin/mkdocs build      # writes site/, which is not committed
+.venv/bin/mkdocs build      # writes docs/, which GitHub Pages serves
 ```
 
 The API reference is generated from the docstrings, so there is no second copy
-to go stale. Version 0.1 committed its built HTML without the sources, which
-means its documentation cannot be rebuilt or corrected.
+to go stale.
 
 Five extras, kept apart so that fitting a model does not drag in a plotting
 stack: `graph` for the single and full models, `cluster` for grouping samples

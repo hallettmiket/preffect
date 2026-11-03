@@ -537,17 +537,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-changed-from-version-01" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What changed from version 0.1
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#how-long-it-takes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -912,17 +901,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-changed-from-version-01" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What changed from version 0.1
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#how-long-it-takes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -965,7 +943,7 @@
 <p>This page is about deciding, before you train anything, whether your counts
 need the zero-inflated distribution or whether the plain one is enough. It
 covers the call that makes the decision, what the numbers mean, where it
-refuses to answer, and what changed from version 0.1.</p>
+refuses to answer.</p>
 <h2 id="the-question">The question<a class="headerlink" href="#the-question" title="Permanent link">&para;</a></h2>
 <p>PREFFECT can fit counts with either of two distributions. The <strong>negative
 binomial</strong> says a gene has an average level and a spread around it wider than
@@ -978,7 +956,7 @@ a reason to use it. The question is whether it fits enough better to be worth
 the extra parameter, and the Akaike information criterion is the usual way to
 answer it. The criterion is the fitted log-likelihood penalised by the number
 of parameters, and the smaller value wins.</p>
-<p>The paper that accompanies version 0.1 asked exactly this question of
+<p>The PREFFECT paper asked exactly this question of
 fRNA-seq counts and found that the plain distribution is usually enough, which
 is why <a href="../reference/config/"><code>Likelihood</code></a> defaults to it. The code here is the
 estimator that produced that answer, ported so the evidence can be reproduced
@@ -1038,8 +1016,7 @@ are easy to read as something they are not.</p>
 <li><strong><code>mean</code> is the mean of the negative binomial component, not of the
   distribution</strong>. Above, the component's mean is 30.3 while the counts
   themselves average 18.6, because two counts in five were forced to zero.
-  <code>observed_mean</code> is the second number. Version 0.1 reported the first, and so
-  does this.</li>
+  <code>observed_mean</code> is the second number.</li>
 <li><strong><code>dispersion</code> is PREFFECT's <code>theta</code>, the inverse dispersion</strong>. Large means
   close to Poisson, small means heavily overdispersed, and the variance is
   <code>mean + mean**2 / dispersion</code>. A textbook that calls the dispersion <code>alpha</code>
@@ -1111,53 +1088,6 @@ fitted is the default, because a sweep that quietly drops genes turns a claim
 about a cohort into a claim about whichever subset happened to fit. Pass
 <code>on_failure="record"</code> to carry on instead; the reason goes in the row's
 <code>problem</code> column and its numbers are left missing.</p>
-<h2 id="what-changed-from-version-01">What changed from version 0.1<a class="headerlink" href="#what-changed-from-version-01" title="Permanent link">&para;</a></h2>
-<p>Version 0.1 shipped this as <code>wrappers/_ZINBEstimator.py</code>. The likelihood is the
-same and the two agree on every set of counts version 0.1 could fit, but the
-search and the failure behaviour changed. Findings 57, 58 and 60 in
-<code>how_this_project_breaks.md</code> carry the measurements, and the decision of
-2026-11-02 on this estimator carries the reasoning.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Version 0.1</th>
-<th>Version 0.2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>What the search varies</td>
-<td>the mean and the variance, with the dispersion divided out afterwards</td>
-<td>the mean and the dispersion, each with a positivity bound</td>
-</tr>
-<tr>
-<td>Counts whose variance is below their mean</td>
-<td>returns nothing, silently</td>
-<td>fitted as a Poisson, with <code>dispersion_at_bound</code> saying so</td>
-</tr>
-<tr>
-<td>A fit that cannot be made</td>
-<td>returns <code>None</code></td>
-<td>raises <code>FitError</code>, naming the counts and the reason</td>
-</tr>
-<tr>
-<td>Gradient</td>
-<td>estimated by finite differences</td>
-<td>from the package's own log-probabilities, by automatic differentiation</td>
-</tr>
-<tr>
-<td>A negative binomial to compare against</td>
-<td>none; the paper's notebooks fitted their own</td>
-<td>fitted beside the zero-inflated one, by the same method</td>
-</tr>
-</tbody>
-</table>
-<p>On the nine reference cases, version 0.2's criterion is never higher than
-version 0.1's, and is lower by up to 0.34 where version 0.1's search stopped
-early. The negative binomial it fits agrees with the <code>statsmodels</code> fit the
-paper's notebooks used to within a tenth of a criterion unit, without
-<code>statsmodels</code> being a dependency.</p>
 <h2 id="how-long-it-takes">How long it takes<a class="headerlink" href="#how-long-it-takes" title="Permanent link">&para;</a></h2>
 <p>Fitting both distributions to one gene across 220 samples takes about 0.18
 seconds on one thread. So 2,000 genes take six minutes and a 19,000-gene
@@ -1168,11 +1098,9 @@ is that an hour's work should not be thrown away by one gene. Read the
 <code>problem</code> column afterwards and decide what to do about the rows that have
 one.</p>
 <h2 id="reproducing-the-papers-comparison">Reproducing the paper's comparison<a class="headerlink" href="#reproducing-the-papers-comparison" title="Permanent link">&para;</a></h2>
-<p>The reference values are in <code>tests/data/version_0_1_zinb_fits.json</code>, which
-holds nine count vectors, version 0.1's fit for each, and both of the negative
-binomial fits the paper's notebooks compared against. It is regenerated by
-<code>tools/make_golden_zinb_fits.py</code>, run under version 0.1's own environment.
-<code>tests/test_zinb_fit.py</code> checks the port against it.</p>
+<p>The reference values are in <code>tests/data/version_0_1_zinb_fits.json</code>: nine
+count vectors with the fits the paper's notebooks compared against.
+<code>tests/test_zinb_fit.py</code> checks the estimator against them.</p>
 
 
 

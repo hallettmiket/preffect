@@ -190,8 +190,7 @@ parameters of the simple model for nothing.
 **It refuses rather than repairs.** Counts that are not whole numbers, a
 negative count, a repeated gene name, a sample table describing different
 samples from the counts: each stops the command with a sentence naming the
-entries at fault. A count matrix quietly coerced into shape is how version
-0.1's problems reached results.
+entries at fault.
 
 For the `full` model, give `--counts` and `--samples` once per tissue and name
 the column that says which patient each sample came from. That builds the

@@ -1019,10 +1019,7 @@ them, called a padded row here:</p>
 <p><strong>What a padded row contributes to, and what it does not.</strong> It is left out of
 the expression reconstruction term and both library-size terms, which are the
 three terms that read the counts. It is kept in the latent and network terms,
-so it is encoded and it takes part in the attention. That split is inherited
-from version 0.1 rather than designed here; the decision of 2026-11-02 on
-unmatched samples measures it against the alternative of dropping those
-patients.</p>
+so it is encoded and it takes part in the attention.</p>
 <p>Two consequences worth knowing before you fit:</p>
 <ul>
 <li><strong>Nothing is ever hidden in a padded row.</strong> Its counts are a mean this
@@ -1076,13 +1073,11 @@ which is ten times sooner, ask for it in the settings and hide entries as
 above: <code>TrainConfig(early_stopping_patience=1000, stop_on="imputation")</code>. The
 <a href="../command-line/">command line page</a> says what the two rules measure and
 when each is the right one.</p>
-<div class="admonition warning">
+<div class="admonition note">
 <p class="admonition-title">Truth is an argument, with no default</p>
-<p><code>imputation_error</code> will not invent something to compare against. Version
-0.1 looked for a layer called <code>truth</code>, and when it was absent the data
-loader supplied the per-gene mean, so on real data it reported the distance
-from the gene average and called it imputation accuracy. There is nowhere
-for a fabricated truth to come from here.</p>
+<p><code>imputation_error</code> will not invent something to compare against. Pass the
+true values, or the observed counts at the hidden entries, and it scores
+against those.</p>
 </div>
 <p><strong>The library size is corrected for what the hiding took away.</strong> A sample's
 library size is its total count, and the model multiplies everything it
@@ -1111,7 +1106,7 @@ many it left out. Dividing by zero makes an average meaningless, and counts are
 <p>The single and full models reconstruct the sample-sample network from a
 latent space of their own, and the loss cannot say whether they are getting
 it right: on a network one per cent dense, a model that predicts no edge
-anywhere scores well on an unweighted cross-entropy (issue #13). Score the
+anywhere scores well on an unweighted cross-entropy. Score the
 edges instead.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">network_recovery</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
@@ -1177,9 +1172,9 @@ fewer. If it runs out of room, <code>grouping.hit_the_floor</code> is true and
 <code>loss_curves</code>, <code>subtype_heatmap</code>.</p>
 <p>Two things to know:</p>
 <ul>
-<li><strong>The UMAP is seeded.</strong> Version 0.1's was not, so the same model and data drew
-  a different picture every run. Seeding costs parallelism, which UMAP will warn
-  about; a figure you cannot reproduce is not worth the time it saved.</li>
+<li><strong>The UMAP is seeded</strong>, so the same model and data draw the same picture
+  every run. Seeding costs parallelism, which UMAP will warn about; a figure
+  you cannot reproduce is not worth the time it saved.</li>
 <li><strong><code>subtype_heatmap</code> finds the PAM50 genes whichever way your data names
   them</strong>, symbols or Ensembl identifiers, and raises if it finds too few rather
   than drawing an empty figure.</li>
@@ -1193,14 +1188,6 @@ fewer. If it runs out of room, <code>grouping.hit_the_floor</code> is true and
 </code></pre></div>
 <p>Genes are ranked by interquartile range, most variable first. <code>force_genes</code>
 keeps a panel regardless of its variability.</p>
-<div class="admonition warning">
-<p class="admonition-title">A panel that matches nothing raises</p>
-<p>If none of the panel is in the data, the naming is wrong, and forcing it
-would silently do nothing. Version 0.1 matched an Ensembl list against
-symbol-named data in three of its own PAM50 notebooks and forced zero genes
-without a word. Passing a <code>GeneSet</code> rather than a list of names avoids the
-problem entirely, because both namings are tried.</p>
-</div>
 <p><strong>Choose genes once, from the training data, and apply the same selection to
 every split by name.</strong> Re-choosing per split gives different genes for the same
 column, which is a leak and a silent one.</p>

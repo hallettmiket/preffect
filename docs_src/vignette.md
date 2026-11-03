@@ -43,12 +43,6 @@ older anndata and an older pandas, but the bytes those libraries write around
 them are not, so the checksums there differ. Compare them against another run
 of your own install, not against this page.
 
-!!! warning "Why that is worth checking"
-    Version 0.1's vignettes ship a `test/` folder byte-identical to
-    `validation/`, in all three of simple, single and full. Published Figure S4
-    shows a user pointing inference at that folder while the caption calls it a
-    held-out test set. It is the validation set. Issue #11.
-
 The counts are simulated from a negative binomial, which is what PREFFECT
 models, with three groups of samples that each raise a different block of
 genes. So there is something real to find, and you can tell whether the model
@@ -57,10 +51,7 @@ found it.
 **The three splits are the same genes.** Each gene has one level and one
 amount of noise, drawn once for the whole cohort, and every split is drawn
 from those. Without that a model fitted on the training split has nothing to
-say about the test split, however well it fits: until finding 65 this
-generator drew the genes separately for each split, so the per-gene means of
-the training and test splits were uncorrelated and most of this page's
-numbers were measuring that rather than measuring PREFFECT.
+say about the test split, however well it fits.
 
 **Batch B's own genes are raised**, by a factor of 1.3, in a fifth of the
 genes picked at random and listed in the file under
@@ -270,11 +261,9 @@ between them is the negative binomial noise. Nothing is skipped here: a true
 expected count is never zero, while 53 of the observed counts at hidden
 entries were, and a relative error cannot be computed against zero.
 
-**Your own data has no such layer, and PREFFECT will not invent one.** Version
-0.1 looked for a layer called `truth`, and where it was absent the loader
-supplied the per-gene mean, so on real data it reported the distance from the
-gene average and called it imputation accuracy. On a real cohort the honest
-comparison is the observed count, which is the 0.646 above. [Using
+**Your own data has no such layer, and PREFFECT will not invent one.** On a
+real cohort the honest comparison is the observed count, which is the 0.646
+above. [Using
 it](guide.md) says more about what that number does and does not measure.
 
 ## If your cohort is too small to divide
@@ -288,8 +277,8 @@ validation: none given, so no validation loss will be reported
 ```
 
 That is honest. Splitting 40 samples three ways gives you nothing you can
-trust, and copying one split into another, which is what version 0.1 did,
-gives you a number that looks like a held-out result and is not.
+trust, and copying one split into another gives you a number that looks like
+a held-out result and is not.
 
 ## The graph model
 

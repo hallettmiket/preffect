@@ -157,13 +157,10 @@ Three lines there are worth reading closely.
   with `--mutual`, and a graph model learns nothing for such a sample.
 
 **Where the recipe comes from.** Each sample is linked to the ten others whose
-square-rooted counts correlate with it most. That is version 0.1's own recipe
-as it was meant to work, and ten neighbours is the setting measured on this
-project's cohort: the one network under which the graph model beat the simple
-model, by 8 per cent lower imputation error at hidden entries in six seeds of
-six. No dataset version 0.1 shipped carries a real network at all, which is
-why this command exists; the decision of 2026-10-30 on the cohort's sample
-network has the measurement.
+square-rooted counts correlate with it most. Ten neighbours is the setting
+measured on this project's cohort: the one network under which the graph model
+beat the simple model, by 8 per cent lower imputation error at hidden entries
+in six seeds of six.
 
 ## `preffect check`
 
@@ -199,8 +196,7 @@ Four lines are worth reading closely.
   network, so only the `simple` model applies. `a network with 240 edge(s),
   4.0 per sample` means the graph models have something to use. `a network
   with NO edges between samples` means the file carries a network that links
-  every sample to itself and to nothing else, which is what every dataset
-  version 0.1 shipped carries (findings 35 and 54). A graph model on one of
+  every sample to itself and to nothing else. A graph model on one of
   those costs ten times the parameters and has nothing to attend to, so
   `train` refuses it.
 - **The overlap.** `0 of 120 training samples reappear in validation` is the
@@ -276,7 +272,7 @@ preffect train --train my_study/train --validation my_study/validation \
 | `--min-delta` | how much the loss must fall to count as improving, for `--patience` | 0 |
 | `--stop-on` | what `--patience` watches: `loss`, or `imputation`, the error on the entries `--hide` hid; see below | `loss` |
 | `--hide` | hide this fraction of the training entries at random, score the model against the full counts, and report the error on the hidden entries at the end; the sample totals the model scales by are corrected for what the hiding took away (see below); needed for `--stop-on imputation` | nothing hidden |
-| `--edge-balance` | how the `single` and `full` models score the pairs of samples that are not linked: `balanced` gives the linked pairs the same total weight as the absent ones, `none` scores every pair equally as version 0.1 did; see below | `balanced` |
+| `--edge-balance` | how the `single` and `full` models score the pairs of samples that are not linked: `balanced` gives the linked pairs the same total weight as the absent ones, `none` scores every pair equally; see below | `balanced` |
 
 **Running it**
 
@@ -329,14 +325,12 @@ such as the transcript never being captured, and it costs one more parameter
 per gene and sample along with the layer that produces it: on the small
 example in the tests, 8,126 parameters against 7,514.
 
-The paper that accompanies version 0.1 found little evidence that fRNA-seq
+The PREFFECT paper found little evidence that fRNA-seq
 needs it, which is why `NB` is the default. To ask the question of your own
 counts rather than inheriting that answer, fit both distributions to them and
 compare: [Choosing a distribution](choosing-a-distribution.md). The choice is
 saved with the model, so `apply` rebuilds the distribution the model was
-fitted with and does not need telling again. This option did not exist until
-2026-11-02: the distribution and the model paths that use it were ported and
-tested, and nothing could ask for them. Finding 61.
+fitted with and does not need telling again.
 
 **Set `--threads` to suit the size of your data.** PyTorch otherwise starts one
 compute thread per core, which on a large shared machine can be over a
@@ -345,10 +339,9 @@ hundred, and coordinating them costs more than the arithmetic. The default of
 per epoch: 1 thread 3.9, 4 threads 2.1, 8 threads 1.3, **16 threads 1.2**, 32
 threads 1.6. On small data one thread wins.
 
-**`--validation` is optional, and leaving it out is honest.** Version 0.1
-required one, so cohorts too small to split used a copy of the training data,
-and the reported validation loss was really a training loss. Here, without
-one, no validation loss is computed and none is reported.
+**`--validation` is optional, and leaving it out is honest.** A cohort too
+small to split should not use a copy of the training data as its validation
+set; without one, no validation loss is computed and none is reported.
 
 **`--genes` chooses once, on the training data.** The validation set gets the
 same genes, matched by name, never re-chosen. The saved model records the
@@ -359,7 +352,7 @@ watches the validation loss, or the training loss when there is no
 `--validation`, and stops once that has not fallen by at least `--min-delta`
 for `--patience` epochs in a row; the model written is the best epoch's, not
 the last. Measured on a cohort of 220 samples at the default learning rate,
-six seeds, a fifth of the samples held out (finding 50): the validation loss
+six seeds, a fifth of the samples held out: the validation loss
 is lowest at about epoch 450 and within five per cent of that until 4,000, so
 any patience stops at 240 to 830 epochs. That is the right place to stop if
 the model is for samples it has not seen. It is ten times too soon if the
@@ -411,13 +404,13 @@ the library alone sets the scale. The correction is each sample's gene count
 divided by the number of its entries the model was shown, which reads how many
 entries were hidden and never which values. It applies only to `--hide`, which
 hides entries at random; nothing else about a run changes, and a run without
-`--hide` is unaffected. Finding 56, closing issue #32.
+`--hide` is unaffected.
 
 **`--edge-balance` is what lets the graph models learn their network on one
 dataset, and has not been shown to on any other.** A sample-sample network
 links each sample to a few others out of hundreds, so 92 to 99.8 per cent of
 the pairs are not edges, and scoring every pair equally, which
-is what version 0.1 did and `none` still does, leaves the network half of the
+`none` does, leaves the network half of the
 model with nothing to learn: measured in `exp/17` on synthetic data with a
 known network, it settles on predicting no edge anywhere in every seed, and
 the loss cannot show it because that is exactly the prediction the loss
@@ -452,11 +445,11 @@ term has the tables.
 attend to network edges between samples that are in the same batch, so a
 batch much smaller than the cohort hides most of the network from it. For
 `single` and `full`, consider a batch size equal to the number of samples.
-How much this costs is still an open question, issue #12.
+How much this costs has not been measured.
 
 **A part that does not exist cannot be frozen.** `--freeze encodr` is refused,
 with the parts that do exist listed, rather than freezing nothing while
-appearing to, which is what version 0.1 did.
+appearing to.
 
 ## `preffect apply`
 
@@ -536,16 +529,13 @@ patient under different names with the correspondence table the full model
 needs. 200 genes, three groups of samples that each raise a different block
 of genes, negative binomial counts. It checks that no two splits share a
 sample or are the same file before it reports success, and refuses to write
-otherwise: version 0.1's vignettes shipped a `test/` folder that was a copy
-of `validation/`. At `--unmatched 0` it draws no random numbers for the
+otherwise. At `--unmatched 0` it draws no random numbers for the
 gaps, so the files are the same whether the option exists or not.
 
 Three further things are true of what it writes, and each exists so an
 example can show something a real cohort shows. **The genes are drawn once
 per cohort**, so a cohort's three splits are the same genes and a model
-fitted on one can be applied to another; drawing them per split, which is
-what happened until finding 65, made three unrelated cohorts that shared
-only a set of names. **Batch B's own genes are raised** by a factor of 1.3,
+fitted on one can be applied to another. **Batch B's own genes are raised** by a factor of 1.3,
 a fifth of them picked at random and listed in the file under
 `uns['batch_shifted_genes']`, which is a nuisance for the correction
 variables to take out and is deliberately weaker than the groups.
