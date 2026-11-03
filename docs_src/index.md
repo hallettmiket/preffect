@@ -1,38 +1,21 @@
 # PREFFECT 0.2
 
-A statistical model for RNA sequencing counts from formalin-fixed
-paraffin-embedded tissue, usually written FFPE.
+## Description
 
-FFPE is how most clinical tumour samples are stored, and it damages RNA. Counts
-from FFPE material are noisier than counts from fresh-frozen tissue, and some
-values are missing outright. PREFFECT fits a model of what the counts would
-have looked like without that damage, and fills the gaps.
+PREFFECT (PaRaffin Embedded Formalin-FixEd Cleaning Tool) is a probabilistic
+framework for the analysis of RNA sequencing data from formalin-fixed paraffin
+embedded (FFPE) samples. PREFFECT uses generative models to fit distributions
+to observed expression measurements while adjusting for technical and
+biological variables. PREFFECT offers a series of models that exploit multiple
+expression profiles generated from matched tissues for a single sample,
+sample-sample adjacency networks and clinicopathological/technical sample
+variables.
 
-## What it does
+PREFFECT is designed to accomplish the following tasks:
 
-It learns a short summary of each sample, a few dozen numbers rather than
-twenty thousand, and reconstructs the counts from that summary. Three things
-follow:
-
-- **Cleaned counts.** What the model thinks each sample should look like.
-- **Filled gaps.** Values for entries that were missing or masked.
-- **A latent summary** of each sample, which can be grouped to find subtypes.
-
-Counts are modelled with a negative binomial distribution, which is the usual
-choice for sequencing counts because they vary more than a Poisson allows. A
-zero-inflated version is available for data with more zeros than that explains.
-
-## Three models
-
-| Model | What it uses | When |
-|---|---|---|
-| `simple` | counts alone | the default, and the right starting point |
-| `single` | counts plus one sample-sample network | when you know which samples resemble which |
-| `full` | several matched tissues per patient | when you have them |
-
-Start with `simple`. The graph models cost roughly ten times the parameters and
-twenty times the time, and they only pay for that if the network has real edges
-in it. [None of the datasets this was built against did.](changes.md)
+- Accurately denoise RNAseq data from FFPE materials (fRNAseq)
+- Impute missing values from the count matrix
+- Improve performance of standard analyses
 
 ## Where to go
 
@@ -44,7 +27,7 @@ in it. [None of the datasets this was built against did.](changes.md)
 - **[Using it](guide.md)** covers the real workflow: checking data, choosing
   genes, imputing, clustering, drawing.
 - **[Reference](reference/config.md)** is the API, taken from the docstrings.
-- **[What changed from 0.1](changes.md)** is what moves a number, and why.
+- **[What changed from 0.1](changes.md)**
 
 ## A note on this version
 
@@ -59,3 +42,24 @@ The rule the rewrite is built around is that **nothing is silently rewritten**.
 If a setting cannot be honoured, it raises and says which setting, what was
 asked for, and what to do instead. That is less convenient and much easier to
 trust.
+
+## Authors
+
+- **Eliseos J. Mucaki**, Department of Biochemistry, Western University, London, Canada
+- **Wenhan Zhang**, Department of Biochemistry, Western University, London, Canada
+- **Aryamaan Saha**, Department of Computer Science, Columbia University, New York, USA
+- **Sabina Trebinjac**, Department of Radiation Oncology and Department of Laboratory Medicine and Pathobiology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
+- **Sharon Nofech-Mozes**, Department of Laboratory Medicine and Pathobiology and Department of Anatomic Pathology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
+- **Eileen Rakovitch**, Department of Radiation Oncology and Department of Laboratory Medicine and Pathobiology, Sunnybrook Health Sciences Centre, University of Toronto, Toronto, Canada
+- **Vanessa Dumeaux**, Department of Anatomy and Cell Biology and Department of Oncology, Western University, London, Canada
+- **Michael T. Hallett**, Department of Biochemistry and Department of Oncology, Western University, London, Canada. Contact: <michael.hallett@uwo.ca>
+
+The method is described in Mucaki *et al.*, *Journal of Translational Medicine*
+23:1023 (2025), <https://doi.org/10.1186/s12967-025-07031-y>.
+
+<p align="center">
+  <img src="assets/logos/western_logo.png" alt="Western University" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/sunnybrook_logo_2024.png" alt="Sunnybrook Health Sciences Centre" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/nserc_2024.png" alt="NSERC" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="assets/logos/cihr_color_logo_2024.png" alt="CIHR" height="60"/>
+</p>

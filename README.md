@@ -198,7 +198,6 @@ tests/          tests, most guarding against a specific past defect
 docs_src/       the user documentation, which mkdocs builds into docs/ from these pages and the docstrings
 docs/           the built documentation site, served at https://mikehallett.science/preffect/
 vignettes/      a notebook that walks the worked example, and the script behind `preffect example-data`
-assets/         logos for this page
 CHANGELOG.md    every fix and change since version 0.1
 ```
 
@@ -223,10 +222,10 @@ their own, outside the working tree.
 - **Michael T. Hallett**, Department of Biochemistry and Department of Oncology, Western University, London, Canada. Contact: <michael.hallett@uwo.ca>
 
 <p align="center">
-  <img src="assets/logos/western_logo.png" alt="Western University" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/sunnybrook_logo_2024.png" alt="Sunnybrook Health Sciences Centre" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/nserc_2024.png" alt="NSERC" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="assets/logos/cihr_color_logo_2024.png" alt="CIHR" height="60"/>
+  <img src="docs_src/assets/logos/western_logo.png" alt="Western University" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs_src/assets/logos/sunnybrook_logo_2024.png" alt="Sunnybrook Health Sciences Centre" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs_src/assets/logos/nserc_2024.png" alt="NSERC" height="60"/>&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs_src/assets/logos/cihr_color_logo_2024.png" alt="CIHR" height="60"/>
 </p>
 
 ## Citation
