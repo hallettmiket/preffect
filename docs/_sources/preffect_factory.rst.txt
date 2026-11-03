@@ -1,7 +1,0 @@
-preffect_factory.py module
-==========================
-
-.. automodule:: preffect_factory
-   :members:
-   :undoc-members:
-   :show-inheritance:

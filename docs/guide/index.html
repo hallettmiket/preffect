@@ -1,0 +1,1277 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A statistical model for RNA sequencing counts from FFPE tissue">
+      
+      
+      
+      
+        <link rel="prev" href="../gui/">
+      
+      
+        <link rel="next" href="../choosing-a-distribution/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Using it - PREFFECT 0.2</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-it" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PREFFECT 0.2" class="md-header__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PREFFECT 0.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using it
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PREFFECT 0.2" class="md-nav__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PREFFECT 0.2
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vignette/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A worked example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command-line/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The graphical interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fitting-from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitting from Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-model-and-patients-who-are-missing-a-tissue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full model, and patients who are missing a tissue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#imputation-measured-honestly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Imputation, measured honestly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoring-a-predicted-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring a predicted network
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#figures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Figures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-genes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing genes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-things-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When things go wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choosing-a-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choosing a distribution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training and inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clustering and figures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What changed from 0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../speed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Speed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fitting-from-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fitting from Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-full-model-and-patients-who-are-missing-a-tissue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full model, and patients who are missing a tissue
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#imputation-measured-honestly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Imputation, measured honestly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoring-a-predicted-network" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring a predicted network
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#figures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Figures
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-genes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing genes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-things-go-wrong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When things go wrong
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="using-it">Using it<a class="headerlink" href="#using-it" title="Permanent link">&para;</a></h1>
+<p>The command line covers fitting and applying. This page covers the rest, from
+Python.</p>
+<h2 id="fitting-from-python">Fitting from Python<a class="headerlink" href="#fitting-from-python" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.config</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">DataConfig</span><span class="p">,</span> <span class="n">LossWeights</span><span class="p">,</span> <span class="n">ModelConfig</span><span class="p">,</span> <span class="n">PreffectConfig</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">RuntimeConfig</span><span class="p">,</span> <span class="n">TrainConfig</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_tissues</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.loading</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_tissues</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.tensors</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_tensors</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleModel</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.training</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_runtime</span><span class="p">,</span> <span class="n">train</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">tissues</span> <span class="o">=</span> <span class="n">load_tissues</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">"my_study/train"</span><span class="p">),</span> <span class="n">n_tissues</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">check_tissues</span><span class="p">(</span><span class="n">tissues</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">"training"</span><span class="p">)</span>      <span class="c1"># raises if something is wrong</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="n">data</span> <span class="o">=</span> <span class="n">to_tensors</span><span class="p">(</span><span class="n">tissues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">correction_variables</span><span class="o">=</span><span class="p">())</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">config</span> <span class="o">=</span> <span class="n">PreffectConfig</span><span class="p">(</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">data</span><span class="o">=</span><span class="n">DataConfig</span><span class="p">(</span><span class="n">train_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">"my_study/train"</span><span class="p">)),</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">model</span><span class="o">=</span><span class="n">ModelConfig</span><span class="p">(</span><span class="n">latent_dim</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="o">=</span><span class="mi">256</span><span class="p">),</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    <span class="n">loss</span><span class="o">=</span><span class="n">LossWeights</span><span class="p">(),</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="n">train</span><span class="o">=</span><span class="n">TrainConfig</span><span class="p">(</span><span class="n">epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    <span class="n">runtime</span><span class="o">=</span><span class="n">RuntimeConfig</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_threads</span><span class="o">=</span><span class="mi">16</span><span class="p">),</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="p">)</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="n">configure_runtime</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>                      <span class="c1"># before building the model</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">(</span><span class="n">tissues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">n_vars</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="n">history</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</code></pre></div>
+<p><code>configure_runtime</code> sets the seed and the thread count, and it has to run
+<strong>before</strong> the model is built. Weights are initialised during construction, so
+seeding afterwards leaves the initialisation unseeded and the run
+unrepeatable. <code>train</code> calls it too, so a run that only uses <code>train</code> is covered.</p>
+<h2 id="the-full-model-and-patients-who-are-missing-a-tissue">The full model, and patients who are missing a tissue<a class="headerlink" href="#the-full-model-and-patients-who-are-missing-a-tissue" title="Permanent link">&para;</a></h2>
+<p>The full model reads several profiles from the same patient and predicts the
+first one. It needs to know which row of one file is which row of another, and
+the files deliberately do not share sample names, so the correspondence is
+written down in a table under <code>obsm['sample_association']</code> with one column per
+tissue. <code>read_split</code> finds it, reorders every tissue by it, and hands back
+tissues whose row <em>i</em> is the same patient throughout.</p>
+<p><strong>A patient can be missing a tissue, and is kept rather than refused.</strong> A
+cohort where some patients have no matched normal is the ordinary case. Their
+cell in the table is empty, and PREFFECT gives that tissue a row of its own for
+them, called a padded row here:</p>
+<ul>
+<li>its counts are the <strong>rounded per-gene mean of that tissue's real samples</strong>;</li>
+<li>every annotation is missing;</li>
+<li>it has <strong>no links</strong> in that tissue's sample-sample network, so it attends to
+  nothing and nothing attends to it.</li>
+</ul>
+<p><strong>What a padded row contributes to, and what it does not.</strong> It is left out of
+the expression reconstruction term and both library-size terms, which are the
+three terms that read the counts. It is kept in the latent and network terms,
+so it is encoded and it takes part in the attention. That split is inherited
+from version 0.1 rather than designed here; the decision of 2026-11-02 on
+unmatched samples measures it against the alternative of dropping those
+patients.</p>
+<p>Two consequences worth knowing before you fit:</p>
+<ul>
+<li><strong>Nothing is ever hidden in a padded row.</strong> Its counts are a mean this
+  package invented, so recovering one would measure nothing. A mask that hides
+  an entry in a padded row is refused by name rather than quietly worked
+  around.</li>
+<li><strong>Padding and correction variables cannot be combined.</strong> A padded row has no
+  annotations, so it has no batch and no stage, and a correction variable with
+  a missing value is refused. Fill the annotations in yourself, drop the
+  incomplete patients, or leave the correction variables out.</li>
+</ul>
+<p><strong>What comes out leaves them behind.</strong> <code>infer</code> and <code>preffect apply</code> return
+results for the real rows of the predicted tissue only, and report how many
+padded rows they dropped, in <code>n_padded_rows_dropped</code> and in
+<code>uns["padded_rows_dropped"]</code> of the file <code>apply</code> writes.</p>
+<p><strong><code>preffect check</code> tells you how many there are</strong> before you fit anything, one
+line per tissue, which is the share of the cohort that will be made up rather
+than measured. <a href="../command-line/">The command line page</a> shows the output.</p>
+<p>To drop the incomplete patients instead, ask the alignment to refuse them and
+act on what it names:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.tissues</span><span class="w"> </span><span class="kn">import</span> <span class="n">align_tissues</span><span class="p">,</span> <span class="n">unmatched_counts</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">unmatched_counts</span><span class="p">(</span><span class="n">tissues</span><span class="p">))</span>        <span class="c1"># {'tau_1': 0, 'tau_2': 24}</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">alignment</span> <span class="o">=</span> <span class="n">align_tissues</span><span class="p">(</span><span class="n">tissues</span><span class="p">,</span> <span class="n">unmatched</span><span class="o">=</span><span class="s2">"refuse"</span><span class="p">)</span>   <span class="c1"># raises if any are missing</span>
+</code></pre></div>
+<h2 id="imputation-measured-honestly">Imputation, measured honestly<a class="headerlink" href="#imputation-measured-honestly" title="Permanent link">&para;</a></h2>
+<p>To find out how well it fills gaps, hide some entries, fit on what is left, and
+score only the hidden ones.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.masking</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_mask</span><span class="p">,</span> <span class="n">mcar_mask</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.tensors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorData</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">imputation_error</span><span class="p">,</span> <span class="n">infer</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">truth</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">mask</span> <span class="o">=</span> <span class="n">mcar_mask</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_genes</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="n">shown</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">apply_mask</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">model_data</span> <span class="o">=</span> <span class="n">TensorData</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">shown</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">truth</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_data</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">result</span> <span class="o">=</span> <span class="n">infer</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">model_data</span><span class="p">)</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">imputation_error</span><span class="p">(</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">result</span><span class="o">.</span><span class="n">expected_counts</span><span class="p">,</span> <span class="n">truth</span><span class="p">,</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">hidden</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">hidden</span><span class="p">),</span> <span class="n">kind</span><span class="o">=</span><span class="s2">"mean_relative"</span><span class="p">,</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="p">)</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="nb">print</span><span class="p">(</span><span class="n">scores</span><span class="p">[</span><span class="s2">"hidden"</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="s2">"visible"</span><span class="p">])</span>
+</code></pre></div>
+<p>To stop training where that error settles rather than where the loss does,
+which is ten times sooner, ask for it in the settings and hide entries as
+above: <code>TrainConfig(early_stopping_patience=1000, stop_on="imputation")</code>. The
+<a href="../command-line/">command line page</a> says what the two rules measure and
+when each is the right one.</p>
+<div class="admonition warning">
+<p class="admonition-title">Truth is an argument, with no default</p>
+<p><code>imputation_error</code> will not invent something to compare against. Version
+0.1 looked for a layer called <code>truth</code>, and when it was absent the data
+loader supplied the per-gene mean, so on real data it reported the distance
+from the gene average and called it imputation accuracy. There is nowhere
+for a fabricated truth to come from here.</p>
+</div>
+<p><strong>The library size is corrected for what the hiding took away.</strong> A sample's
+library size is its total count, and the model multiplies everything it
+predicts for that sample by it. Read off the counts the model was shown, that
+total is short by the hidden fraction, while the targets keep the originals,
+so every predicted count would be short by the same fraction and nothing in
+the model could make it up: the composition sums to one across genes, so the
+library alone sets the scale. Passing a <code>mask</code> to <code>TensorData</code>, as above, is
+all it takes. The correction is the number of genes divided by the number of
+that sample's entries the model was shown, and it travels with the data
+through training, mini-batching and inference.</p>
+<p>The correction reads <strong>how many</strong> entries were hidden and never which values.
+A sample's true total together with its visible entries would give the sum of
+its hidden ones exactly, so a library taken from the targets would hand the
+model the answer it is being scored on. It is also available for missing
+completely at random only, which is the one scheme <code>mcar_mask</code> writes; a
+scheme that hid entries according to their values would make the estimate
+biased rather than unavailable, and is refused by name.</p>
+<p>Scoring the visible entries too is worth doing. Doing well on entries the model
+was shown is not imputation, and if the two numbers are similar the model may
+be reproducing its input rather than generalising.</p>
+<p><strong>Relative error leaves out entries whose true value is zero</strong>, and reports how
+many it left out. Dividing by zero makes an average meaningless, and counts are
+10 to 55 per cent zeros.</p>
+<h2 id="scoring-a-predicted-network">Scoring a predicted network<a class="headerlink" href="#scoring-a-predicted-network" title="Permanent link">&para;</a></h2>
+<p>The single and full models reconstruct the sample-sample network from a
+latent space of their own, and the loss cannot say whether they are getting
+it right: on a network one per cent dense, a model that predicts no edge
+anywhere scores well on an unweighted cross-entropy (issue #13). Score the
+edges instead.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">network_recovery</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">corrections</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">predicted</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">network_decoder</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">network_latent_mean</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">corrections</span><span class="p">)</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">network_recovery</span><span class="p">(</span><span class="n">predicted</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="p">())</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nb">print</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># precision 0.021, recall 1.000, F1 0.041 at one half (111259 pairs predicted,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># 2355 edges among 179700 pairs); average precision 0.039 against 0.013 for a</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># flat prediction</span>
+</code></pre></div>
+<p>That output is a single model after 200 epochs on <code>exp/17</code>'s synthetic cohort
+with the term balanced: the ranking is three times better than chance, and
+the threshold of one half calls far too many pairs, which is the kind of thing
+the loss alone would never have shown.</p>
+<p>Both inputs are square over the same samples and are read as symmetric: each
+pair is counted once and the diagonal is ignored. An edge is predicted where
+the probability exceeds one half. Average precision ranks every pair by its
+probability and needs no threshold; a model that cannot rank the pairs at
+all, whether it predicts no edge, every edge, or one half everywhere, scores
+the density there, which the result carries as <code>flat_average_precision</code> so
+the baseline is beside the number. Predicting no edge anywhere scores zero on
+precision, recall and F1.</p>
+<p>Decode from the network latent <strong>mean</strong>, as above, rather than from a draw,
+for the same reason inference uses the latent mean: the same model over the
+same data should give the same network twice. For the full model the decoder
+and the latent are lists, one per tissue.</p>
+<h2 id="clustering">Clustering<a class="headerlink" href="#clustering" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.clustering</span><span class="w"> </span><span class="kn">import</span> <span class="n">clustering_recovery</span><span class="p">,</span> <span class="n">resolution_for_target</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">grouping</span> <span class="o">=</span> <span class="n">resolution_for_target</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">latent</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">target_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">grouping</span><span class="o">.</span><span class="n">n_clusters</span><span class="p">,</span> <span class="s2">"clusters at resolution"</span><span class="p">,</span> <span class="n">grouping</span><span class="o">.</span><span class="n">resolution</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">scores</span> <span class="o">=</span> <span class="n">clustering_recovery</span><span class="p">(</span><span class="n">grouping</span><span class="p">,</span> <span class="n">subtypes</span><span class="p">)</span>   <span class="c1"># subtypes from adata.obs</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="c1"># adjusted Rand 0.412, adjusted mutual information 0.389</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># (5 clusters against 5 known groups, 528 samples)</span>
+</code></pre></div>
+<p>Both scores are corrected for chance. That matters at these sizes: with five
+groups and a few hundred samples, an uncorrected Rand index sits near 0.7 for a
+random grouping and reads as success.</p>
+<p><code>target_clusters</code> is a <strong>ceiling</strong>, not a promise. The search only lowers the
+resolution, so it stops as soon as the count is low enough and can return
+fewer. If it runs out of room, <code>grouping.hit_the_floor</code> is true and
+<code>grouping.resolution</code> is the resolution the labels actually came from.</p>
+<h2 id="figures">Figures<a class="headerlink" href="#figures" title="Permanent link">&para;</a></h2>
+<p>Every figure returns a matplotlib <code>Figure</code> and none of them write a file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect</span><span class="w"> </span><span class="kn">import</span> <span class="n">plots</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">figure</span> <span class="o">=</span> <span class="n">plots</span><span class="o">.</span><span class="n">library_size_and_dispersion</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">counts</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">plots</span><span class="o">.</span><span class="n">save_figure</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span> <span class="s2">"figures/diagnostics.png"</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">plots</span><span class="o">.</span><span class="n">save_figure</span><span class="p">(</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">plots</span><span class="o">.</span><span class="n">subtype_heatmap</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">gene_names</span><span class="p">,</span> <span class="n">subtypes</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="s2">"log_z_score"</span><span class="p">),</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="s2">"figures/pam50.png"</span><span class="p">,</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="p">)</span>
+</code></pre></div>
+<p>Available: <code>library_size_histogram</code>, <code>gene_scatter</code>, <code>batch_adjustment</code>,
+<code>zero_fraction_against_pi</code>, <code>library_size_and_dispersion</code>, <code>latent_umap</code>,
+<code>loss_curves</code>, <code>subtype_heatmap</code>.</p>
+<p>Two things to know:</p>
+<ul>
+<li><strong>The UMAP is seeded.</strong> Version 0.1's was not, so the same model and data drew
+  a different picture every run. Seeding costs parallelism, which UMAP will warn
+  about; a figure you cannot reproduce is not worth the time it saved.</li>
+<li><strong><code>subtype_heatmap</code> finds the PAM50 genes whichever way your data names
+  them</strong>, symbols or Ensembl identifiers, and raises if it finds too few rather
+  than drawing an empty figure.</li>
+</ul>
+<h2 id="choosing-genes">Choosing genes<a class="headerlink" href="#choosing-genes" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.data.selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">apply_gene_selection</span><span class="p">,</span> <span class="n">choose_genes</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.gene_sets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PAM50</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">selection</span> <span class="o">=</span> <span class="n">choose_genes</span><span class="p">(</span><span class="n">tissues</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_genes</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">force_genes</span><span class="o">=</span><span class="n">PAM50</span><span class="p">)</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">tissues</span> <span class="o">=</span> <span class="n">apply_gene_selection</span><span class="p">(</span><span class="n">tissues</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="s2">"training"</span><span class="p">)</span>
+</code></pre></div>
+<p>Genes are ranked by interquartile range, most variable first. <code>force_genes</code>
+keeps a panel regardless of its variability.</p>
+<div class="admonition warning">
+<p class="admonition-title">A panel that matches nothing raises</p>
+<p>If none of the panel is in the data, the naming is wrong, and forcing it
+would silently do nothing. Version 0.1 matched an Ensembl list against
+symbol-named data in three of its own PAM50 notebooks and forced zero genes
+without a word. Passing a <code>GeneSet</code> rather than a list of names avoids the
+problem entirely, because both namings are tried.</p>
+</div>
+<p><strong>Choose genes once, from the training data, and apply the same selection to
+every split by name.</strong> Re-choosing per split gives different genes for the same
+column, which is a leak and a silent one.</p>
+<h2 id="when-things-go-wrong">When things go wrong<a class="headerlink" href="#when-things-go-wrong" title="Permanent link">&para;</a></h2>
+<p>Everything raises <code>PreffectError</code> or one of its subclasses, and the message
+names the setting, what was asked for, and what to do instead.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">preffect.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigError</span><span class="p">,</span> <span class="n">DataError</span><span class="p">,</span> <span class="n">PreffectError</span>
+</code></pre></div>
+<p>If a message tells you only that something is wrong and not what to do about
+it, that is a defect in the message. Version 0.2 has had three of those and
+they are all in the findings list.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

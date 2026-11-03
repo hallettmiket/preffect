@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.venv-*/
+venv/
+
+# Testing and tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Model checkpoints and run outputs. These belong outside the repository, never in it.
+*.pth
+*.pt
+*.h5ad
+# Plain-text counts too. The binary forms were covered and these were not, so
+# a run writing its output inside the working tree would have put
+# participant-level expression into `git add -A`. Nothing reached git, because
+# every run so far wrote under the data root, but the gap was real.
+*.tsv
+*.csv
+*.tsv.gz
+*.csv.gz
+*.mtx
+*.loom
+runs/
+outputs/
+example_data/
+vignette_data/
+
+# Per-machine, never shared
+.env
+*.local.toml
+.claude/settings.json
+docs/

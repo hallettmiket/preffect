@@ -1,0 +1,1689 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A statistical model for RNA sequencing counts from FFPE tissue">
+      
+      
+      
+      
+        <link rel="prev" href="../vignette/">
+      
+      
+        <link rel="next" href="../gui/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>The command line - PREFFECT 0.2</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#the-command-line" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="PREFFECT 0.2" class="md-header__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PREFFECT 0.2
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              The command line
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="PREFFECT 0.2" class="md-nav__button md-logo" aria-label="PREFFECT 0.2" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PREFFECT 0.2
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hallettmiket/preffect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vignette/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    A worked example
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The command line
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The command line
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-every-command-shares" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What every command shares
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect train
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="preffect train">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worth-knowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Worth knowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect apply
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect gui
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-example-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect example-data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-it-refuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When it refuses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-command-line-does-not-reach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the command line does not reach
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    The graphical interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using it
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choosing-a-distribution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choosing a distribution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training and inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clustering and figures
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    What changed from 0.1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../speed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Speed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-every-command-shares" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What every command shares
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect check
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-train" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect train
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="preffect train">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#worth-knowing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Worth knowing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect apply
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect gui
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preffect-example-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preffect example-data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-it-refuses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When it refuses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-the-command-line-does-not-reach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the command line does not reach
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="the-command-line">The command line<a class="headerlink" href="#the-command-line" title="Permanent link">&para;</a></h1>
+<p>Three commands, and the first time through you run them in this order; a
+fourth opens the same work <a href="../gui/">in a browser</a>:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>preffect check</code></td>
+<td>reads the counts and says whether they can be used, without fitting anything</td>
+</tr>
+<tr>
+<td><code>preffect train</code></td>
+<td>fits a model and saves it to one file</td>
+</tr>
+<tr>
+<td><code>preffect apply</code></td>
+<td>runs a saved model over counts and writes the cleaned result</td>
+</tr>
+<tr>
+<td><code>preffect example-data</code></td>
+<td>writes a small simulated cohort to try the three on</td>
+</tr>
+</tbody>
+</table>
+<p><code>preffect --help</code> lists the commands, <code>preffect &lt;command&gt; --help</code> lists a
+command's options with their defaults, and <code>preffect --version</code> prints the
+version. This page says the same things at more length: what each option is
+for, and when to change it.</p>
+<p>The examples write <code>preffect</code>. If you installed a copy of the source with
+<code>scripts/install.sh</code>, write <code>.venv/bin/preffect</code>. If <code>preffect</code> is not on your
+path at all, or prints something you did not expect, <code>python -P -m preffect</code>
+runs the same thing. <code>-P</code> stops Python putting the current folder first on the
+import path, so a folder named <code>preffect</code> beside you cannot be mistaken for the
+installed package.</p>
+<h2 id="what-every-command-shares">What every command shares<a class="headerlink" href="#what-every-command-shares" title="Permanent link">&para;</a></h2>
+<p><strong>A data folder, not a file.</strong> Each of <code>--train</code>, <code>--validation</code> and <code>--data</code>
+names a folder holding one file per tissue, named <code>&lt;anything&gt;tau_&lt;n&gt;.h5ad</code> with
+<code>&lt;n&gt;</code> counting from 1. A single-tissue cohort, which is the usual case, has one
+file ending <code>tau_1.h5ad</code>. <a href="../getting-started/">Getting started</a> says what has
+to be inside it.</p>
+<p><strong><code>--tissues</code> is how many of those files to expect.</strong> A tissue here is one
+sample from each patient under one condition, such as tumour and adjacent
+normal; the <code>full</code> model fits several at once. The default of 1 is right for
+everything except the <code>full</code> model.</p>
+<p><strong>It says what it is doing.</strong> Every command prints what it read and what it
+produced, so a long run that says nothing can be told apart from one that has
+hung, and a run that produced nothing cannot look like one that succeeded.</p>
+<p><strong>It stops rather than guesses.</strong> A setting that cannot be honoured, a folder
+that does not exist, or an output path that cannot be written stops the
+command with one sentence naming the problem, before any work is done. The
+exit status is 0 when the command did what was asked, 2 when it refused, and 1
+when no command was given. A refusal prints no traceback, because a traceback
+tells someone who did not write the code nothing they can act on.</p>
+<h2 id="preffect-check"><code>preffect check</code><a class="headerlink" href="#preffect-check" title="Permanent link">&para;</a></h2>
+<p>Reads the data, reports what it found, and refuses if something would stop a
+run. It takes seconds and it is the single most useful command here, because
+the problems it finds otherwise show up as a confusing result rather than as
+an error.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>preffect<span class="w"> </span>check<span class="w"> </span>--train<span class="w"> </span>my_study/train<span class="w"> </span>--validation<span class="w"> </span>my_study/validation
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--train</code></td>
+<td>folder of training counts</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--validation</code></td>
+<td>folder of validation counts</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>--tissues</code></td>
+<td>how many tissue files each folder holds</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Output on the vignette data:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>training: 1 tissue(s) from vignette_data/simple/train
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  tissue 1: 120 samples, 200 genes, no network
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  the counts look usable
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>validation: 40 samples from vignette_data/simple/validation
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  tissue 1: 0 of 120 training samples reappear in validation
+</code></pre></div>
+<p>Three lines are worth reading closely.</p>
+<ul>
+<li><strong>The network.</strong> <code>no network</code> means the file carries no sample-sample
+  network, so only the <code>simple</code> model applies. <code>a network with 240 edge(s),
+  4.0 per sample</code> means the graph models have something to use. <code>a network
+  with NO edges between samples</code> means the file carries a network that links
+  every sample to itself and to nothing else, which is what every dataset
+  version 0.1 shipped carries (findings 35 and 54). A graph model on one of
+  those costs ten times the parameters and has nothing to attend to, so
+  <code>train</code> refuses it.</li>
+<li><strong>The overlap.</strong> <code>0 of 120 training samples reappear in validation</code> is the
+  line that tells you your splits are what you think they are. If every
+  training sample reappears, it says <code>the validation data is the training
+  data. Leave --validation out instead.</code></li>
+<li><strong>Without a validation set</strong> it says <code>validation: none given, so no
+  validation loss will be reported</code>, and that is all it does. It does not
+  invent one.</li>
+</ul>
+<p>With <code>--tissues 2</code> or more it adds one line per tissue saying how many
+patients have no sample there:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>training: 2 tissue(s) from my_study/train
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  tissue 1: 120 samples, 200 genes, a network with 240 edge(s), 4.0 per sample
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  tissue 2: 96 samples, 200 genes, a network with 192 edge(s), 4.0 per sample
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  tissue 1: every patient has a sample here
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  tissue 2: 24 patient(s) have no sample here, and get a row of per-gene means padded in
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  the counts look usable
+</code></pre></div>
+<p>Those 24 patients are kept, and the full model is given a made-up profile for
+the tissue they lack: the rounded per-gene mean of that tissue's real samples,
+linked to nothing in that tissue's network. The guide's full-model section says
+what such a row does and does not contribute to, and the decision of 2026-11-02
+on unmatched samples says why it works that way. The number is worth reading,
+because it is the share of the cohort the model will be working on that was
+made up rather than measured.</p>
+<h2 id="preffect-train"><code>preffect train</code><a class="headerlink" href="#preffect-train" title="Permanent link">&para;</a></h2>
+<p>Fits a model to the training counts and writes it to one file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>preffect<span class="w"> </span>train<span class="w"> </span>--train<span class="w"> </span>my_study/train<span class="w"> </span>--validation<span class="w"> </span>my_study/validation<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">               </span>--out<span class="w"> </span>model.pt<span class="w"> </span>--epochs<span class="w"> </span><span class="m">100</span><span class="w"> </span>--seed<span class="w"> </span><span class="m">0</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">16</span>
+</code></pre></div>
+<p><strong>The data</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--train</code></td>
+<td>folder of training counts</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--validation</code></td>
+<td>folder of validation counts, used to report a loss on samples the model is not fitted to</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>the file to write the model to; its folder is created if missing, and the path is checked for writability before any work starts</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--tissues</code></td>
+<td>how many tissue files each folder holds</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>--genes</code></td>
+<td>keep only this many of the most variable genes, chosen on the training data and applied to the validation data by name</td>
+<td>all genes</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The model</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--kind</code></td>
+<td><code>simple</code> uses counts alone; <code>single</code> adds one sample-sample network; <code>full</code> uses several matched tissues per patient</td>
+<td><code>simple</code></td>
+</tr>
+<tr>
+<td><code>--likelihood</code></td>
+<td>which count distribution the model fits: <code>NB</code>, the negative binomial, or <code>ZINB</code>, which adds a separate probability that a count is zero for a reason unrelated to expression level; see below</td>
+<td><code>NB</code></td>
+</tr>
+<tr>
+<td><code>--latent-dim</code></td>
+<td>the size of the summary the model learns for each sample</td>
+<td>20</td>
+</tr>
+<tr>
+<td><code>--hidden-dim</code></td>
+<td>the width of the hidden layers between the counts and that summary</td>
+<td>50</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The fitting</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--epochs</code></td>
+<td>how many passes over the training data; <code>--patience</code> below says how many is enough, and for what</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>--batch-size</code></td>
+<td>how many samples go through the model per step</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>--learning-rate</code></td>
+<td>how far the optimiser moves per step</td>
+<td>0.001</td>
+</tr>
+<tr>
+<td><code>--patience</code></td>
+<td>stop early once the loss has not improved for this many epochs; the model kept is the best epoch's</td>
+<td>never stop early</td>
+</tr>
+<tr>
+<td><code>--min-delta</code></td>
+<td>how much the loss must fall to count as improving, for <code>--patience</code></td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>--stop-on</code></td>
+<td>what <code>--patience</code> watches: <code>loss</code>, or <code>imputation</code>, the error on the entries <code>--hide</code> hid; see below</td>
+<td><code>loss</code></td>
+</tr>
+<tr>
+<td><code>--hide</code></td>
+<td>hide this fraction of the training entries at random, score the model against the full counts, and report the error on the hidden entries at the end; the sample totals the model scales by are corrected for what the hiding took away (see below); needed for <code>--stop-on imputation</code></td>
+<td>nothing hidden</td>
+</tr>
+<tr>
+<td><code>--edge-balance</code></td>
+<td>how the <code>single</code> and <code>full</code> models score the pairs of samples that are not linked: <code>balanced</code> gives the linked pairs the same total weight as the absent ones, <code>none</code> scores every pair equally as version 0.1 did; see below</td>
+<td><code>balanced</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Running it</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--seed</code></td>
+<td>fixes the random starting point, so the same command gives the same model twice</td>
+<td>unseeded</td>
+</tr>
+<tr>
+<td><code>--deterministic</code></td>
+<td>repeatable bit for bit on a GPU as well as on the CPU; needs <code>--seed</code></td>
+<td>off</td>
+</tr>
+<tr>
+<td><code>--threads</code></td>
+<td>compute threads</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>--device</code></td>
+<td><code>cpu</code>, <code>cuda</code>, or a particular card such as <code>cuda:0</code></td>
+<td><code>cpu</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Starting from a model already fitted</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--from-model</code></td>
+<td>a saved model to start from instead of from scratch; it must have the same genes and the same shape, and the command says which differs if not</td>
+<td>none</td>
+</tr>
+<tr>
+<td><code>--freeze</code></td>
+<td>hold part of the model still while the rest trains, for example <code>--freeze encoder</code>; may be given more than once; only with <code>--from-model</code></td>
+<td>nothing frozen</td>
+</tr>
+</tbody>
+</table>
+<p>Output on the vignette data, with <code>--patience 5</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>fitting a simple model: 200 genes, 36,090 parameters, 80 epochs
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>finished after 8 epoch(s)
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  training loss   1456.05 -&gt; 947.48
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  validation loss 1119.80
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  stopped early, best epoch was 3
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>wrote model.pt
+</code></pre></div>
+<p>Validation close to training means the model is not simply memorising. A
+validation loss far above the training loss means it is, and the vignette's
+toy of 120 samples gets there within a few epochs, which is why it runs with
+<code>--patience</code>.</p>
+<h3 id="worth-knowing">Worth knowing<a class="headerlink" href="#worth-knowing" title="Permanent link">&para;</a></h3>
+<p><strong>Set <code>--seed</code> if you want the same model twice.</strong> Without it the same command
+gives a different model each time. On a GPU, add <code>--deterministic</code> as well.
+Without it two runs of a graph model from the same seed differ at the fourth
+decimal place, because one of its operations adds numbers in whichever order
+the card finishes them; with it the two runs match bit for bit, measured on an
+A100. The simple model matches on a GPU either way. Deterministic kernels can
+be slower, which has not been measured, so it is off unless asked for.</p>
+<p><strong><code>--likelihood ZINB</code> is for counts that have more zeros than the negative
+binomial can account for.</strong> The negative binomial already produces plenty of
+zeros on its own when a gene is lowly expressed, so a high proportion of them
+is not by itself a reason to change. The zero-inflated form adds a separate
+probability that a count is zero for a reason unrelated to expression level,
+such as the transcript never being captured, and it costs one more parameter
+per gene and sample along with the layer that produces it: on the small
+example in the tests, 8,126 parameters against 7,514.</p>
+<p>The paper that accompanies version 0.1 found little evidence that fRNA-seq
+needs it, which is why <code>NB</code> is the default. To ask the question of your own
+counts rather than inheriting that answer, fit both distributions to them and
+compare: <a href="../choosing-a-distribution/">Choosing a distribution</a>. The choice is
+saved with the model, so <code>apply</code> rebuilds the distribution the model was
+fitted with and does not need telling again. This option did not exist until
+2026-11-02: the distribution and the model paths that use it were ported and
+tested, and nothing could ask for them. Finding 61.</p>
+<p><strong>Set <code>--threads</code> to suit the size of your data.</strong> PyTorch otherwise starts one
+compute thread per core, which on a large shared machine can be over a
+hundred, and coordinating them costs more than the arithmetic. The default of
+4 suits a small example. Measured on 528 samples by 18,790 genes, in seconds
+per epoch: 1 thread 3.9, 4 threads 2.1, 8 threads 1.3, <strong>16 threads 1.2</strong>, 32
+threads 1.6. On small data one thread wins.</p>
+<p><strong><code>--validation</code> is optional, and leaving it out is honest.</strong> Version 0.1
+required one, so cohorts too small to split used a copy of the training data,
+and the reported validation loss was really a training loss. Here, without
+one, no validation loss is computed and none is reported.</p>
+<p><strong><code>--genes</code> chooses once, on the training data.</strong> The validation set gets the
+same genes, matched by name, never re-chosen. The saved model records the
+names, and <code>apply</code> matches on them.</p>
+<p><strong><code>--patience</code> stops a run that has stopped improving, and it stops early.</strong> It
+watches the validation loss, or the training loss when there is no
+<code>--validation</code>, and stops once that has not fallen by at least <code>--min-delta</code>
+for <code>--patience</code> epochs in a row; the model written is the best epoch's, not
+the last. Measured on a cohort of 220 samples at the default learning rate,
+six seeds, a fifth of the samples held out (finding 50): the validation loss
+is lowest at about epoch 450 and within five per cent of that until 4,000, so
+any patience stops at 240 to 830 epochs. That is the right place to stop if
+the model is for samples it has not seen. It is ten times too soon if the
+model is for the cohort it was fitted on: imputation of that cohort's hidden
+entries is 1.5 times worse at epoch 300 than at 3,000 and is still falling at
+16,000, and the loss that <code>--patience</code> watches cannot see it. Clustering
+recovery of subtype from the latent is at its level by epoch 500 to 750
+whichever you do, and past 7,000 the latent of unseen samples gets worse. <strong>At
+this learning rate, 3,000 to 5,000 epochs serves the loss and the latent within
+a few per cent and in-cohort imputation within about a tenth, and 16,000 is
+harmful for anything applied to new samples.</strong> A rule that watches imputation
+of the hidden entries instead, which lands near that range on its own, is
+below; the curves are in the decision of 2026-10-28 on training length.</p>
+<p><strong><code>--stop-on imputation</code> stops where imputation of the fitted cohort settles.</strong>
+With <code>--hide 0.2</code> a fifth of the training entries are hidden from the model at
+random, and after every epoch the model's error on those entries is measured,
+the same number <code>exp/10</code> and <code>exp/11</code> score; <code>--patience</code> then counts epochs
+without that error falling, and the model written is the best epoch's by that
+measure. On the real cohort, replayed in <code>exp/11</code>, a patience of 500 to 2,000
+epochs stops at 2,000 to 4,000 and keeps a model within four to six per cent of
+the best imputation, where the loss rule keeps one from epoch 300 with 1.7
+times the error. Two things to know. The objective scores the model
+against the full counts, hidden entries included, so this measures how far the
+fit of the cohort has gone, not how the model generalises to samples it has
+not seen; for that, stop on the loss with <code>--validation</code>. And measuring it
+costs one extra pass over the training data per epoch, about 70 per cent more
+time an epoch on a GPU; the random stream is restored afterwards, so the run is
+the same run as without the rule, stopped sooner or later. Run live on the real
+cohort (<code>exp/12</code>), the rule stopped at 2,100 to 6,400 epochs on its own and
+kept a model ten per cent better at imputation than a fixed 4,000-epoch run
+in every seed, with the latent space level or better, at 1.7 times the time; the
+decision of 2026-10-28 on stopping has the table. <code>--min-delta</code> applies to
+whichever quantity is watched, in its own units. With the default of zero the
+imputation rule waits until the error stops falling at all; on data where it
+keeps creeping down (the synthetic data in <code>exp/12</code> fell two per cent over
+4,000 epochs and the rule ran to its cap in four of six seeds) set
+<code>--min-delta</code> to the smallest
+improvement worth waiting for, about one per cent of the error: 0.005 on an
+error near 0.5, 0.01 on one near 1.</p>
+<p><strong><code>--hide</code> corrects the sample totals for what it hid.</strong> A sample's library
+size is its total count, and the model multiplies everything it predicts for
+that sample by it. Hiding a fifth of the entries takes about a fifth off that
+total, while the counts the model is scored against keep the originals, so
+without a correction every predicted count is short by the hidden fraction and
+no amount of training recovers it: the composition sums to one across genes, so
+the library alone sets the scale. The correction is each sample's gene count
+divided by the number of its entries the model was shown, which reads how many
+entries were hidden and never which values. It applies only to <code>--hide</code>, which
+hides entries at random; nothing else about a run changes, and a run without
+<code>--hide</code> is unaffected. Finding 56, closing issue #32.</p>
+<p><strong><code>--edge-balance</code> is what lets the graph models learn their network on one
+dataset, and has not been shown to on any other.</strong> A sample-sample network
+links each sample to a few others out of hundreds, so 92 to 99.8 per cent of
+the pairs are not edges, and scoring every pair equally, which
+is what version 0.1 did and <code>none</code> still does, leaves the network half of the
+model with nothing to learn: measured in <code>exp/17</code> on synthetic data with a
+known network, it settles on predicting no edge anywhere in every seed, and
+the loss cannot show it because that is exactly the prediction the loss
+rewards. <code>balanced</code>, the default, gives the linked pairs the same total weight
+as the absent ones; on that synthetic network the predicted network then ranks
+the true edges as well as a predictor that knows the sample groups, and
+clustering, imputation and the expression terms are unchanged. A third way,
+scoring the linked pairs against
+as many absent pairs drawn at random each step, did about as well more slowly
+and lost; it lives in <code>exp/17</code>, not in the package.</p>
+<p><strong>That recovery has not reproduced on either dataset run since.</strong> On the DCIS
+cohort at 773 genes, <code>exp/17</code>'s run of 2026-11-02 found every arm, <code>balanced</code>
+included, ending with the decoder predicting exactly one half for every pair,
+so the term made no difference there in either direction. On
+<code>dataset_full_1</code>, <code>exp/18</code> found every decoder predicting no edge anywhere
+under <code>balanced</code>, which is the outcome it exists to prevent. Nothing measured
+is worse under <code>balanced</code>, which is why it is still the default, but do not
+expect a usable network out of a graph model without checking the ranking with
+<code>network_recovery</code> on your own data.</p>
+<p>Two further things to know. Under
+<code>balanced</code> a probability above one half is
+not an edge call: equal weight moves the point where the model is undecided,
+so most pairs come out above a half and the useful output is the ranking,
+which is how the guide's <code>network_recovery</code> scores it. And <code>none</code> is there for
+repeating a result produced before 2026-10-30, which every graph-model result
+in this repository was. The decision of 2026-10-30 on weighting the network
+term has the tables.</p>
+<p><strong><code>--batch-size</code> matters more for the graph models.</strong> A graph model can only
+attend to network edges between samples that are in the same batch, so a
+batch much smaller than the cohort hides most of the network from it. For
+<code>single</code> and <code>full</code>, consider a batch size equal to the number of samples.
+How much this costs is still an open question, issue #12.</p>
+<p><strong>A part that does not exist cannot be frozen.</strong> <code>--freeze encodr</code> is refused,
+with the parts that do exist listed, rather than freezing nothing while
+appearing to, which is what version 0.1 did.</p>
+<h2 id="preffect-apply"><code>preffect apply</code><a class="headerlink" href="#preffect-apply" title="Permanent link">&para;</a></h2>
+<p>Runs a saved model over counts and writes the cleaned result.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>preffect<span class="w"> </span>apply<span class="w"> </span>--model<span class="w"> </span>model.pt<span class="w"> </span>--data<span class="w"> </span>my_study/new<span class="w"> </span>--out<span class="w"> </span>cleaned.h5ad
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--model</code></td>
+<td>the file <code>train</code> wrote</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--data</code></td>
+<td>folder of counts to apply it to</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--out</code></td>
+<td>the <code>.h5ad</code> file to write; checked for writability before the model is loaded</td>
+<td>required</td>
+</tr>
+<tr>
+<td><code>--tissues</code></td>
+<td>how many tissue files the data folder holds; only consulted if the model did not record its own count, and a model saved by this version always does</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>--threads</code></td>
+<td>compute threads, as for <code>train</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>--device</code></td>
+<td><code>cpu</code>, <code>cuda</code>, or a particular card such as <code>cuda:0</code>, as for <code>train</code></td>
+<td><code>cpu</code></td>
+</tr>
+</tbody>
+</table>
+<p>Output on the vignette's held-out split:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>loaded a simple model written by PREFFECT 0.2.0.dev0, applying on cpu
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>matched 200 genes to the ones the model was fitted on
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>wrote cleaned.h5ad: 40 samples, 200 genes
+</code></pre></div>
+<p>The result carries the cleaned counts in <code>X</code>, the predicted proportions in
+<code>layers['composition']</code>, and the latent summary of each sample in
+<code>obsm['latent']</code>.</p>
+<p><strong>Genes are matched by name</strong>, so the columns of the file you apply to need
+not be in the order you trained on. A gene the model was fitted on and the
+file lacks stops the command and says which, rather than shifting everything
+along by one.</p>
+<p><code>apply</code> will run over any counts, including the ones the model was trained on.
+The only honest held-out result comes from data that was in neither <code>--train</code>
+nor <code>--validation</code>.</p>
+<h2 id="preffect-gui"><code>preffect gui</code><a class="headerlink" href="#preffect-gui" title="Permanent link">&para;</a></h2>
+<p>Opens <a href="../gui/">the graphical interface</a> in your browser: check a folder of
+counts, apply a saved model, and look at the figures. It answers on this
+machine only, to <code>localhost</code>, and sends nothing anywhere; from a laptop,
+forward the port over SSH.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>preffect<span class="w"> </span>gui
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--port</code></td>
+<td>the local port to serve on</td>
+<td>8501</td>
+</tr>
+</tbody>
+</table>
+<p>It needs the <code>gui</code> extra, and says so if that is missing.</p>
+<h2 id="preffect-example-data"><code>preffect example-data</code><a class="headerlink" href="#preffect-example-data" title="Permanent link">&para;</a></h2>
+<p>Writes a small simulated cohort, so the commands above can be tried before
+any real data is to hand, and so the <a href="../vignette/">worked example</a> runs from a
+tool install, which has no copy of the source.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>preffect<span class="w"> </span>example-data<span class="w"> </span>--out<span class="w"> </span>example_data
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>What it does</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--out</code></td>
+<td>the folder to write under</td>
+<td><code>example_data</code></td>
+</tr>
+<tr>
+<td><code>--seed</code></td>
+<td>seed for the simulation; the same seed writes the same files</td>
+<td>0</td>
+</tr>
+<tr>
+<td><code>--unmatched</code></td>
+<td>the share of patients whose second tissue is left out of the full model's data, so there is something to pad; at least 0 and below 1</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>It writes three things, each as three splits with no sample in common:
+<code>simple/</code> for the simple model; <code>single/</code>, the same counts plus a
+sample-sample network with real edges in it; and <code>full/</code>, two tissues per
+patient under different names with the correspondence table the full model
+needs. 200 genes, three groups of samples that each raise a different block
+of genes, negative binomial counts. It checks that no two splits share a
+sample or are the same file before it reports success, and refuses to write
+otherwise: version 0.1's vignettes shipped a <code>test/</code> folder that was a copy
+of <code>validation/</code>. At <code>--unmatched 0</code> it draws no random numbers for the
+gaps, so the files are the same whether the option exists or not.</p>
+<h2 id="when-it-refuses">When it refuses<a class="headerlink" href="#when-it-refuses" title="Permanent link">&para;</a></h2>
+<p>The message names what was asked for and what to do instead. A few you may
+meet:</p>
+<table>
+<thead>
+<tr>
+<th>It says</th>
+<th>It means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>no such folder</code></td>
+<td>the path given to <code>--train</code>, <code>--validation</code> or <code>--data</code> does not exist</td>
+</tr>
+<tr>
+<td><code>no files matching '*tau_&lt;n&gt;.h5ad'</code></td>
+<td>the folder exists but holds no count file named the way PREFFECT expects</td>
+</tr>
+<tr>
+<td><code>gene name(s) appear more than once</code></td>
+<td>gene names are the key everything matches on, and some repeat; it lists them, worst first</td>
+</tr>
+<tr>
+<td><code>the validation data is the training data</code></td>
+<td>printed by <code>check</code>, not a refusal: your two splits hold the same samples</td>
+</tr>
+<tr>
+<td><code>a network with NO edges between samples</code></td>
+<td>the file carries a sample-sample network with nothing in it; use <code>--kind simple</code></td>
+</tr>
+<tr>
+<td><code>cannot write --out</code></td>
+<td>the output path was checked before any work and cannot be written</td>
+</tr>
+<tr>
+<td><code>--freeze only makes sense with --from-model</code></td>
+<td>there is nothing to hold still in a model that has not been fitted</td>
+</tr>
+</tbody>
+</table>
+<p>If a message tells you only that something is wrong and not what to do about
+it, that is a defect in the message, and worth reporting.</p>
+<h2 id="what-the-command-line-does-not-reach">What the command line does not reach<a class="headerlink" href="#what-the-command-line-does-not-reach" title="Permanent link">&para;</a></h2>
+<p>Imputation scored against a genuine held-out set, clustering the latent
+summary, and figures are done from Python. <a href="../guide/">Using it</a> covers them.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

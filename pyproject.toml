@@ -1,0 +1,91 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "preffect"
+version = "0.2.0"
+description = "Probabilistic modelling of RNA sequencing from formalin-fixed paraffin-embedded material"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "CC0-1.0" }
+authors = [
+    { name = "Eliseos J. Mucaki" },
+    { name = "Michael T. Hallett" },
+]
+keywords = ["FFPE", "RNA-seq", "variational autoencoder", "denoising", "imputation"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+# torch >= 2.6 is a floor, not a preference. 2.6 changed torch.load to refuse
+# pickled objects by default, which is why checkpoints in this version store
+# tensors and configuration rather than a pickled session object.
+dependencies = [
+    "torch>=2.6",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "pandas>=2.0",
+    "anndata>=0.10",
+]
+
+[project.optional-dependencies]
+graph = ["torch-geometric>=2.5"]
+# Clustering is a computation, plotting is presentation, so they are separate.
+# Someone who wants a clustering-recovery number should not need matplotlib.
+# leidenalg and igraph are what scanpy's Leiden actually runs on; the previous
+# viz group named scanpy without them and would have failed at the first call.
+cluster = [
+    "scanpy>=1.10",
+    "scikit-learn>=1.4",
+    "leidenalg>=0.10",
+    "igraph>=0.11",
+]
+viz = ["preffect[cluster]", "matplotlib>=3.8", "umap-learn>=0.5"]
+# The browser interface draws the package's own figures, so it needs viz. It
+# runs locally; `preffect gui` switches off Streamlit's usage reporting.
+gui = ["streamlit>=1.30", "preffect[viz]"]
+# The API reference is generated from the docstrings, so there is no second
+# copy to keep in step. Version 0.1 committed built HTML without its sources,
+# which means its documentation cannot be rebuilt or corrected. Issue #2.
+docs = ["mkdocs>=1.6", "mkdocs-material>=9.5", "mkdocstrings[python]>=0.26"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "torch-geometric>=2.5",
+    "preffect[cluster]",
+    "preffect[gui]",
+    # A static ffmpeg with H.264, for exp/09's summary video. The ffmpeg on a
+    # shared machine's path may have no working encoder at all; this one does.
+    "imageio-ffmpeg>=0.5",
+]
+
+[project.scripts]
+preffect = "preffect.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: runs a real training loop; deselect with -m 'not slow'",
+    # Importing scanpy, and compiling umap's numba kernels, costs about 80
+    # seconds once per session and dwarfs the work these tests do. They run by
+    # default, because a test nobody runs is not a test. For the edit-run loop:
+    #     pytest -m 'not extras'     core suite, about 20 seconds
+    "extras: needs the cluster or viz extra; deselect with -m 'not extras'",
+    "gpu: requires a CUDA device",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

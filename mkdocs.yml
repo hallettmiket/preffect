@@ -1,0 +1,76 @@
+# Documentation for PREFFECT 0.2.
+#
+# Version 0.1 used Sphinx with hand-editing, and committed the built HTML
+# without the sources, so its documentation cannot be rebuilt or corrected.
+# This setup takes the API reference from the docstrings rather than from a
+# second copy, so there is nothing to keep in step by hand. Issue #2.
+#
+#   .venv/bin/mkdocs serve    # live preview on localhost:8000
+#   .venv/bin/mkdocs build    # writes docs/, committed only in the public release
+
+site_name: PREFFECT 0.2
+# The sources are in docs_src/ and the built site is written to docs/, which
+# GitHub Pages serves from the main branch. The built site is committed in
+# the public repository at each release, and ignored here.
+docs_dir: docs_src
+site_dir: docs
+site_description: A statistical model for RNA sequencing counts from FFPE tissue
+repo_url: https://github.com/hallettmiket/preffect
+edit_uri: ""
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: {icon: material/weather-sunny, name: Light mode}
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: sphinx
+            show_source: true
+            show_root_heading: true
+            show_signature_annotations: true
+            separate_signature: true
+            members_order: source
+            filters: ["!^_"]
+            heading_level: 3
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.highlight: {anchor_linenums: true}
+  - pymdownx.superfences
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - A worked example: vignette.md
+  - The command line: command-line.md
+  - The graphical interface: gui.md
+  - Using it: guide.md
+  - Choosing a distribution: choosing-a-distribution.md
+  - Reference:
+      - Settings: reference/config.md
+      - Data: reference/data.md
+      - Models: reference/models.md
+      - Training and inference: reference/training.md
+      - Clustering and figures: reference/analysis.md
+  - What changed from 0.1: changes.md
+  - Speed: speed.md

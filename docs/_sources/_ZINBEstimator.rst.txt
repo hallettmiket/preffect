@@ -1,7 +1,0 @@
-_ZINBEstimator.py module
-======================
-
-.. automodule:: wrappers._ZINBEstimator
-   :members:
-   :undoc-members:
-   :show-inheritance:

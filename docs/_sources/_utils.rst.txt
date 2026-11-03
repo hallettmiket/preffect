@@ -1,7 +1,0 @@
-_utils.py module
-======================
-
-.. automodule:: _utils
-   :members:
-   :undoc-members:
-   :show-inheritance:

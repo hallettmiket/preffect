@@ -1,7 +1,0 @@
-_logger_config.py module
-======================
-
-.. automodule:: _logger_config
-   :members:
-   :undoc-members:
-   :show-inheritance:
