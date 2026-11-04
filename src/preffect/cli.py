@@ -246,9 +246,10 @@ def build_parser() -> argparse.ArgumentParser:
         "gui",
         help="open the graphical interface in a browser",
         description=(
-            "Opens PREFFECT's graphical interface in your browser: check a folder "
-            "of counts, apply a saved model, and look at the before-and-after "
-            "figures. Runs on this machine only; nothing leaves it."
+            "Opens PREFFECT's graphical interface in your browser: prepare and look "
+            "at a folder of counts, apply a saved model, read how the fit went, and "
+            "look at the figures, a page at a time. Runs on this machine only; "
+            "nothing leaves it."
         ),
     )
     gui.add_argument(

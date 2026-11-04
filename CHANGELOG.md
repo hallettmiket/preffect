@@ -1,5 +1,9 @@
 # Changes
 
+## Unreleased
+
+- The graphical interface's pages sit under six headings in the sidebar, in the order the work is done (Start, Your data, The fit, Does the fit hold?, Ask the model, Compare), as clickable titles each phrased as the question the page answers, with an address of its own. Before, the pages were one flat list of radio buttons with the page about the fitted model first and the two steps that come before any model in the middle. The form that opens a run moved from the sidebar to the landing page, which says what to do first; three lines under the page list say what is open, on every page; and a new page, *What does the data look like?*, reads a folder without a model and shows what is in it: samples, genes, how much of the matrix is zero, the sample table's columns and their values, the network, and how deeply each sample was sequenced. A button on the landing page, *Try it on the example data*, writes the simulated example cohort under the system's temporary folder, fits the worked example's two models on it through `preffect train` and opens both, so every page can be seen populated without typing a path; the paths it fills in are where it put the files, and no path is a default. The `gui` extra needs Streamlit 1.36 or later.
+
 ## 0.2.0
 
 Version 0.2 is a rewrite of version 0.1, not a patch. Three things follow for

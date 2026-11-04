@@ -1,13 +1,13 @@
 # The graphical interface
 
 A page in your browser for the part of the work you want to look at: turning
-your two tables into the file PREFFECT reads, whether that folder of counts is
-usable, how the fit that produced a saved model went, and the figures that say
-whether to believe it. It reads like a report. You pick a run, you read a page
-describing it, and then you move through the figures one at a time. Past the
-figures it will look up a single gene or a single sample, ask whether the
-model can fill in a count it was not shown, and put two saved models side by
-side on the same counts.
+your two tables into the file PREFFECT reads, whether that folder of counts
+can be fitted and what it holds, how the fit that produced a saved model went,
+and the figures that say whether to believe it. It reads like a report. The
+pages sit under six headings in the sidebar, in the order the work is done,
+and you move through them a page at a time. Past the figures it will look up a
+single gene or a single sample, ask whether the model can fill in a count it
+was not shown, and put two saved models side by side on the same counts.
 
 ```bash
 preffect gui
@@ -30,33 +30,66 @@ SSH and open the same address in your own browser:
 ssh -L 8501:localhost:8501 your-server    # then preffect gui on the server
 ```
 
-## What it does
+## How it is laid out
 
-It shows you one run at a time, a page at a time. The sidebar is where you
-name the run and where you move between pages; everything else is the page you
-are on.
+The sidebar lists the pages under six headings, top to bottom in the order the
+work is done. Each title is the question the page answers, and clicking it
+opens that page and nothing else. A page is listed only once what it needs is
+open, so before a run is open you see four pages, and the rest appear when a
+model has been applied. Under the list, three lines say what is open, on every
+page: the folder of counts, the model, and the second model if there is one.
+Every page opens by saying what it is for, before any number or picture. Each
+page has an address of its own, so a figure page can be bookmarked and
+returned to.
 
-### Choosing a run
+| Heading | Pages | Needs |
+|---|---|---|
+| Start | Start here | nothing |
+| Your data | Prepare the input file; Can this be fitted?; What does the data look like? | a folder of counts, for the last two |
+| The fit | How did the fit go? | a run |
+| Does the fit hold? | one page per figure, six in all | a run |
+| Ask the model | What did it make of one gene or sample?; Can it fill in hidden counts? | a run |
+| Compare | How do two models compare? | a second model, opened on the same counts |
 
-A run is a saved model and the counts you want to apply it to, and the sidebar
-is where you name both. Give it the folder of counts, say how many tissue
-files are in it, give it the model `preffect train` wrote, and press **Open the
-run**. Applying the model takes a moment and then happens once: moving between
-pages after that does not refit or reapply anything.
+## Start here
 
-Until you do, three pages are available, and the rest are not offered at all.
-A page with nothing behind it is a page that fails when you press it. The
-three are the two steps that come before a run, preparing the file and
-checking it, and the run page itself, which says what to fill in.
+The landing page. It says in one sentence what the interface is for and that
+fitting itself happens on the command line, then says whether a run is open,
+and then asks for what it needs: the folder of counts and how many tissue
+files are in it, the model `preffect train` wrote and the device to run it
+on, and, optionally, a second model to compare. A folded section at the bottom
+walks the four steps for a first visit, and stays folded after that.
 
-Below that is a second model, which is optional. Name one and press **Open the
-comparison** and it is applied to the same counts, which adds one more page.
+**Nothing to open yet?** Press **Try it on the example data** and the
+interface writes the simulated example cohort under the system's temporary
+folder, fits the worked example's two models on it, a plain one and a
+zero-inflated one, with the worked example's own settings, fills in the paths
+it made and opens both. It takes about ten seconds. It is the one fit the
+interface makes: the cohort is small and simulated, and the fit goes through
+the same `preffect train` the worked example runs. Every page then has
+something behind it, and the comparison page has two different models to put
+side by side. Nothing is filled in until you press it, because a path that
+only exists on one machine is not a default this package will ship.
 
-### Prepare data
+**A run is a saved model and the counts you want to apply it to.** Give both
+and press **Open the run**. Applying the model takes a moment and then happens
+once: moving between pages after that does not refit or reapply anything, and
+the line at the top of the page says what is open. The three pages under
+*Your data* need only the folder, so you can prepare, check and look at a
+cohort before you have fitted anything.
 
-**Prepare data** writes the file everything else here reads, from the two
-tables you are likely to have: a counts table with a count for every sample
-and gene, and a sample table saying what is known about each sample. It is
+Name a second model and press **Open the comparison** and it is applied to the
+same counts, which adds the *Compare* heading. Opening a different first run
+drops the second, because two models over two different sets of counts is not
+a comparison and nothing on the page would say so.
+
+## Your data
+
+### Prepare the input file
+
+Writes the file everything else here reads, from the two tables you are
+likely to have: a counts table with a count for every sample and gene, and a
+sample table saying what is known about each sample. It is
 [`preffect prepare`](command-line.md) with the steps laid out, and it is
 where to start if PREFFECT has never seen your cohort.
 
@@ -85,20 +118,46 @@ Name a folder, press the button, and one file per tissue is written. **Nothing
 already in the folder is written over**: a name that is taken is refused, with
 the path it would have replaced. Every count is checked before anything is
 written and a problem names the entries at fault. The page finishes by running
-the same check the page below it runs, so you end on the sentence that says
+the same check the next page runs, so you end on the sentence that says
 whether what you made can be fitted.
 
-### Check the data
+### Can this be fitted?
 
-**Check the data** is what `preffect check` reports, and it needs no model.
-It says how many samples and genes each tissue file holds, whether there is a
-sample-sample network and how many links it has, and, if something would stop
-a run, the sentence the run would have refused with. Run it on a new folder
+What `preffect check` reports, and it needs no model. It says how many samples
+and genes each tissue file holds, whether there is a sample-sample network and
+how many links it has, and, if something would stop a run, the sentence the
+run would have refused with. It is a pass or a fail. Run it on a new folder
 before you spend hours fitting anything.
 
-### The run page
+### What does the data look like?
 
-**The run** describes the fit itself, and it is what opens when a run opens.
+What the folder holds, read without a model, for the decisions that come
+before a fit. For each tissue file:
+
+- how many samples and genes there are, and **how much of the matrix is
+  zero**, which is what decides whether to ask `preffect train` for the
+  zero-inflated distribution, `--likelihood ZINB`: a matrix that is largely
+  zeros is where it earns its extra parameter, and one that is not usually
+  does not need it;
+- **the sample table's columns**, with how many distinct values each takes,
+  how many are missing and a few examples, which is where a batch to correct
+  for or a label to colour the latent summary by comes from;
+- whether the file carries a **sample-sample network**, and with how many
+  links, which only the graph models use;
+- **how deeply each sample was sequenced**, as a histogram of each sample's
+  total count. A bar far to the right of the rest is a sample sequenced far
+  more deeply than the others and one far to the left is a failed library;
+  either pulls a fit towards itself, and this is the moment to drop it, before
+  any model has been pulled by it.
+
+The page before this one says whether the folder can be fitted at all; this
+one says what you would be fitting.
+
+## The fit
+
+### How did the fit go?
+
+Describes the fit itself, and it is the page to read first once a run is open.
 It is there so that nobody reads a figure without first knowing whether the
 model behind it had finished moving. It shows, in this order:
 
@@ -121,44 +180,47 @@ the model file. A file written before that was kept is still a perfectly good
 model: the page says it was saved before its history was kept, and everything
 that does not need the history is shown as usual. Refit if you want the curve.
 
-### One page per figure
+## Does the fit hold?
 
-Each figure gets a page of its own, and each page opens by saying what the
-picture shows, what a good one looks like, what a bad one looks like and what
-to do about it. They are written for someone who has not read the code. The
-pages are:
+Each figure gets a page of its own, titled with the question it answers, and
+each page opens by saying what the picture shows, what a good one looks like,
+what a bad one looks like and what to do about it. They are written for
+someone who has not read the code, and they come in order from the simplest
+check of the fit to the latent summary:
 
-| Page | The question it answers |
+| Page | What is drawn |
 |---|---|
-| Library sizes | Has the model learned how deeply each sample was sequenced? |
-| Fitted against observed counts | Does the model reproduce the counts it was given, gene by gene? |
-| Batch adjustment | Has a difference between groups of samples that came from the handling been removed? |
-| Gene means and dispersion | Is the model fitting how noisy each gene is, or only its average? |
-| Zeros | Does the zero-inflated model's probability of a zero match how often genes are actually zero? |
-| The latent summary | Do samples that share a label sit together in the model's own description of them? |
+| Does it track sequencing depth? | each sample's observed total count beside the total the model inferred |
+| Does it reproduce the counts? | for the most variable genes, the count the model fitted against the count observed, sample by sample |
+| Did it remove the batch effect? | each gene's average in one batch against its average in another, in the data and in the model's view of it |
+| Is the noise per gene believable? | gene averages, fitted dispersion, library sizes, and the dispersion against the average |
+| Does it get the zeros right? | how often each gene is zero against the zero-inflated model's probability of a zero |
+| Do similar samples group together? | the model's summary of each sample squeezed to two dimensions, coloured by a column of your sample table |
 
-Two of these need something the model may not have. **Batch adjustment** needs
-a column of your sample table holding one label per sample, such as the run or
-the site it came from, and you choose which column on the page. **Zeros** needs
-the zero-inflated distribution, which is `preffect train --likelihood ZINB`.
-Where what is needed is missing, the page still opens with its description and
-says in a sentence what is missing and what to refit with, rather than drawing
-something empty.
+Two of these need something the model may not have. **Did it remove the batch
+effect?** needs a column of your sample table holding one label per sample,
+such as the run or the site it came from, and you choose which column on the
+page. **Does it get the zeros right?** needs the zero-inflated distribution,
+which is `preffect train --likelihood ZINB`. Where what is needed is missing,
+the page still opens with its description and says in a sentence what is
+missing and what to refit with, rather than drawing something empty.
 
 Every figure here is one of [`preffect.plots`](reference/analysis.md)' figures,
 drawn by the same call a script would make, so anything seen here can be
-reproduced and put in a paper. The loss curve on the run page is the one
+reproduced and put in a paper. The loss curve on the fit page is the one
 exception, and it is drawn from what the training run recorded.
 
-### Gene and sample lookup
+## Ask the model
 
-**Gene and sample lookup** answers a question about one gene or one sample,
-where every page before it describes the whole cohort at once. Pick a gene and
-it shows the count the model fitted in each sample against the count observed,
-how closely the two move together across the cohort, how variable the model
-thinks the gene is, and how often it is zero. Pick a sample and it gives one
-number saying how well the model accounts for that sample, and shows where
-that number sits among the rest.
+### What did it make of one gene or sample?
+
+Answers a question about one gene or one sample, where every page before it
+describes the whole cohort at once. Pick a gene and it shows the count the
+model fitted in each sample against the count observed, how closely the two
+move together across the cohort, how variable the model thinks the gene is,
+and how often it is zero. Pick a sample and it gives one number saying how
+well the model accounts for that sample, and shows where that number sits
+among the rest.
 
 **The measure for a sample is the mean log probability per gene** of that
 sample's observed counts under the distribution the model fitted for it.
@@ -171,13 +233,12 @@ ordered worst fit first. A sample at the top of it is usually a failed
 library, a mislabelled sample, or a sample of a different tissue from the
 rest, and it is worth looking at before it goes into anything downstream.
 
-### Can this model impute?
+### Can it fill in hidden counts?
 
-**Can this model impute?** asks whether the model can fill in a count it was
-not shown. It hides a fraction of the entries of the counts you loaded,
-chosen by a slider and a seed, runs the model on what is left, and compares
-what it predicted at the hidden entries against what was really there. This
-is what
+Asks whether the model can fill in a count it was not shown. It hides a
+fraction of the entries of the counts you loaded, chosen by a slider and a
+seed, runs the model on what is left, and compares what it predicted at the
+hidden entries against what was really there. This is what
 [`preffect train --hide`](command-line.md) reports at the end of a run, asked
 of a model that is already fitted.
 
@@ -199,17 +260,19 @@ example](vignette.md) the same model is out by about 65 per cent of the
 observed count and about 12 per cent of the count it was drawn from. Ordinary
 counts carry no such layer, and PREFFECT will not invent one.
 
-### Compare two runs
+## Compare
 
-**Compare two runs** appears once a second model has been opened on the same
-counts, so that the difference you see is the model and not the data. It has
-three parts: what each run recorded about itself, side by side; any figure
-page drawn under both models on one set of axes; and a table of three numbers
-you might decide on, worked out when you ask because clustering costs a minute
-on a real cohort. Those three are the median correlation between fitted and
-observed across genes, the latent clustering scored against a column of your
-sample table, and the imputation error, which reuses the fraction and seed the
-page above it used.
+### How do two models compare?
+
+Appears once a second model has been opened on the same counts, so that the
+difference you see is the model and not the data. It has three parts: what
+each run recorded about itself, side by side; any figure page drawn under both
+models on one set of axes; and a table of three numbers you might decide on,
+worked out when you ask because clustering costs a minute on a real cohort.
+Those three are the median correlation between fitted and observed across
+genes, the latent clustering scored against a column of your sample table,
+and the imputation error, which reuses the fraction and seed the page above it
+used.
 
 The last column of the table says which run is better on each measure, and
 reads **neither** where the two differ by less than a threshold set for that
@@ -223,14 +286,16 @@ answer. Treat a small difference here as nothing at all.
 
 ## What it does not do
 
-**It does not fit a model.** Training a real cohort is hours, and belongs on
-the command line where it can be left running and logged. The interface reads
+**It does not fit a model**, apart from the example on the landing page,
+which is seconds on simulated data and goes through `preffect train` itself.
+Training a real cohort is hours, and belongs on the command line where it can
+be left running and logged. The interface reads
 what `preffect train` wrote. That is why the count distribution is shown here
 and chosen there, with
 [`preffect train --likelihood`](command-line.md): a zero-inflated model and a
 plain one of the same kind look alike on these pages and predict different
 counts, so the page owes you the answer even though it cannot change it. The
-same holds for everything else on the run page: it reports the settings a run
+same holds for everything else on the fit page: it reports the settings a run
 used and changes none of them.
 
 **It does not score anything on samples it has not seen.** The imputation page

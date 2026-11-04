@@ -40,3 +40,9 @@ vignette_data/
 .env
 *.local.toml
 .claude/settings.json
+
+# preffect_deep_think: the rounds' outputs live under append_only, never here
+preffect_deep_think/*.html
+preffect_deep_think/*_run_output.json
+preffect_deep_think/2026-*.md
+!preffect_deep_think/2026-*_brief.md

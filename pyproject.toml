@@ -46,8 +46,9 @@ cluster = [
 ]
 viz = ["preffect[cluster]", "matplotlib>=3.8", "umap-learn>=0.5"]
 # The browser interface draws the package's own figures, so it needs viz. It
-# runs locally; `preffect gui` switches off Streamlit's usage reporting.
-gui = ["streamlit>=1.30", "preffect[viz]"]
+# runs locally; `preffect gui` switches off Streamlit's usage reporting. 1.36
+# is where a page became a plain function, which is how the sidebar is built.
+gui = ["streamlit>=1.36", "preffect[viz]"]
 # The API reference is generated from the docstrings, so there is no second
 # copy to keep in step. Version 0.1 committed built HTML without its sources,
 # which means its documentation cannot be rebuilt or corrected. Issue #2.

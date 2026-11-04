@@ -43,6 +43,7 @@ if TYPE_CHECKING:  # pragma: no cover
 __all__ = [
     "save_figure",
     "library_size_histogram",
+    "observed_library_sizes",
     "gene_scatter",
     "gene_dispersion_and_zeros",
     "sample_fit_spread",
@@ -124,6 +125,27 @@ def library_size_histogram(result, observed) -> Figure:
     both = np.concatenate([observed_totals, inferred_totals])
     for axis in (axes[0][0], axes[0][1]):
         axis.set_xlim(both.min(), both.max())
+    return figure
+
+
+def observed_library_sizes(observed) -> Figure:
+    """How deeply each sample was sequenced, before any model is fitted.
+
+    One histogram of the library sizes, which are each sample's total count:
+    the left panel of :func:`library_size_histogram`, for a folder that has
+    not been fitted yet. A sample far deeper or far shallower than the rest
+    pulls a fit towards itself, and this is the moment to see it.
+
+    :param observed: the counts, samples by genes.
+    """
+    totals = _as_array(observed).sum(axis=1)
+    if totals.size == 0:
+        raise PreffectError("there are no samples to draw")
+    figure, axes = _figure(1, 1, size=(6.0, 3.6))
+    axes[0][0].hist(totals, bins=min(30, max(5, totals.size // 2)),
+                    color="tab:blue", edgecolor="white")
+    axes[0][0].set_xlabel("total counts in a sample")
+    axes[0][0].set_ylabel("samples")
     return figure
 
 

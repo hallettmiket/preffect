@@ -1,17 +1,62 @@
-"""The graphical interface: pick a run, read how it fitted, then look at it page by page.
+"""The graphical interface: open a run, read how it fitted, then look at it page by page.
 
 Started with ``preffect gui``, which runs this file under Streamlit and opens
 it in a browser. It runs on this machine only and sends nothing anywhere;
 Streamlit's own usage reporting is switched off by the command that starts it.
 
 It covers the part of the work a person wants to *see*: turning two tables
-into the file the rest of the package reads, whether a folder of counts is
-usable, how the fit that produced a saved model went, the figures that say
-whether to believe it, what the model made of one gene or one sample, whether
-it can fill in a count it was not shown, and how two saved models compare on
-the same counts. Fitting a model is hours on a real cohort and belongs on the
-command line, where it can be left running; the interface reads what
-``preffect train`` wrote.
+into the file the rest of the package reads, whether a folder of counts can
+be fitted and what it holds, how the fit that produced a saved model went,
+the figures that say whether to believe it, what the model made of one gene
+or one sample, whether it can fill in a count it was not shown, and how two
+saved models compare on the same counts. Fitting a model is hours on a real
+cohort and belongs on the command line, where it can be left running; the
+interface reads what ``preffect train`` wrote.
+
+## The pages are grouped by what they need
+
+The sidebar lists the pages under six headings, in the order the work is
+done: *Start*, where a run is opened; *Your data*, the three pages that need
+no model; *The fit*, which describes the saved model; *Does the fit hold?*,
+one page per figure; *Ask the model*, the two pages that put a question to
+the open run; and *Compare*, once a second model is open. A page is listed
+only when what it needs is open, so a page is never offered with nothing
+behind it, and every page that reports something is titled with the question
+it answers. The first version offered one flat list of radio buttons, with the
+page about the fitted model first, the two steps that come before any model
+in the middle and the figures after them, so a reader could not tell which
+pages were about their data and which were about a model, and landed on an
+empty page. Finding 67.
+
+## Why Streamlit's own navigation, and why the pages are functions
+
+Streamlit's multi-page mechanism once wanted a ``pages/`` directory beside the
+script, one file per page, which is why the first version drew a radio list
+instead: this package ships one module that ``preffect gui`` runs by path.
+Since Streamlit 1.36 a page can be a plain function, so :func:`render` builds
+the list from what is open, hands it to ``st.navigation``, and each page is a
+closure over the open run. One entry point, headings in the sidebar, and an
+address per page that can be bookmarked.
+
+## Why the form is on the landing page, and how its values survive
+
+The folder, the model and the device are asked for once, on *Start here*,
+rather than in a sidebar repeated on every page. Streamlit forgets a widget's
+value as soon as a run passes without drawing it, which is every visit to
+another page, so :func:`render` writes each form value back into the session
+on every run, which is the documented way to keep it. The run itself, once
+opened, is held in the session under its own key and is not a widget.
+
+## The one fit the interface makes: the example
+
+The interface does not fit models, because a real cohort takes hours and
+belongs on the command line. The one exception is the button on the landing
+page that writes the simulated example cohort and fits the worked example's
+two models on it, which takes seconds, by calling the command line's own
+``train`` in this process with the worked example's exact settings. It fills
+the form with the paths it made, under the system's temporary folder, so a
+newcomer sees every page populated without typing a path and nothing in the
+package names one.
 
 ## Why it reads as a report rather than one long page
 
@@ -23,16 +68,6 @@ what the picture shows, what a good one looks like and what to do about a bad
 one. Only the chosen page is drawn, so changing the colouring of the latent
 summary no longer redraws five figures that did not change.
 
-## Why the pages are built here instead of in a ``pages/`` directory
-
-Streamlit's own multi-page mechanism wants a ``pages/`` directory beside the
-script, one file per page. This package ships a single module that
-``preffect gui`` runs by path, so a directory of further scripts would have to
-be found, installed and kept importable alongside it, and there would be more
-than one way into the interface. The pages are a list in the sidebar instead,
-and :func:`render` draws the chosen one. One entry point, and the page list is
-built from what the run actually has.
-
 ## One description and one drawing call per figure
 
 A figure page and the comparison of two runs draw the same figures, so the
@@ -42,7 +77,7 @@ page a reader sees and the page they compare against drift apart.
 
 Every figure of the data is one of :mod:`preffect.plots`' figures, drawn by the
 same call a script would make, so a picture seen here can be reproduced and put
-in a paper. The loss curve on the run page is the exception and is drawn here:
+in a paper. The loss curve on the fit page is the exception and is drawn here:
 the figure in :mod:`preffect.plots` needs every term of the objective at every
 epoch, and what a checkpoint carries is the two totals.
 """
@@ -56,38 +91,79 @@ from typing import Any
 
 __all__ = ["render"]
 
-#: Available before any model is loaded: the run page, which is where the
-#: interface lands and which says what to fill in, then the two things done
-#: before there is a run at all, in the order they are done. The rest need a
-#: fitted model applied to some counts.
-PREPARE_PAGE = "Prepare data"
-OPENING_PAGES = ("The run", PREPARE_PAGE, "Check the data")
+#: The pages, each named by the question it answers, and the one page that
+#: writes a file named by the instruction. Every title is a constant so that
+#: the tests, the comparison page and the documentation cannot drift from the
+#: sidebar.
+START_PAGE = "Start here"
+PREPARE_PAGE = "Prepare the input file"
+CHECK_PAGE = "Can this be fitted?"
+LOOK_PAGE = "What does the data look like?"
+FIT_PAGE = "How did the fit go?"
+DEPTH_PAGE = "Does it track sequencing depth?"
+COUNTS_PAGE = "Does it reproduce the counts?"
+BATCH_PAGE = "Did it remove the batch effect?"
+NOISE_PAGE = "Is the noise per gene believable?"
+ZEROS_PAGE = "Does it get the zeros right?"
+GROUPS_PAGE = "Do similar samples group together?"
+LOOKUP_PAGE = "What did it make of one gene or sample?"
+IMPUTE_PAGE = "Can it fill in hidden counts?"
+COMPARE_PAGE = "How do two models compare?"
+
+#: The pages that need no model, in the order they are done: write the file,
+#: find out whether it can be fitted, then look at what it holds.
+DATA_PAGES = (PREPARE_PAGE, CHECK_PAGE, LOOK_PAGE)
 
 #: The figure pages, in the order a reader should meet them: the simplest
 #: check of the fit first, the latent summary last.
-FIGURE_PAGES = (
-    "Library sizes",
-    "Fitted against observed counts",
-    "Batch adjustment",
-    "Gene means and dispersion",
-    "Zeros",
-    "The latent summary",
-)
+FIGURE_PAGES = (DEPTH_PAGE, COUNTS_PAGE, BATCH_PAGE, NOISE_PAGE, ZEROS_PAGE, GROUPS_PAGE)
 
-#: Pages that ask a question of the open run rather than describing it.
-LOOKUP_PAGE = "Gene and sample lookup"
-IMPUTE_PAGE = "Can this model impute?"
+#: Pages that put a question to the open run rather than describing it.
 TOOL_PAGES = (LOOKUP_PAGE, IMPUTE_PAGE)
 
-#: Offered only once a second model has been opened on the same counts.
-COMPARE_PAGE = "Compare two runs"
+#: The sidebar, top to bottom: each heading and the pages under it, in the
+#: order the work is done. A page is listed only when what it needs is open.
+SECTIONS = (
+    ("Start", (START_PAGE,)),
+    ("Your data", DATA_PAGES),
+    ("The fit", (FIT_PAGE,)),
+    ("Does the fit hold?", FIGURE_PAGES),
+    ("Ask the model", TOOL_PAGES),
+    ("Compare", (COMPARE_PAGE,)),
+)
+
+#: Each page's address, so that a page can be bookmarked and returned to.
+URL_PATHS = {
+    START_PAGE: "start",
+    PREPARE_PAGE: "prepare",
+    CHECK_PAGE: "check",
+    LOOK_PAGE: "look",
+    FIT_PAGE: "fit",
+    DEPTH_PAGE: "depth",
+    COUNTS_PAGE: "counts",
+    BATCH_PAGE: "batch",
+    NOISE_PAGE: "noise",
+    ZEROS_PAGE: "zeros",
+    GROUPS_PAGE: "groups",
+    LOOKUP_PAGE: "lookup",
+    IMPUTE_PAGE: "impute",
+    COMPARE_PAGE: "compare",
+}
+
+#: The form on the landing page, by widget key. Written back into the session
+#: on every run, so that leaving the page does not blank them.
+FORM_KEYS = ("data_folder", "n_tissues", "model_path", "device", "second_model_path")
+
+#: The worked example's own fitting recipe (`docs_src/vignette.md`), which is
+#: what the example button runs, through the command line's ``train``.
+EXAMPLE_RECIPE = ("--epochs", "80", "--batch-size", "40", "--threads", "4", "--patience", "5")
 
 #: What each figure shows, what a good one looks like, what a bad one looks
 #: like, and what to do about it. Written for a reader who has not read the
 #: code. Held here rather than inside each page because the comparison of two
 #: runs shows the same figures and must say the same thing about them.
 FIGURE_DESCRIPTIONS = {
-    "Library sizes": (
+    DEPTH_PAGE: (
         "The library size of a sample is the total of all its counts, and it "
         "says how deeply that sample was sequenced rather than anything "
         "biological. The left panel is the observed total for each sample and "
@@ -101,7 +177,7 @@ FIGURE_DESCRIPTIONS = {
         "one sample sequenced ten times as deeply as the rest will pull the "
         "fit, and dropping it is usually the right answer."
     ),
-    "Fitted against observed counts": (
+    COUNTS_PAGE: (
         "This is the plainest question to ask of a fitted model: does it "
         "reproduce the counts it was given. Each panel is one gene, with the "
         "observed count for a sample across and the count the model fitted for "
@@ -114,7 +190,7 @@ FIGURE_DESCRIPTIONS = {
         "nothing about which sample is which, which is usually too few epochs "
         "or a latent space that collapsed during training."
     ),
-    "Batch adjustment": (
+    BATCH_PAGE: (
         "A batch is a group of samples handled together, and a batch effect is "
         "a difference between those groups that came from the handling rather "
         "than from the biology. Each row of the figure compares two batches: "
@@ -127,7 +203,7 @@ FIGURE_DESCRIPTIONS = {
         "panels look alike, the model was not told about the batches: name the "
         "column as a correction variable and fit again."
     ),
-    "Gene means and dispersion": (
+    NOISE_PAGE: (
         "Four panels, and the last is the one worth your time. Top left is each "
         "gene's average count, observed across and fitted up; top right is how "
         "the fitted dispersion is spread across genes; bottom left is each "
@@ -138,10 +214,10 @@ FIGURE_DESCRIPTIONS = {
         "logarithmic scale, and in real data the dispersion falls as the "
         "average rises. A flat or rising cloud there means the dispersion is "
         "not being fitted, and the model's idea of how noisy each gene is "
-        "cannot be trusted; fit for longer, and check the loss curve on the run "
+        "cannot be trusted; fit for longer, and check the loss curve on the fit "
         "page before reading anything else here."
     ),
-    "Zeros": (
+    ZEROS_PAGE: (
         "A count of zero means one of two things: the gene was genuinely off in "
         "that sample, or it was there and was missed. The zero-inflated model "
         "carries a separate probability that any given count is a zero for the "
@@ -155,7 +231,7 @@ FIGURE_DESCRIPTIONS = {
         "well below mean it is explaining real zeros as ordinary low counts "
         "instead."
     ),
-    "The latent summary": (
+    GROUPS_PAGE: (
         "The latent summary is the model's own short description of each "
         "sample: a few dozen numbers it decides are enough to rebuild that "
         "sample's counts. This page squeezes those numbers down to two so they "
@@ -329,18 +405,18 @@ def _draw_figure(plots, page: str, run: Run, choices: dict):
         when this model has nothing to draw for this page.
     """
     result, observed = run.result, run.observed
-    if page == "Library sizes":
+    if page == DEPTH_PAGE:
         return plots.library_size_histogram(result, observed)
-    if page == "Fitted against observed counts":
+    if page == COUNTS_PAGE:
         return plots.gene_scatter(result, observed, gene_names=run.gene_names)
-    if page == "Batch adjustment":
+    if page == BATCH_PAGE:
         batches = run.target.obs[choices["batch_column"]].astype(str).to_numpy()
         return plots.batch_adjustment(result, observed, batches)
-    if page == "Gene means and dispersion":
+    if page == NOISE_PAGE:
         return plots.library_size_and_dispersion(result, observed)
-    if page == "Zeros":
+    if page == ZEROS_PAGE:
         return plots.zero_fraction_against_pi(result, observed)
-    if page == "The latent summary":
+    if page == GROUPS_PAGE:
         colour = choices["colour_by"]
         values = None if colour == "none" else run.target.obs[colour].astype(str).to_numpy()
         return plots.latent_umap(result, colour_by=values, colour_label=colour)
@@ -355,7 +431,7 @@ def _figure_controls(st, page: str, run: Run, key_prefix: str) -> dict | None:
     table names no groups.
     """
     choices = {"batch_column": None, "colour_by": "none"}
-    if page == "Batch adjustment":
+    if page == BATCH_PAGE:
         columns = _group_columns(run.target.obs)
         if not columns:
             st.info(
@@ -368,7 +444,7 @@ def _figure_controls(st, page: str, run: Run, key_prefix: str) -> dict | None:
         choices["batch_column"] = st.selectbox(
             "Column holding the batch", columns, index=default, key=f"{key_prefix}batch_by"
         )
-    if page == "The latent summary":
+    if page == GROUPS_PAGE:
         choices["colour_by"] = st.selectbox(
             "Colour by", ["none"] + _colour_columns(run.target.obs), key=f"{key_prefix}colour_by"
         )
@@ -384,18 +460,19 @@ def _check_page(st, data_folder: str, n_tissues: int) -> None:
     """Whether a folder of counts could be fitted at all, without fitting it."""
     from preffect.workflow import inspect_split
 
-    st.header("Check the data")
+    st.header(CHECK_PAGE)
     st.markdown(
         "This is what `preffect check` reports, and it needs no model. It says "
         "how many samples and genes each tissue file holds, whether there is a "
         "sample-sample network and how many links it has, and, if something "
         "would stop a run, the sentence the run would have refused with. Run it "
-        "on a new folder before you spend hours fitting anything."
+        "on a new folder before you spend hours fitting anything. It is a pass "
+        "or a fail; the page after it says what the folder holds."
     )
     if not data_folder:
-        st.info("Give a folder of counts in the sidebar, then press Check the data.")
+        st.info(f"Give a folder of counts on {START_PAGE}, then press the button here.")
         return
-    if st.button("Check the data", key="check"):
+    if st.button("Check the folder", key="check"):
         st.session_state["report"] = inspect_split(Path(data_folder), n_tissues)
 
     report = st.session_state.get("report")
@@ -422,6 +499,149 @@ def _show_report(st, report) -> None:
         st.success("The counts look usable.")
     else:
         st.error(report.problem)
+
+
+def _look_page(st, plt, plots, data_folder: str, n_tissues: int) -> None:
+    """What a folder of counts holds, read without a model, for the choices before a fit."""
+    from preffect.errors import PreffectError
+
+    st.header(LOOK_PAGE)
+    st.markdown(
+        "What is in a folder of counts, read without fitting anything, for the "
+        "decisions that come before a fit. For each tissue file it says how "
+        "many samples and genes there are and how much of the matrix is zero, "
+        "which is what decides whether to ask `preffect train` for the "
+        "zero-inflated distribution; what columns the sample table has and how "
+        "many values each takes, which is where a batch to correct for or a "
+        "label to colour by comes from; whether the file carries a "
+        "sample-sample network, which only the graph models use; and how deeply "
+        "each sample was sequenced, as a picture. A sample sequenced ten times "
+        "as deeply as the rest, or a library that failed, shows up here before "
+        "any model has been pulled by it, and this is the moment to drop it. "
+        "The page before this one says whether the folder can be fitted at "
+        "all; this one says what you would be fitting."
+    )
+    if not data_folder:
+        st.info(f"Give a folder of counts on {START_PAGE}, then press the button here.")
+        return
+    if st.button("Read the folder", key="look"):
+        try:
+            with st.spinner("Reading the counts"):
+                st.session_state["looked"] = _read_for_a_look(Path(data_folder), n_tissues)
+        except PreffectError as error:
+            st.session_state.pop("looked", None)
+            st.error(str(error))
+
+    looked = st.session_state.get("looked")
+    if looked is None:
+        return
+    if looked["folder"] != str(Path(data_folder)):
+        st.info(
+            f"This is {looked['folder']}, which is no longer the folder on "
+            f"{START_PAGE}. Press the button again to read {data_folder}."
+        )
+        return
+    st.caption(looked["folder"])
+    several = len(looked["tissues"]) > 1
+    for index, tissue in enumerate(looked["tissues"], start=1):
+        if several:
+            st.subheader(f"Tissue {index}")
+        _describe_tissue(st, plt, plots, tissue)
+
+
+def _read_for_a_look(folder: Path, n_tissues: int) -> dict:
+    """Read the tissue files as they are, without the checks a run would make.
+
+    The loader refuses a file it cannot read, in its own sentence. Whether the
+    counts would stop a run is the check page's question, and a folder that
+    would fail it is still worth looking at, which is why this reads and does
+    not check.
+    """
+    from preffect.data.loading import load_tissues
+
+    return {"folder": str(folder), "tissues": load_tissues(folder, n_tissues)}
+
+
+def _describe_tissue(st, plt, plots, tissue) -> None:
+    """One tissue file: its size, its zeros, its sample table, its network, its depth."""
+    import numpy as np
+
+    from preffect.data.graph import has_adjacency
+    from preffect.workflow import describe_network
+
+    observed = _as_dense(tissue.X)
+    totals = observed.sum(axis=1)
+    zeros = observed == 0
+    row = st.columns(4)
+    row[0].metric("samples", tissue.n_obs)
+    row[1].metric("genes", tissue.n_vars)
+    row[2].metric(
+        "entries that are zero",
+        f"{float(zeros.mean()):.0%}" if zeros.size else "none",
+        help="The share of all the counts in the matrix that are zero. A matrix "
+        "that is largely zeros is where the zero-inflated distribution, "
+        "`preffect train --likelihood ZINB`, earns its extra parameter; one "
+        "that is not usually does not need it.",
+    )
+    row[3].metric(
+        "median library size",
+        f"{float(np.median(totals)):,.0f}" if totals.size else "none",
+        help="A sample's library size is the total of its counts, which says "
+        "how deeply it was sequenced.",
+    )
+    if zeros.size:
+        per_gene = zeros.mean(axis=0)
+        st.caption(
+            f"The median gene is zero in {float(np.median(per_gene)):.0%} of "
+            f"samples, and {int((per_gene == 1.0).sum())} gene(s) are zero in "
+            f"every sample."
+        )
+
+    st.markdown("**The sample table**")
+    obs = tissue.obs
+    if obs.shape[1] == 0:
+        st.write(
+            "No columns: nothing is known about the samples beyond their "
+            "counts, so there is no batch to correct for and nothing to colour "
+            "the latent summary by."
+        )
+    else:
+        st.table([
+            {
+                "column": str(column),
+                "distinct values": int(obs[column].nunique(dropna=False)),
+                "missing": int(obs[column].isna().sum()),
+                "for example": ", ".join(
+                    str(v) for v in obs[column].dropna().drop_duplicates().head(3)
+                ),
+            }
+            for column in obs.columns
+        ])
+        st.caption(
+            "A column with a few distinct values, such as the run or the site a "
+            "sample came from, is a batch: the model can be told about it as a "
+            "correction variable when it is fitted from Python, the batch page "
+            "compares the groups it names, and the latent summary can be "
+            "coloured by any column with up to twenty values."
+        )
+
+    st.markdown("**The sample-sample network**")
+    if has_adjacency(tissue):
+        st.write(f"The file carries {describe_network(tissue)}.")
+    else:
+        st.write(
+            "None in the file. The simple model needs none; the single and full "
+            "models do, and `preffect network` adds one."
+        )
+
+    st.markdown("**How deeply each sample was sequenced**")
+    _show(st, plt, lambda: plots.observed_library_sizes(observed))
+    st.caption(
+        "Each sample's total count. A bar far to the right of the rest is a "
+        "sample sequenced far more deeply than the others and one far to the "
+        "left is a failed library; either pulls a fit towards itself, and "
+        "dropping it before fitting is usually the right answer."
+    )
 
 
 def _prepare_page(st) -> None:
@@ -750,9 +970,9 @@ def _prepare_write(st, read, networks, association) -> None:
     _show_report(st, prepared["report"])
 
 
-def _run_page(st, plt, run: Run | None, n_tissues: int) -> None:
+def _fit_page(st, plt, run: Run | None, n_tissues: int) -> None:
     """What was fitted, how the fit went, and what it was applied to."""
-    st.header("The run")
+    st.header(FIT_PAGE)
     st.markdown(
         "Everything about this fit in one place, before any figure. It says what "
         "kind of model was fitted and on what, how the training loss moved and "
@@ -763,8 +983,8 @@ def _run_page(st, plt, run: Run | None, n_tissues: int) -> None:
     )
     if run is None:
         st.info(
-            "No run is open. Give a folder of counts and a saved model in the "
-            "sidebar, then press Open the run."
+            f"No run is open. Give a folder of counts and a saved model on "
+            f"{START_PAGE}, then press Open the run."
         )
         return
 
@@ -1286,7 +1506,7 @@ def _compare_numbers(first: Run, second: Run, label: str, device) -> list[dict]:
     if scored is None:
         rows.append({
             "measure": name, first.name: "not scored", second.name: "not scored",
-            "better": f"run {IMPUTE_PAGE} first; this reuses its fraction and seed",
+            "better": f"answer {IMPUTE_PAGE} first; this reuses its fraction and seed",
         })
     else:
         rows.append(_row(name, scored, larger_is_better=False, relative=True,
@@ -1371,8 +1591,232 @@ def _imputation_for_both(first: Run, second: Run, device) -> dict | None:
     return values
 
 
+def _start_page(st) -> None:
+    """Open a run, see what is open, and find out where to go next."""
+    st.header(START_PAGE)
+    st.markdown(
+        "This is for looking at what PREFFECT did: your data before a fit, and "
+        "a saved model after one. Fitting itself happens on the command line, "
+        "with `preffect train`, because a real cohort takes hours and a "
+        "terminal can be left running; what you open here is the model it "
+        "wrote, applied to a folder of counts."
+    )
+    # Filled in after the buttons below have been handled, so that a run
+    # opened on this very press is what the line reports.
+    state = st.empty()
+
+    st.markdown(
+        "**Nothing to open yet?** The button writes the simulated example "
+        "cohort, fits the worked example's two models on it, a plain one and a "
+        "zero-inflated one, and opens both. It takes a few seconds, and the "
+        "paths it fills in below are where it put them."
+    )
+    if st.button("Try it on the example data", key="example"):
+        _try_the_example(st, st.session_state.get("device", "cpu"))
+
+    st.subheader("Your counts")
+    row = st.columns([3, 1])
+    data_folder = row[0].text_input(
+        "Folder of counts", key="data_folder",
+        help="One file per tissue, named <anything>tau_<n>.h5ad. The pages "
+        "under Your data need only this.",
+    )
+    n_tissues = int(row[1].number_input(
+        "Tissue files in the folder", min_value=1, value=1, key="n_tissues"
+    ))
+
+    st.subheader("Your model")
+    row = st.columns([3, 1])
+    model_path = row[0].text_input(
+        "Saved model (.pt)", key="model_path", help="What preffect train wrote."
+    )
+    device = row[1].selectbox("Run on", ["cpu", "cuda"], key="device")
+    if st.button("Open the run", key="apply"):
+        if not data_folder or not model_path:
+            st.error("Give both a folder of counts and a saved model.")
+        elif _apply_model(st, model_path, "run", data_folder, n_tissues, device):
+            st.rerun()
+
+    st.subheader("A second model, to compare")
+    second_path = st.text_input(
+        "Second saved model (.pt)", key="second_model_path",
+        help="Optional. Applied to the same counts, which adds the comparison page.",
+    )
+    if st.button("Open the comparison", key="compare"):
+        if not data_folder or not second_path:
+            st.error("Give a folder of counts and a second saved model.")
+        elif st.session_state.get("run") is None:
+            st.error("Open the first run before comparing a second model with it.")
+        elif _apply_model(st, second_path, "second_run", data_folder, n_tissues, device):
+            st.rerun()
+
+    run, second = st.session_state.get("run"), st.session_state.get("second_run")
+    if run is None:
+        state.info(
+            "No run is open. Give a folder of counts and a saved model below, "
+            "then press Open the run. The pages under Your data need only the "
+            "folder."
+        )
+    else:
+        beside = f", with `{second.name}` beside it to compare" if second else ""
+        state.success(
+            f"Open: `{run.name}` on `{data_folder}`, {run.target.n_obs} samples "
+            f"and {run.target.n_vars} genes matched{beside}. The pages on the "
+            f"left are ready."
+        )
+
+    with st.expander("How the pages fit together"):
+        st.markdown(
+            f"1. **Your data.** *{PREPARE_PAGE}* writes the file PREFFECT reads "
+            f"from a counts table and a sample table; *{CHECK_PAGE}* is the pass "
+            f"or fail `preffect check` gives; *{LOOK_PAGE}* shows what the folder "
+            f"holds, for choosing settings. None of them needs a model.\n"
+            f"2. **The fit.** Open a run above and *{FIT_PAGE}* describes the "
+            f"saved model: what was fitted, how the loss moved, why it stopped, "
+            f"and the cleaned counts to download.\n"
+            f"3. **Does the fit hold?** One page per figure, each opening with "
+            f"what the picture shows and what a good one looks like, from the "
+            f"simplest check to the latent summary.\n"
+            f"4. **Ask the model.** One gene or one sample, and whether the model "
+            f"can fill in counts it was not shown. **Compare** appears once a "
+            f"second model is open on the same counts."
+        )
+
+
+def _try_the_example(st, device) -> None:
+    """Write the example cohort, fit the worked example's two models, open both.
+
+    The fit goes through the command line's own ``train``, in this process,
+    with the worked example's settings, so what the reader sees is exactly
+    what the worked example describes. A refusal arrives as the sentence the
+    command line printed. On success the form is filled in on the next run,
+    because a field's value cannot be changed after the field has been drawn.
+    """
+    import contextlib
+    import io
+    import tempfile
+
+    from preffect.cli import main
+    from preffect.errors import PreffectError
+    from preffect.example_data import write_example_data
+
+    folder = Path(tempfile.mkdtemp(prefix="preffect_example_"))
+    try:
+        with st.spinner("Writing the example cohort"):
+            write_example_data(folder / "example_data")
+    except PreffectError as error:
+        st.error(str(error))
+        return
+    train = folder / "example_data" / "simple" / "train"
+    validation = folder / "example_data" / "simple" / "validation"
+
+    models = {}
+    for name, likelihood, seed in (("plain.pt", "NB", "0"), ("zero_inflated.pt", "ZINB", "1")):
+        out = folder / name
+        said = io.StringIO()
+        with (
+            st.spinner(f"Fitting {name} on the example, with the worked example's settings"),
+            contextlib.redirect_stdout(said),
+            contextlib.redirect_stderr(said),
+        ):
+            code = main([
+                "train", "--train", str(train), "--validation", str(validation),
+                "--out", str(out), "--likelihood", likelihood, "--seed", seed,
+                "--device", device, *EXAMPLE_RECIPE,
+            ])
+        if code != 0:
+            lines = [line for line in said.getvalue().splitlines() if line.strip()]
+            st.error(lines[-1] if lines else f"fitting {name} failed")
+            return
+        models[name] = out
+
+    if not _apply_model(st, str(models["plain.pt"]), "run", str(train), 1, device):
+        return
+    if not _apply_model(st, str(models["zero_inflated.pt"]), "second_run", str(train), 1, device):
+        return
+    st.session_state["fill_form"] = {
+        "data_folder": str(train),
+        "n_tissues": 1,
+        "model_path": str(models["plain.pt"]),
+        "second_model_path": str(models["zero_inflated.pt"]),
+    }
+    st.rerun()
+
+
+def _apply_model(st, path: str, slot: str, data_folder: str, n_tissues: int, device) -> bool:
+    """Run one saved model over the counts and keep the result; True if it opened.
+
+    Opening the first run clears the second and everything worked out from
+    the pair of them. Otherwise a reader who points the interface at a
+    different folder and reopens is comparing two models over two different
+    sets of counts, with nothing on the page saying so.
+    """
+    from preffect.config import RuntimeConfig
+    from preffect.errors import PreffectError
+    from preffect.training import resolve_device
+    from preffect.workflow import apply_checkpoint
+
+    try:
+        with st.spinner("Applying the model"):
+            resolved = resolve_device(RuntimeConfig(device=device))
+            applied = apply_checkpoint(
+                Path(path), Path(data_folder), n_tissues=n_tissues, device=resolved
+            )
+    except PreffectError as error:
+        st.error(str(error))
+        return False
+
+    if slot == "run":
+        for stale in ("second_run", "comparison", "imputation"):
+            st.session_state.pop(stale, None)
+        st.session_state["run"] = Run(_run_label(path, None), *applied)
+        return True
+    st.session_state.pop("comparison", None)
+    taken = st.session_state["run"].name
+    st.session_state[slot] = Run(_run_label(path, taken), *applied)
+    return True
+
+
+def _status_block(st, run: Run | None, second: Run | None, data_folder: str) -> None:
+    """Three lines under the page list saying what is open, on every page."""
+    st.markdown("**What is open**")
+    if run is not None:
+        st.caption(
+            f"Counts: `{data_folder}`, {run.target.n_obs} samples, "
+            f"{run.target.n_vars} genes matched, {len(run.tissues)} tissue file(s)."
+        )
+    elif data_folder:
+        st.caption(f"Counts: `{data_folder}`, not opened yet.")
+    else:
+        st.caption("Counts: no folder open yet.")
+    if run is None:
+        st.caption("Model: no model open yet.")
+    else:
+        config = run.checkpoint.model_config
+        st.caption(
+            f"Model: `{run.name}`, the {config.kind.value} model, "
+            f"{config.likelihood.value} distribution."
+        )
+    if second is None:
+        st.caption("Second model: not open.")
+    else:
+        st.caption(f"Second model: `{second.name}`, open for comparison.")
+
+
+def _available(page: str, run: Run | None, second: Run | None) -> bool:
+    """Whether a page has what it needs, so that it is listed only then."""
+    if page == COMPARE_PAGE:
+        return second is not None
+    if page == START_PAGE or page in DATA_PAGES:
+        return True
+    return run is not None
+
+
 def render() -> None:
-    """Draw the chosen page. Streamlit runs this again on every interaction."""
+    """Build the page list from what is open, and draw the chosen page.
+
+    Streamlit runs this again on every interaction.
+    """
     import matplotlib
 
     matplotlib.use("Agg")
@@ -1380,108 +1824,58 @@ def render() -> None:
     import streamlit as st
 
     from preffect import __version__, plots
-    from preffect.errors import PreffectError
 
     st.set_page_config(page_title="PREFFECT", layout="wide")
+    # Streamlit forgets a widget's value as soon as a run passes without
+    # drawing it, which is every visit to another page. Writing each value
+    # back on every run is the documented way to keep it.
+    for key in FORM_KEYS:
+        if key in st.session_state:
+            st.session_state[key] = st.session_state[key]
+    # What the example button asked to be filled in, applied here because a
+    # field's value can only be set before the field is drawn.
+    st.session_state.update(st.session_state.pop("fill_form", {}))
+
     st.title(f"PREFFECT {__version__}")
     st.caption("Runs on this machine only. Nothing you point it at leaves it.")
 
-    with st.sidebar:
-        st.header("Your run")
-        data_folder = st.text_input(
-            "Folder of counts",
-            key="data_folder",
-            help="One file per tissue, named <anything>tau_<n>.h5ad.",
-        )
-        n_tissues = int(
-            st.number_input("Tissue files in the folder", min_value=1, value=1, key="n_tissues")
-        )
-        model_path = st.text_input(
-            "Saved model (.pt)", key="model_path", help="What preffect train wrote."
-        )
-        device = st.selectbox("Run on", ["cpu", "cuda"], key="device")
-        open_run = st.button("Open the run", key="apply")
-        second_path = st.text_input(
-            "Second saved model (.pt), to compare",
-            key="second_model_path",
-            help="Optional. Opens the compare page, on the same counts.",
-        )
-        open_second = st.button("Open the comparison", key="compare")
-
-    def apply_model(path: str, slot: str) -> None:
-        """Run one saved model over the counts and keep the result.
-
-        Opening the first run clears the second and everything worked out
-        from the pair of them. Otherwise a reader who points the interface at
-        a different folder and reopens is comparing two models over two
-        different sets of counts, with nothing on the page saying so.
-        """
-        from preffect.config import RuntimeConfig
-        from preffect.training import resolve_device
-        from preffect.workflow import apply_checkpoint
-
-        try:
-            with st.spinner("Applying the model"):
-                resolved = resolve_device(RuntimeConfig(device=device))
-                applied = apply_checkpoint(
-                    Path(path), Path(data_folder), n_tissues=n_tissues, device=resolved
-                )
-        except PreffectError as error:
-            st.error(str(error))
-            return
-
-        if slot == "run":
-            for stale in ("second_run", "comparison", "imputation"):
-                st.session_state.pop(stale, None)
-            st.session_state["run"] = Run(_run_label(path, None), *applied)
-            return
-        st.session_state.pop("comparison", None)
-        taken = st.session_state["run"].name
-        st.session_state[slot] = Run(_run_label(path, taken), *applied)
-
-    if open_run:
-        if not data_folder or not model_path:
-            st.error("Give both a folder of counts and a saved model.")
-        else:
-            apply_model(model_path, "run")
-
-    if open_second:
-        if not data_folder or not second_path:
-            st.error("Give a folder of counts and a second saved model.")
-        elif st.session_state.get("run") is None:
-            st.error("Open the first run before comparing a second model with it.")
-        else:
-            apply_model(second_path, "second_run")
-
     run = st.session_state.get("run")
     second = st.session_state.get("second_run")
+    data_folder = st.session_state.get("data_folder", "")
+    n_tissues = int(st.session_state.get("n_tissues", 1))
+    device = st.session_state.get("device", "cpu")
 
-    # The page list is built from what the run has, so a page is never offered
-    # with nothing behind it. Only the chosen page is drawn: before this, every
-    # figure was redrawn whenever anything on the page was touched.
-    pages = list(OPENING_PAGES)
-    if run is not None:
-        pages += list(FIGURE_PAGES) + list(TOOL_PAGES)
-        if second is not None:
-            pages.append(COMPARE_PAGE)
+    drawers = {
+        START_PAGE: lambda: _start_page(st),
+        PREPARE_PAGE: lambda: _prepare_page(st),
+        CHECK_PAGE: lambda: _check_page(st, data_folder, n_tissues),
+        LOOK_PAGE: lambda: _look_page(st, plt, plots, data_folder, n_tissues),
+        FIT_PAGE: lambda: _fit_page(st, plt, run, n_tissues),
+        LOOKUP_PAGE: lambda: _lookup_page(st, plt, plots, run),
+        IMPUTE_PAGE: lambda: _impute_page(st, run, device),
+        COMPARE_PAGE: lambda: _compare_page(st, plt, plots, run, second, device),
+    }
+    for title in FIGURE_PAGES:
+        drawers[title] = lambda title=title: _figure_page(st, plt, plots, title, run)
+
+    # The sidebar lists a page only when what it needs is open, so a page is
+    # never offered with nothing behind it. Only the chosen page is drawn.
+    sections = {}
+    for heading, titles in SECTIONS:
+        offered = [t for t in titles if _available(t, run, second)]
+        if offered:
+            sections[heading] = [
+                st.Page(drawers[t], title=t, url_path=URL_PATHS[t], default=t == START_PAGE)
+                for t in offered
+            ]
+    st.navigation(sections, position="sidebar").run()
+
+    # Drawn after the page, so that a run opened on it is what the lines say.
     with st.sidebar:
-        st.header("Pages")
-        page = st.radio("Page", pages, key="page", label_visibility="collapsed")
-
-    if page == PREPARE_PAGE:
-        _prepare_page(st)
-    elif page == "Check the data":
-        _check_page(st, data_folder, n_tissues)
-    elif page == "The run" or run is None:
-        _run_page(st, plt, run, n_tissues)
-    elif page in FIGURE_DESCRIPTIONS:
-        _figure_page(st, plt, plots, page, run)
-    elif page == LOOKUP_PAGE:
-        _lookup_page(st, plt, plots, run)
-    elif page == IMPUTE_PAGE:
-        _impute_page(st, run, device)
-    elif page == COMPARE_PAGE:
-        _compare_page(st, plt, plots, run, second, device)
+        _status_block(
+            st, st.session_state.get("run"), st.session_state.get("second_run"),
+            st.session_state.get("data_folder", ""),
+        )
 
 
 if __name__ == "__main__":

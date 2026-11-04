@@ -472,8 +472,9 @@ nor `--validation`.
 
 ## `preffect gui`
 
-Opens [the graphical interface](gui.md) in your browser: check a folder of
-counts, apply a saved model, and look at the figures. It answers on this
+Opens [the graphical interface](gui.md) in your browser: prepare and look at
+a folder of counts, apply a saved model, read how the fit went, and look at the
+figures, a page at a time. It answers on this
 machine only, to `localhost`, and sends nothing anywhere; from a laptop,
 forward the port over SSH.
 

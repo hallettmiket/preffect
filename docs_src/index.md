@@ -22,8 +22,9 @@ PREFFECT is designed to accomplish the following tasks:
 - **[Getting started](getting-started.md)** installs it and fits a model.
 - **[The command line](command-line.md)** is every command and every option,
   with what each is for and when to change it.
-- **[The graphical interface](gui.md)** checks a folder, applies a saved model
-  and shows the figures, in a browser, on your own machine.
+- **[The graphical interface](gui.md)** prepares and looks at a folder of
+  counts, applies a saved model and shows the figures a page at a time, in a
+  browser, on your own machine.
 - **[Using it](guide.md)** covers the real workflow: checking data, choosing
   genes, imputing, clustering, drawing.
 - **[Reference](reference/config.md)** is the API, taken from the docstrings.
